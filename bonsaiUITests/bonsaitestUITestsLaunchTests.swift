@@ -1,13 +1,13 @@
 //
-//  bonsaitestUITestsLaunchTests.swift
-//  bonsaitestUITests
+//  bonsaiUITestsLaunchTests.swift
+//  bonsaiUITests
 //
 //  Created by Azam Jawad on 2024-11-28.
 //
 
 import XCTest
 
-final class bonsaitestUITestsLaunchTests: XCTestCase {
+final class bonsaiUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true

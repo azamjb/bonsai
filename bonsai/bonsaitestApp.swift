@@ -1,6 +1,6 @@
 //
-//  bonsaitestApp.swift
-//  bonsaitest
+//  bonsaiApp.swift
+//  bonsai
 //
 //  Created by Azam Jawad on YYYY-MM-DD.
 //
@@ -8,7 +8,7 @@
 import SwiftUI
 
 @main
-struct bonsaitestApp: App {
+struct bonsaiApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()

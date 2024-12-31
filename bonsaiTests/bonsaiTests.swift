@@ -1,14 +1,14 @@
 //
-//  bonsaitestTests.swift
-//  bonsaitestTests
+//  bonsaiTests.swift
+//  bonsaiTests
 //
 //  Created by Azam Jawad on 2024-11-28.
 //
 
 import Testing
-@testable import bonsaitest
+@testable import bonsai
 
-struct bonsaitestTests {
+struct bonsaiTests {
 
     @Test func example() async throws {
         // Write your test here and use APIs like `#expect(...)` to check expected conditions.
