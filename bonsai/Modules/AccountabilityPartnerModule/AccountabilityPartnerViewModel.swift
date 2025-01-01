@@ -1,10 +1,9 @@
 //
-//  ScreenTimeSelectAppsModel.swift
+//  AccountabilityPartnerViewModel.swift
 //  bonsai
 //
-//  Created by Azam Jawad on 2024-12-30.
+//  Created by Brayden O on 2025-01-01.
 //
-
 
 import Foundation
 import FamilyControls
@@ -21,7 +20,7 @@ public class ScreenTimeSelectAppsModel: ObservableObject {
         UserDefaults(suiteName: appGroupID)
     }
 
-    func saveSelection() {
+    public func saveSelection() {
         let encoder = JSONEncoder()
         do {
             let encoded = try encoder.encode(activitySelection)

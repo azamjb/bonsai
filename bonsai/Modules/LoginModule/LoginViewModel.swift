@@ -6,6 +6,7 @@
 //
 import Foundation
 import Combine
+import SwiftUICore
 
 @MainActor class LoginViewModel: ObservableObject {
     @Published var email: String = ""
@@ -14,25 +15,36 @@ import Combine
     @Published var isLoading: Bool = false
     @Published var errorMessage: String = ""
     
+    private var navGuardService: NavGuardService
+    
+    init(navGuardService: NavGuardService) {
+        self.navGuardService = navGuardService
+    }
+    
     func login() async {
-        let defaults = UserDefaults.standard
-        let accountApi = AccountApi()
+        if(!validate()) {
+            return
+        }
         
         isLoading = true
         
-        if(validate()) {
-            do {
-                let loginResponse = try await accountApi.login(request: LoginRequest(email: email, password: password))
-                
-                UserDefaults.standard.set(loginResponse.bearer, forKey: LocalStorageKeys.bearer)
-                UserDefaults.standard.set(loginResponse.userId, forKey: LocalStorageKeys.userId)
-                
-                errorMessage = ""
-            } catch let error as StringError {
-                errorMessage = error.message
-            } catch {
-                errorMessage = error.localizedDescription
-            }
+        do {
+            let accountApi = AccountApi()
+            
+            let loginResponse = try await accountApi.login(request: LoginRequest(email: email, password: password))
+            
+            UserDefaults.standard.set(loginResponse.bearer, forKey: LocalStorageKeys.bearer)
+            UserDefaults.standard.set(loginResponse.userId, forKey: LocalStorageKeys.userId)
+            
+            navGuardService.isLoggedIn = true
+            
+            errorMessage = ""
+        } catch let error as StringError {
+            errorMessage = error.message
+            navGuardService.isLoggedIn = false
+        } catch {
+            errorMessage = error.localizedDescription
+            navGuardService.isLoggedIn = false
         }
         
         isLoading = false

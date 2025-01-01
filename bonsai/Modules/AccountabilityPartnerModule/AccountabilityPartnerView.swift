@@ -2,7 +2,7 @@
 //  AccountabilityPartnerView.swift
 //  bonsai
 //
-//  Created by Azam Jawad on 2024-12-31.
+//  Created by Brayden O on 2025-01-01.
 //
 
 import SwiftUI
@@ -157,4 +157,3 @@ struct AcceptInviteView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 }
-

@@ -1,5 +1,5 @@
 //
-//  LoginDataController.swift
+//  LoginView.swift
 //  bonsai
 //
 //  Created by Brayden O on 2024-12-31.
@@ -7,7 +7,13 @@
 import SwiftUI
 
 struct LoginView: View {
-    @StateObject private var viewModel = LoginViewModel()
+    @EnvironmentObject var navGuardService: NavGuardService
+    @StateObject private var viewModel: LoginViewModel
+
+    init() {
+        let navGuard = NavGuardService()  
+        _viewModel = StateObject(wrappedValue: LoginViewModel(navGuardService: navGuard))
+    }
     
     var body: some View {
         Form {

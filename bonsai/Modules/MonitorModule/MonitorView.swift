@@ -1,21 +1,17 @@
+//
+//  MonitorView.swift
+//  bonsai
+//
+//  Created by Brayden O on 2025-01-01.
+//
 import SwiftUI
 import FamilyControls
 import DeviceActivity
 import ManagedSettings
 
 struct MonitorView: View {
-    @StateObject private var model = ScreenTimeSelectAppsModel.shared
-    @State private var pickerIsPresented = false
-    @State private var monitoringStarted = false
+    @StateObject private var viewModel = MonitorViewModel()
     
-    // New: String for user input (time limit in minutes).
-    @State private var timeLimitMinutesString: String = "1"
-    
-    @State private var enteredPin: String = ""
-    @State private var pinError: String? = nil
-
-    let correctPin = "123456" // Replace with your desired PIN
-
     var body: some View {
         NavigationView {
             ZStack {
@@ -26,19 +22,19 @@ struct MonitorView: View {
                         UIApplication.shared.dismissKeyboard()
                     }
                     .ignoresSafeArea()
-
+                
                 // 2. Your main content
                 VStack(spacing: 16) {
                     Text("Monitoring")
                         .font(.largeTitle)
                         .padding(.top)
-
+                    
                     // MARK: - Time Limit Input
                     VStack {
                         Text("Enter Time Limit (minutes)")
                             .font(.headline)
-
-                        TextField("Time limit (e.g. 15)", text: $timeLimitMinutesString)
+                        
+                        TextField("Time limit (e.g. 15)", text: $viewModel.timeLimitMinutesString)
                             .keyboardType(.numberPad)
                             .padding()
                             .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -47,7 +43,7 @@ struct MonitorView: View {
                     
                     // MARK: - Select Apps to Monitor
                     Button {
-                        pickerIsPresented = true
+                        viewModel.pickerIsPresented = true
                     } label: {
                         Text("Select Apps to Monitor")
                             .font(.headline)
@@ -57,29 +53,29 @@ struct MonitorView: View {
                             .cornerRadius(10)
                     }
                     .padding(.top, 4)
-                    .familyActivityPicker(isPresented: $pickerIsPresented, selection: $model.activitySelection)
-                    .onChange(of: model.activitySelection) { newValue in
-                        model.saveSelection()
+                    .familyActivityPicker(isPresented: $viewModel.pickerIsPresented, selection: $viewModel.activitySelection)
+                    .onChange(of: viewModel.activitySelection) { newValue in
+                        viewModel.saveSelection()
                         print("Selection saved: \(newValue)")
                     }
-
+                    
                     // MARK: - Start Monitoring
                     Button {
-                        startMonitoring()
+                        viewModel.startMonitoring()
                     } label: {
-                        Text(monitoringStarted ? "Monitoring Started" : "Start Monitoring")
+                        Text(viewModel.monitoringStarted ? "Monitoring Started" : "Start Monitoring")
                             .font(.headline)
                             .foregroundColor(.white)
                             .padding()
-                            .background(monitoringStarted ? Color.gray : Color.green)
+                            .background(viewModel.monitoringStarted ? Color.gray : Color.green)
                             .cornerRadius(10)
                     }
-                    .disabled(monitoringStarted)
+                    .disabled(viewModel.monitoringStarted)
                     .padding(.top, 4)
-
+                    
                     // MARK: - Clear All Restrictions
                     Button {
-                        clearAllRestrictions()
+                        viewModel.clearAllRestrictions()
                     } label: {
                         Text("Clear All Restrictions")
                             .font(.headline)
@@ -89,18 +85,18 @@ struct MonitorView: View {
                             .cornerRadius(10)
                     }
                     .padding(.top, 4)
-
+                    
                     // MARK: - PIN Input
                     VStack(spacing: 8) {
-                        SecureField("Enter 6-digit PIN", text: $enteredPin)
+                        SecureField("Enter 6-digit PIN", text: $viewModel.enteredPin)
                             .keyboardType(.numberPad)
                             .padding()
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .frame(width: 200)
-
+                        
                         Button {
                             UIApplication.shared.dismissKeyboard() // Dismiss keyboard
-                            validateAndClearRestrictions()
+                            viewModel.validateAndClearRestrictions()
                         } label: {
                             Text("Submit PIN")
                                 .font(.headline)
@@ -110,71 +106,18 @@ struct MonitorView: View {
                                 .cornerRadius(10)
                         }
                     }
-
+                    
                     // Error message for wrong PIN
-                    if let error = pinError {
+                    if let error = viewModel.pinError {
                         Text(error)
                             .foregroundColor(.red)
                             .font(.caption)
                     }
-
+                    
                     Spacer()
                 }
                 .padding()
             }
-        }
-    }
-
-    private func startMonitoring() {
-        let center = DeviceActivityCenter()
-
-        // Convert user’s text to Int; fallback to 1 if conversion fails
-        let timeLimitMinutes = Int(timeLimitMinutesString) ?? 1
-
-        let selection = model.loadSelection() ?? FamilyActivitySelection()
-
-        let schedule = DeviceActivitySchedule(
-            intervalStart: DateComponents(hour: 0, minute: 0, second: 0),
-            intervalEnd: DateComponents(hour: 23, minute: 59, second: 59),
-            repeats: true
-        )
-
-        let event = DeviceActivityEvent(
-            applications: selection.applicationTokens,
-            categories: selection.categoryTokens,
-            webDomains: selection.webDomainTokens,
-            threshold: DateComponents(minute: timeLimitMinutes)
-        )
-
-        let activityName = DeviceActivityName("ScreenTimeActivity")
-        let eventName = DeviceActivityEvent.Name("ScreenTimeThreshold")
-
-        do {
-            try center.startMonitoring(
-                activityName,
-                during: schedule,
-                events: [eventName: event]
-            )
-            monitoringStarted = true
-            print("Monitoring started with time limit: \(timeLimitMinutes) minute(s).")
-        } catch {
-            print("Failed to start monitoring: \(error)")
-        }
-    }
-
-    private func clearAllRestrictions() {
-        let store = ManagedSettingsStore()
-        store.shield.applicationCategories = nil
-        store.shield.applications = nil
-        print("All restrictions cleared.")
-    }
-
-    private func validateAndClearRestrictions() {
-        if enteredPin == correctPin {
-            clearAllRestrictions()
-            pinError = nil
-        } else {
-            pinError = "Invalid PIN. Please try again."
         }
     }
 }

@@ -8,26 +8,30 @@
 import SwiftUI
 
 struct ContentView: View {
+    //@StateObject var navGuardService = NavGuardService()
+    
     var body: some View {
-            TabView {
-                ActivityReportView()
-                    .tabItem {
-                        Label("Activity", systemImage: "chart.pie")
-                    }
-
-                MonitorView()
-                    .tabItem {
-                        Label("Monitoring", systemImage: "gearshape")
-                    }
-                
-                AccountabilityPartnerView()
-                    .tabItem {
-                        Label("Accountability", systemImage: "person.fill")
-                    }
-            }
+        //if navGuardService.isLoggedIn {
+        TabView {
+            ActivityReportView()
+                .tabItem {
+                    Label("Activity", systemImage: "chart.pie")
+                }
+            
+            MonitorView()
+                .tabItem {
+                    Label("Monitoring", systemImage: "gearshape")
+                }
+            
+            AccountabilityPartnerView()
+                .tabItem {
+                    Label("Accountability", systemImage: "person.fill")
+                }
         }
-}
-
-#Preview {
-    ContentView()
+    }
+    //    else {
+    //            LoginView()
+    //                .environmentObject(navGuardService)
+    //        }
+//  }
 }
