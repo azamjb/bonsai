@@ -3,10 +3,14 @@ import FamilyControls
 import DeviceActivity
 import ManagedSettings
 
-struct SecondPageView: View {
+struct MonitorView: View {
     @StateObject private var model = ScreenTimeSelectAppsModel.shared
     @State private var pickerIsPresented = false
     @State private var monitoringStarted = false
+    
+    // New: String for user input (time limit in minutes).
+    @State private var timeLimitMinutesString: String = "1"
+    
     @State private var enteredPin: String = ""
     @State private var pinError: String? = nil
 
@@ -24,11 +28,24 @@ struct SecondPageView: View {
                     .ignoresSafeArea()
 
                 // 2. Your main content
-                VStack {
-                    Text("Moitoring")
+                VStack(spacing: 16) {
+                    Text("Monitoring")
                         .font(.largeTitle)
-                        .padding()
+                        .padding(.top)
 
+                    // MARK: - Time Limit Input
+                    VStack {
+                        Text("Enter Time Limit (minutes)")
+                            .font(.headline)
+
+                        TextField("Time limit (e.g. 15)", text: $timeLimitMinutesString)
+                            .keyboardType(.numberPad)
+                            .padding()
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .frame(width: 200)
+                    }
+                    
+                    // MARK: - Select Apps to Monitor
                     Button {
                         pickerIsPresented = true
                     } label: {
@@ -39,13 +56,14 @@ struct SecondPageView: View {
                             .background(Color.blue)
                             .cornerRadius(10)
                     }
-                    .padding()
+                    .padding(.top, 4)
                     .familyActivityPicker(isPresented: $pickerIsPresented, selection: $model.activitySelection)
                     .onChange(of: model.activitySelection) { newValue in
                         model.saveSelection()
                         print("Selection saved: \(newValue)")
                     }
 
+                    // MARK: - Start Monitoring
                     Button {
                         startMonitoring()
                     } label: {
@@ -57,8 +75,9 @@ struct SecondPageView: View {
                             .cornerRadius(10)
                     }
                     .disabled(monitoringStarted)
-                    .padding()
+                    .padding(.top, 4)
 
+                    // MARK: - Clear All Restrictions
                     Button {
                         clearAllRestrictions()
                     } label: {
@@ -69,9 +88,10 @@ struct SecondPageView: View {
                             .background(Color.red)
                             .cornerRadius(10)
                     }
-                    .padding()
+                    .padding(.top, 4)
 
-                    VStack {
+                    // MARK: - PIN Input
+                    VStack(spacing: 8) {
                         SecureField("Enter 6-digit PIN", text: $enteredPin)
                             .keyboardType(.numberPad)
                             .padding()
@@ -91,12 +111,16 @@ struct SecondPageView: View {
                         }
                     }
 
+                    // Error message for wrong PIN
                     if let error = pinError {
                         Text(error)
                             .foregroundColor(.red)
                             .font(.caption)
                     }
+
+                    Spacer()
                 }
+                .padding()
             }
         }
     }
@@ -104,7 +128,9 @@ struct SecondPageView: View {
     private func startMonitoring() {
         let center = DeviceActivityCenter()
 
-        let timeLimitMinutes = 1
+        // Convert user’s text to Int; fallback to 1 if conversion fails
+        let timeLimitMinutes = Int(timeLimitMinutesString) ?? 1
+
         let selection = model.loadSelection() ?? FamilyActivitySelection()
 
         let schedule = DeviceActivitySchedule(
@@ -130,7 +156,7 @@ struct SecondPageView: View {
                 events: [eventName: event]
             )
             monitoringStarted = true
-            print("Monitoring started.")
+            print("Monitoring started with time limit: \(timeLimitMinutes) minute(s).")
         } catch {
             print("Failed to start monitoring: \(error)")
         }

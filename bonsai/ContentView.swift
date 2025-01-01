@@ -15,9 +15,14 @@ struct ContentView: View {
                         Label("Activity", systemImage: "chart.pie")
                     }
 
-                SecondPageView()
+                MonitorView()
                     .tabItem {
                         Label("Monitoring", systemImage: "gearshape")
+                    }
+                
+                AccountabilityPartnerView()
+                    .tabItem {
+                        Label("Accountability", systemImage: "person.fill")
                     }
             }
         }
