@@ -54,9 +54,8 @@ struct MonitorView: View {
                     }
                     .padding(.top, 4)
                     .familyActivityPicker(isPresented: $viewModel.pickerIsPresented, selection: $viewModel.activitySelection)
-                    .onChange(of: viewModel.activitySelection) { newValue in
-                        viewModel.saveSelection()
-                        print("Selection saved: \(newValue)")
+                    .onChange(of: viewModel.activitySelection) { selection in
+                        viewModel.saveSelection(for: selection)
                     }
                     
                     // MARK: - Start Monitoring

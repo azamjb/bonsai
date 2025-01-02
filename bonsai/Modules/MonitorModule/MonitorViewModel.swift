@@ -18,7 +18,6 @@ class MonitorViewModel: ObservableObject {
     @Published var enteredPin: String = ""
     @Published var pinError: String? = nil
     @Published var activitySelection = FamilyActivitySelection()
-    @Published private var appSelectionModel = ScreenTimeSelectAppsModel.shared
     
     private let userDefaultsKey = "SelectedActivity"
     private let appGroupID = "group.com.bonsai" // Replace with your actual App Group ID
@@ -35,8 +34,6 @@ class MonitorViewModel: ObservableObject {
 
         let timeLimitMinutes = Int(timeLimitMinutesString) ?? 1
 
-        let selection = appSelectionModel.loadSelection() ?? FamilyActivitySelection()
-
         let schedule = DeviceActivitySchedule(
             intervalStart: DateComponents(hour: 0, minute: 0, second: 0),
             intervalEnd: DateComponents(hour: 23, minute: 59, second: 59),
@@ -44,33 +41,37 @@ class MonitorViewModel: ObservableObject {
         )
 
         let event = DeviceActivityEvent(
-            applications: selection.applicationTokens,
-            categories: selection.categoryTokens,
-            webDomains: selection.webDomainTokens,
-            threshold: DateComponents(minute: timeLimitMinutes)
+            applications: activitySelection.applicationTokens,
+            categories: activitySelection.categoryTokens,
+            webDomains: activitySelection.webDomainTokens,
+            threshold: DateComponents(minute: 0)
         )
 
         let activityName = DeviceActivityName("ScreenTimeActivity")
         let eventName = DeviceActivityEvent.Name("ScreenTimeThreshold")
-
+        
+        let encoder = JSONEncoder()
         do {
-            try center.startMonitoring(
-                activityName,
-                during: schedule,
-                events: [eventName: event]
-            )
-            monitoringStarted = true
-            print("Monitoring started with time limit: \(timeLimitMinutes) minute(s).")
+            let encoded = try encoder.encode(activitySelection)
+            sharedDefaults?.set(encoded, forKey: userDefaultsKey)
         } catch {
-            print("Failed to start monitoring: \(error)")
+            print("Failed to encode selection: \(error)")
         }
+        
+        try! center.startMonitoring(
+            activityName,
+            during: schedule,
+            events: [eventName: event]
+        )
+        
+        monitoringStarted = true
     }
 
     public func clearAllRestrictions() {
         let store = ManagedSettingsStore()
         store.shield.applicationCategories = nil
         store.shield.applications = nil
-        print("All restrictions cleared.")
+        monitoringStarted = false
     }
 
     public func validateAndClearRestrictions() {
@@ -82,14 +83,7 @@ class MonitorViewModel: ObservableObject {
         }
     }
     
-    public func saveSelection() {
-        let encoder = JSONEncoder()
-        do {
-            let encoded = try encoder.encode(activitySelection)
-            sharedDefaults?.set(encoded, forKey: userDefaultsKey)
-            print("Selection successfully saved: \(activitySelection)")
-        } catch {
-            print("Failed to encode selection: \(error)")
-        }
+    public func saveSelection(for selection: FamilyActivitySelection) {
+        activitySelection = selection
     }
 }
