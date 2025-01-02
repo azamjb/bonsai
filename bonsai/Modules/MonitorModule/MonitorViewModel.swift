@@ -11,7 +11,7 @@ import DeviceActivity
 import FamilyControls
 import ManagedSettings
 
-class MonitorViewModel: ObservableObject {
+@MainActor class MonitorViewModel: ObservableObject {
     @Published var pickerIsPresented: Bool = false
     @Published var monitoringStarted: Bool = false
     @Published var timeLimitMinutesString: String = "1"

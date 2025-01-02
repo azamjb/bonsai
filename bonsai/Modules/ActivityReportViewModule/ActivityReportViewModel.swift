@@ -7,6 +7,6 @@
 
 import Combine
 import Foundation
-class ActivityReportViewModel: ObservableObject {
+@MainActor class ActivityReportViewModel: ObservableObject {
     
 }

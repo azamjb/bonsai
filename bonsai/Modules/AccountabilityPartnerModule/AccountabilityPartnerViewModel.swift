@@ -8,7 +8,7 @@
 import Foundation
 import FamilyControls
 
-public class AccountabilityPartnerViewModel: ObservableObject {
+@MainActor public class AccountabilityPartnerViewModel: ObservableObject {
     @Published public var phoneNumber: String = ""
     @Published public var code: String = ""
     @Published public var userCode: String = ""
@@ -16,8 +16,11 @@ public class AccountabilityPartnerViewModel: ObservableObject {
     @Published public var isSendInvitePressed: Bool = false
     @Published public var isRequestMoreTimePressed = false
     @Published public var verificationMessage: String? = nil
-    @Published public var errorMessage: String = ""
-    @Published var isSendingText: Bool = false
+    @Published public var inviteErrorMessage: String = ""
+    @Published public var timeRequestErrorMessage: String = ""
+
+    @Published public var isSendingInvite: Bool = false
+    @Published public var isSendingTimeRequest: Bool = false
 
     private let userDefaultsKey = "SelectedActivity"
     private let appGroupID = "group.com.bonsai" // Replace with your actual App Group ID
@@ -26,9 +29,9 @@ public class AccountabilityPartnerViewModel: ObservableObject {
         UserDefaults(suiteName: appGroupID)
     }
     
-    public func sendTimeRequest() async {
+    public func sendInvite() async {
         isSendInvitePressed = true
-        isSendingText = true
+        isSendingInvite = true
         
         let smsApi = SMSApi()
         code = generateRandomCode()
@@ -43,13 +46,44 @@ public class AccountabilityPartnerViewModel: ObservableObject {
                 )
             )
         } catch let error as StringError {
-            errorMessage = error.message
+            inviteErrorMessage = error.message
         } catch {
-            errorMessage = error.localizedDescription
+            inviteErrorMessage = error.localizedDescription
         }
 
+        isSendingInvite = false
+    }
+    
+    public func sendTimeRequest() async {
+        let smsApi = SMSApi()
+        isSendingTimeRequest = true
         
-        isSendingText = false
+        do {
+            try await smsApi.timeRequest(
+                request: SMSRequest(
+                    number: phoneNumber,
+                    username: "Azam",
+                    accountabilityPartnerName: "Bob",
+                    code: "123432"
+                )
+            )
+        } catch let error as StringError {
+            timeRequestErrorMessage = error.message
+        } catch {
+            timeRequestErrorMessage = error.localizedDescription
+        }
+        
+        isSendingTimeRequest = false
+    }
+    
+    public func validateVerificationCode() {
+        if userCode == code {
+            isValidated = true
+            verificationMessage = "Verification Successful!"
+        } else {
+            isValidated = false
+            verificationMessage = "Invalid Code. Please try again."
+        }
     }
 
     public func generateRandomCode() -> String {

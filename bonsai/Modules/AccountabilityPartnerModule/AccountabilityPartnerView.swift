@@ -38,29 +38,30 @@ struct AccountabilityPartnerView: View {
 
                     // Submit button
                     Button(action: {
+                        UIApplication.shared.dismissKeyboard()
                         Task {
-                            UIApplication.shared.dismissKeyboard()
-                            await viewModel.sendTimeRequest()
+                            await viewModel.sendInvite()
                         }
                     }) {
-                        if viewModel.isSendingText {
+                        if viewModel.isSendingInvite {
                             ProgressView()
                         } else {
                             Text("Send Invite")
                                 .font(.headline)
+                                .frame(maxWidth: .infinity)
                         }
                     }
                     .padding()
                     .frame(maxWidth: .infinity)
-                    .background(viewModel.isSendingText ? Color.gray : Color.blue)
+                    .background(viewModel.isSendingInvite ? Color.gray : Color.blue)
                     .foregroundColor(.white)
                     .cornerRadius(10)
-                    .disabled(viewModel.isSendingText)
+                    .disabled(viewModel.isSendingInvite)
                     
-                    if !viewModel.errorMessage.isEmpty {
-                        Text(viewModel.errorMessage)
+                    if !viewModel.inviteErrorMessage.isEmpty {
+                        Text(viewModel.inviteErrorMessage)
                             .font(.headline)
-                            .foregroundColor(viewModel.isValidated ? .green : .red)
+                            .foregroundColor(.red)
                             .padding(.top, 8)
                     }
 
@@ -89,13 +90,7 @@ struct AccountabilityPartnerView: View {
                         // Verify button
                         Button(action: {
                             UIApplication.shared.dismissKeyboard()
-                            if viewModel.userCode == viewModel.code {
-                                viewModel.isValidated = true
-                                viewModel.verificationMessage = "Verification Successful!"
-                            } else {
-                                viewModel.isValidated = false
-                                viewModel.verificationMessage = "Invalid Code. Please try again."
-                            }
+                            viewModel.validateVerificationCode()
                         }) {
                             Text("Verify")
                                 .font(.headline)
@@ -120,19 +115,26 @@ struct AccountabilityPartnerView: View {
 
                     if viewModel.isValidated {
                         Button(action: {
+                            UIApplication.shared.dismissKeyboard()
                             Task {
-                                UIApplication.shared.dismissKeyboard()
                                 await viewModel.sendTimeRequest()
                             }
                         })
                         {
-                            Text("Request More Time")
-                                .font(.headline)
-                                .foregroundColor(.white)
-                                .padding()
-                                .background(viewModel.isRequestMoreTimePressed ? Color.blue.opacity(0.7) : Color.blue)
-                                .cornerRadius(8)
+                            if viewModel.isSendingInvite {
+                                ProgressView()
+                            } else {
+                                Text("Request Time")
+                                    .font(.headline)
+                                    .frame(maxWidth: .infinity)
+                            }
                         }
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(viewModel.isSendingTimeRequest ? Color.gray : Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                        .disabled(viewModel.isSendingTimeRequest)
                     }
                 }
                 .padding()
