@@ -1,23 +1,11 @@
 import SwiftUI
+import iPhoneNumberField
 import FamilyControls
 import DeviceActivity
 import ManagedSettings
 
 struct AccountabilityPartnerView: View {
-    @StateObject private var model = ScreenTimeSelectAppsModel.shared
-    let smsApi = SMSApi()
-    @State private var phoneNumber: String = ""
-    @State private var code: String = ""
-    @State private var userCode: String = ""
-    @State private var isValidated = false
-    @State private var isSendInvitePressed = false
-    @State private var isRequestMoreTimePressed = false
-    @State private var verificationMessage: String? = nil
-
-    func generateRandomCode() -> String {
-        let randomCode = Int.random(in: 100_000...999_999)
-        return String(randomCode)
-    }
+    @StateObject private var viewModel = AccountabilityPartnerViewModel()
 
     var body: some View {
         NavigationView {
@@ -41,7 +29,7 @@ struct AccountabilityPartnerView: View {
                                     .foregroundColor(.blue)
 
                                 // TextField for phone number
-                                TextField("Phone Number", text: $phoneNumber)
+                                iPhoneNumberField("Phone Number", text: $viewModel.phoneNumber)
                                     .keyboardType(.phonePad)
                                     .padding(.leading, 4)
                             }
@@ -51,30 +39,23 @@ struct AccountabilityPartnerView: View {
                     // Submit button
                     Button(action: {
                         UIApplication.shared.dismissKeyboard()
-                        Task {
-                            code = generateRandomCode()
-                            try await smsApi.invite(
-                                request: SMSRequest(
-                                    number: phoneNumber,
-                                    username: "Azam",
-                                    accountabilityPartnerName: "Bob",
-                                    code: code
-                                )
-                            )
-                            isSendInvitePressed = true
-                        }
+                        Task { await viewModel.sendTimeRequest() }
                     }) {
-                        Text("Send Invite")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background( Color.blue)
-                            .cornerRadius(12)
+                        if viewModel.isSendingText {
+                            ProgressView()
+                        } else {
+                            Text("Send Invite")
+                                .font(.headline)
+                        }
                     }
-                    .padding(.horizontal)
-
-                    if !phoneNumber.isEmpty && isSendInvitePressed {
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(viewModel.isSendingText ? Color.gray : Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+                    .disabled(viewModel.isSendingText)
+                    
+                    if !viewModel.phoneNumber.isEmpty && viewModel.isSendInvitePressed {
                         Text("Enter verification code")
                             .font(.title)
                             .fontWeight(.semibold)
@@ -89,7 +70,7 @@ struct AccountabilityPartnerView: View {
                                     Image(systemName: "lock.fill")
                                         .foregroundColor(.blue)
 
-                                    TextField("PIN", text: $userCode)
+                                    TextField("PIN", text: $viewModel.userCode)
                                         .keyboardType(.phonePad)
                                         .padding(.leading, 4)
                                 }
@@ -99,12 +80,12 @@ struct AccountabilityPartnerView: View {
                         // Verify button
                         Button(action: {
                             UIApplication.shared.dismissKeyboard()
-                            if userCode == code {
-                                isValidated = true
-                                verificationMessage = "Verification Successful!"
+                            if viewModel.userCode == viewModel.code {
+                                viewModel.isValidated = true
+                                viewModel.verificationMessage = "Verification Successful!"
                             } else {
-                                isValidated = false
-                                verificationMessage = "Invalid Code. Please try again."
+                                viewModel.isValidated = false
+                                viewModel.verificationMessage = "Invalid Code. Please try again."
                             }
                         }) {
                             Text("Verify")
@@ -118,35 +99,29 @@ struct AccountabilityPartnerView: View {
                         .padding(.horizontal)
 
                         // Verification feedback
-                        if let message = verificationMessage {
+                        if let message = viewModel.verificationMessage {
                             Text(message)
                                 .font(.headline)
-                                .foregroundColor(isValidated ? .green : .red)
+                                .foregroundColor(viewModel.isValidated ? .green : .red)
                                 .padding(.top, 8)
                         }
                     }
 
                     Spacer()
 
-                    if isValidated {
+                    if viewModel.isValidated {
                         Button(action: {
-                            UIApplication.shared.dismissKeyboard()
                             Task {
-                                try await smsApi.timeRequest(
-                                    request: SMSRequest(
-                                        number: phoneNumber,
-                                        username: "Azam",
-                                        accountabilityPartnerName: "Bob",
-                                        code: "123432"
-                                    )
-                                )
+                                UIApplication.shared.dismissKeyboard()
+                                await viewModel.sendTimeRequest()
                             }
-                        }) {
+                        })
+                        {
                             Text("Request More Time")
                                 .font(.headline)
                                 .foregroundColor(.white)
                                 .padding()
-                                .background(isRequestMoreTimePressed ? Color.blue.opacity(0.7) : Color.blue)
+                                .background(viewModel.isRequestMoreTimePressed ? Color.blue.opacity(0.7) : Color.blue)
                                 .cornerRadius(8)
                         }
                     }

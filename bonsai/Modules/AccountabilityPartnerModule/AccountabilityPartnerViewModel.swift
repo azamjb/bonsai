@@ -8,42 +8,44 @@
 import Foundation
 import FamilyControls
 
-public class ScreenTimeSelectAppsModel: ObservableObject {
-    static let shared = ScreenTimeSelectAppsModel()
-    
-    @Published var activitySelection = FamilyActivitySelection()
-    
+public class AccountabilityPartnerViewModel: ObservableObject {
+    @Published public var phoneNumber: String = ""
+    @Published public var code: String = ""
+    @Published public var userCode: String = ""
+    @Published public var isValidated: Bool = false
+    @Published public var isSendInvitePressed: Bool = false
+    @Published public var isRequestMoreTimePressed = false
+    @Published public var verificationMessage: String? = nil
+    @Published var isSendingText: Bool = false
+
     private let userDefaultsKey = "SelectedActivity"
     private let appGroupID = "group.com.bonsai" // Replace with your actual App Group ID
     
     private var sharedDefaults: UserDefaults? {
         UserDefaults(suiteName: appGroupID)
     }
-
-    public func saveSelection() {
-        let encoder = JSONEncoder()
-        do {
-            let encoded = try encoder.encode(activitySelection)
-            sharedDefaults?.set(encoded, forKey: userDefaultsKey)
-            print("Selection successfully saved: \(activitySelection)")
-        } catch {
-            print("Failed to encode selection: \(error)")
-        }
+    
+    public func sendTimeRequest() async {
+        isSendInvitePressed = true
+        isSendingText = true
+        
+        let smsApi = SMSApi()
+        code = generateRandomCode()
+        
+        try! await smsApi.invite(
+            request: SMSRequest(
+                number: phoneNumber,
+                username: "Azam",
+                accountabilityPartnerName: "Bob",
+                code: code
+            )
+        )
+        
+        isSendingText = false
     }
 
-    public func loadSelection() -> FamilyActivitySelection? {
-        let decoder = JSONDecoder()
-        if let data = sharedDefaults?.data(forKey: userDefaultsKey) {
-            do {
-                let selection = try decoder.decode(FamilyActivitySelection.self, from: data)
-                print("Selection successfully loaded: \(selection)")
-                return selection
-            } catch {
-                print("Failed to decode selection: \(error)")
-            }
-        } else {
-            print("No data found in shared UserDefaults for key: \(userDefaultsKey)")
-        }
-        return nil
+    public func generateRandomCode() -> String {
+        let randomCode = Int.random(in: 100_000...999_999)
+        return String(randomCode)
     }
 }

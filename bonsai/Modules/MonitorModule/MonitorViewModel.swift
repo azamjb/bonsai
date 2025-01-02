@@ -18,7 +18,7 @@ class MonitorViewModel: ObservableObject {
     @Published var enteredPin: String = ""
     @Published var pinError: String? = nil
     @Published var activitySelection = FamilyActivitySelection()
-    
+
     private let userDefaultsKey = "SelectedActivity"
     private let appGroupID = "group.com.bonsai" // Replace with your actual App Group ID
     
@@ -50,13 +50,8 @@ class MonitorViewModel: ObservableObject {
         let activityName = DeviceActivityName("ScreenTimeActivity")
         let eventName = DeviceActivityEvent.Name("ScreenTimeThreshold")
         
-        let encoder = JSONEncoder()
-        do {
-            let encoded = try encoder.encode(activitySelection)
-            sharedDefaults?.set(encoded, forKey: userDefaultsKey)
-        } catch {
-            print("Failed to encode selection: \(error)")
-        }
+        let encoded = try! JSONEncoder().encode(activitySelection)
+        sharedDefaults?.set(encoded, forKey: userDefaultsKey)
         
         try! center.startMonitoring(
             activityName,
