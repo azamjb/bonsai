@@ -45,7 +45,6 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     
     private func handleThresholdReached(activitySelection: FamilyActivitySelection) {
         let settingsStore = ManagedSettingsStore()
-        let shieldActionHandler = ShieldActionDelegate()
         
         settingsStore.shield.applications = activitySelection.applicationTokens
         settingsStore.shield.applicationCategories = .specific(activitySelection.categoryTokens)
