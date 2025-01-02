@@ -8,7 +8,7 @@ import Foundation
 
 class BaseApi {
     // Change this to your network IP for the wifi that your testing device and mac are connected to
-    let hostName = "192.168.0.171"
+    let hostName = "192.168.0.30"
     
     let apiBaseUrl: String
     var endpointControllerName: String {

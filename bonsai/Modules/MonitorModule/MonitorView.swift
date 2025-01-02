@@ -95,7 +95,7 @@ struct MonitorView: View {
                         
                         Button {
                             UIApplication.shared.dismissKeyboard() // Dismiss keyboard
-                            viewModel.validateAndClearRestrictions()
+                            viewModel.validateAndExtendTime()
                         } label: {
                             Text("Submit PIN")
                                 .font(.headline)

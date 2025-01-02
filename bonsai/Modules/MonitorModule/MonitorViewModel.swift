@@ -74,14 +74,31 @@ class MonitorViewModel: ObservableObject {
         monitoringStarted = false
     }
 
-    public func validateAndClearRestrictions() {
-        if enteredPin == correctPin {
-            clearAllRestrictions()
-            pinError = nil
-        } else {
-            pinError = "Invalid PIN. Please try again."
+    public func validateAndExtendTime() {
+            if enteredPin == correctPin {
+                pinError = nil
+
+                // 1) Stop existing monitoring session
+                let center = DeviceActivityCenter()
+                do {
+                    try center.stopMonitoring([DeviceActivityName("ScreenTimeActivity")])
+                    print("Stopped existing monitoring session.")
+                } catch {
+                    print("Failed to stop monitoring: \(error)")
+                }
+
+                // 2) Increase daily limit, e.g. add 15 more minutes
+                let currentLimit = Int(timeLimitMinutesString) ?? 1
+                let newLimit = currentLimit + 15 // Increase by 15, or any value you want
+                timeLimitMinutesString = String(newLimit)
+
+                // 3) Restart monitoring with new limit
+                startMonitoring()
+
+            } else {
+                pinError = "Invalid PIN. Please try again."
+            }
         }
-    }
     
     public func saveSelection(for selection: FamilyActivitySelection) {
         activitySelection = selection
