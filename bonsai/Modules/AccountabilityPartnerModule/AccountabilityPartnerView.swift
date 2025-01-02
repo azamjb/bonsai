@@ -1,159 +1,163 @@
-//
-//  AccountabilityPartnerView.swift
-//  bonsai
-//
-//  Created by Brayden O on 2025-01-01.
-//
-
 import SwiftUI
 import FamilyControls
 import DeviceActivity
 import ManagedSettings
 
 struct AccountabilityPartnerView: View {
-    
     @StateObject private var model = ScreenTimeSelectAppsModel.shared
-    
+    let smsApi = SMSApi()
+    @State private var phoneNumber: String = ""
+    @State private var code: String = ""
+    @State private var userCode: String = ""
+    @State private var isValidated = false
+    @State private var isSendInvitePressed = false
+    @State private var isRequestMoreTimePressed = false
+    @State private var verificationMessage: String? = nil
+
+    func generateRandomCode() -> String {
+        let randomCode = Int.random(in: 100_000...999_999)
+        return String(randomCode)
+    }
+
     var body: some View {
         NavigationView {
-            ZStack {
-                // 1. A transparent background that catches taps
-                Color.clear
-                    .contentShape(Rectangle())  // Make the entire area tappable
-                    .onTapGesture {
-                        UIApplication.shared.dismissKeyboard()
-                    }
-                    .ignoresSafeArea()
-                
-                // 2. Put your buttons inside the same ZStack (often in a VStack)
+            ScrollView {
                 VStack(spacing: 20) {
-                    
                     Text("Accountability")
                         .font(.largeTitle)
-                    
-                    // MARK: - NavigationLink for inviting a partner
-                    NavigationLink(destination: InvitePartnerView()) {
-                        Text("Invite accountability partner")
+
+                    Text("Invite Partner")
+                        .font(.title)
+                        .fontWeight(.semibold)
+                        .padding(.top, 16)
+
+                    // Phone Number Input
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.gray.opacity(0.4), lineWidth: 1)
+                        .frame(height: 50)
+                        .overlay(
+                            HStack {
+                                Image(systemName: "phone.fill")
+                                    .foregroundColor(.blue)
+
+                                // TextField for phone number
+                                TextField("Phone Number", text: $phoneNumber)
+                                    .keyboardType(.phonePad)
+                                    .padding(.leading, 4)
+                            }
+                            .padding(.horizontal)
+                        )
+
+                    // Submit button
+                    Button(action: {
+                        UIApplication.shared.dismissKeyboard()
+                        Task {
+                            code = generateRandomCode()
+                            try await smsApi.invite(
+                                request: SMSRequest(
+                                    number: phoneNumber,
+                                    username: "Azam",
+                                    accountabilityPartnerName: "Bob",
+                                    code: code
+                                )
+                            )
+                            isSendInvitePressed = true
+                        }
+                    }) {
+                        Text("Send Invite")
                             .font(.headline)
                             .foregroundColor(.white)
                             .padding()
-                            .background(Color.blue)
-                            .cornerRadius(10)
+                            .frame(maxWidth: .infinity)
+                            .background( Color.blue)
+                            .cornerRadius(12)
                     }
-                    
-                    // MARK: - NavigationLink for accepting an invite
-                    NavigationLink(destination: AcceptInviteView()) {
-                        Text("Accept invite")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding()
-                            .background(Color.blue)
-                            .cornerRadius(10)
+                    .padding(.horizontal)
+
+                    if !phoneNumber.isEmpty && isSendInvitePressed {
+                        Text("Enter verification code")
+                            .font(.title)
+                            .fontWeight(.semibold)
+                            .padding(.top, 16)
+
+                        // Verification Input
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color.gray.opacity(0.4), lineWidth: 1)
+                            .frame(height: 50)
+                            .overlay(
+                                HStack {
+                                    Image(systemName: "lock.fill")
+                                        .foregroundColor(.blue)
+
+                                    TextField("PIN", text: $userCode)
+                                        .keyboardType(.phonePad)
+                                        .padding(.leading, 4)
+                                }
+                                .padding(.horizontal)
+                            )
+
+                        // Verify button
+                        Button(action: {
+                            UIApplication.shared.dismissKeyboard()
+                            if userCode == code {
+                                isValidated = true
+                                verificationMessage = "Verification Successful!"
+                            } else {
+                                isValidated = false
+                                verificationMessage = "Invalid Code. Please try again."
+                            }
+                        }) {
+                            Text("Verify")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(Color.blue)
+                                .cornerRadius(12)
+                        }
+                        .padding(.horizontal)
+
+                        // Verification feedback
+                        if let message = verificationMessage {
+                            Text(message)
+                                .font(.headline)
+                                .foregroundColor(isValidated ? .green : .red)
+                                .padding(.top, 8)
+                        }
+                    }
+
+                    Spacer()
+
+                    if isValidated {
+                        Button(action: {
+                            UIApplication.shared.dismissKeyboard()
+                            Task {
+                                try await smsApi.timeRequest(
+                                    request: SMSRequest(
+                                        number: phoneNumber,
+                                        username: "Azam",
+                                        accountabilityPartnerName: "Bob",
+                                        code: "123432"
+                                    )
+                                )
+                            }
+                        }) {
+                            Text("Request More Time")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .padding()
+                                .background(isRequestMoreTimePressed ? Color.blue.opacity(0.7) : Color.blue)
+                                .cornerRadius(8)
+                        }
                     }
                 }
+                .padding()
+                .navigationBarTitleDisplayMode(.inline)
+            }
+            .ignoresSafeArea(.keyboard, edges: .bottom)
+            .onTapGesture {
+                UIApplication.shared.dismissKeyboard() // Dismiss keyboard when tapping outside
             }
         }
-    }
-}
-
-// Dummy views for illustration
-struct InvitePartnerView: View {
-    @State private var phoneNumber: String = ""
-
-    var body: some View {
-        VStack(spacing: 24) {
-            // Title
-            Text("Invite Partner")
-                .font(.title)
-                .fontWeight(.semibold)
-                .padding(.top, 16)
-
-            // Phone Number Input
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.gray.opacity(0.4), lineWidth: 1)
-                .frame(height: 50)
-                .overlay(
-                    HStack {
-                        Image(systemName: "phone.fill")
-                            .foregroundColor(.blue)
-                        
-                        // TextField for phone number
-                        TextField("Phone Number", text: $phoneNumber)
-                            .keyboardType(.phonePad)
-                            .padding(.leading, 4)
-                    }
-                    .padding(.horizontal)
-                )
-
-            // Submit button
-            Button(action: {
-                // TODO: Implement the invite logic
-            }) {
-                Text("Send Invite")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color.blue)
-                    .cornerRadius(12)
-            }
-            .padding(.horizontal)
-
-            Spacer()
-        }
-        .padding()
-        .navigationBarTitleDisplayMode(.inline)
-    }
-}
-
-
-import SwiftUI
-
-struct AcceptInviteView: View {
-    @State private var pin: String = ""
-
-    var body: some View {
-        VStack(spacing: 24) {
-            // Title
-            Text("Accept Invite")
-                .font(.title)
-                .fontWeight(.semibold)
-                .padding(.top, 16)
-
-            // Phone Number Input
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.gray.opacity(0.4), lineWidth: 1)
-                .frame(height: 50)
-                .overlay(
-                    HStack {
-                        Image(systemName: "lock.fill")
-                            .foregroundColor(.blue)
-                        
-                        // TextField for phone number
-                        TextField("Enter verification PIN", text: $pin)
-                            .keyboardType(.phonePad)
-                            .padding(.leading, 4)
-                    }
-                    .padding(.horizontal)
-                )
-
-            // Submit button
-            Button(action: {
-                // TODO: Implement the invite logic
-            }) {
-                Text("Accept Request")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color.blue)
-                    .cornerRadius(12)
-            }
-            .padding(.horizontal)
-
-            Spacer()
-        }
-        .padding()
-        .navigationBarTitleDisplayMode(.inline)
     }
 }
