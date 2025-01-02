@@ -38,8 +38,10 @@ struct AccountabilityPartnerView: View {
 
                     // Submit button
                     Button(action: {
-                        UIApplication.shared.dismissKeyboard()
-                        Task { await viewModel.sendTimeRequest() }
+                        Task {
+                            UIApplication.shared.dismissKeyboard()
+                            await viewModel.sendTimeRequest()
+                        }
                     }) {
                         if viewModel.isSendingText {
                             ProgressView()
@@ -55,6 +57,13 @@ struct AccountabilityPartnerView: View {
                     .cornerRadius(10)
                     .disabled(viewModel.isSendingText)
                     
+                    if !viewModel.errorMessage.isEmpty {
+                        Text(viewModel.errorMessage)
+                            .font(.headline)
+                            .foregroundColor(viewModel.isValidated ? .green : .red)
+                            .padding(.top, 8)
+                    }
+
                     if !viewModel.phoneNumber.isEmpty && viewModel.isSendInvitePressed {
                         Text("Enter verification code")
                             .font(.title)

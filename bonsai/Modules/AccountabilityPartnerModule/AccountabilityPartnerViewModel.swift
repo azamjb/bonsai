@@ -16,6 +16,7 @@ public class AccountabilityPartnerViewModel: ObservableObject {
     @Published public var isSendInvitePressed: Bool = false
     @Published public var isRequestMoreTimePressed = false
     @Published public var verificationMessage: String? = nil
+    @Published public var errorMessage: String = ""
     @Published var isSendingText: Bool = false
 
     private let userDefaultsKey = "SelectedActivity"
@@ -32,14 +33,21 @@ public class AccountabilityPartnerViewModel: ObservableObject {
         let smsApi = SMSApi()
         code = generateRandomCode()
         
-        try! await smsApi.invite(
-            request: SMSRequest(
-                number: phoneNumber,
-                username: "Azam",
-                accountabilityPartnerName: "Bob",
-                code: code
+        do {
+            try await smsApi.invite(
+                request: SMSRequest(
+                    number: phoneNumber,
+                    username: "Azam",
+                    accountabilityPartnerName: "Bob",
+                    code: code
+                )
             )
-        )
+        } catch let error as StringError {
+            errorMessage = error.message
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+
         
         isSendingText = false
     }
