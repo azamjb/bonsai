@@ -26,9 +26,6 @@ import ManagedSettings
         UserDefaults(suiteName: appGroupID)
     }
 
-    // Testing
-    let correctPin = "123456"
-
     public func startMonitoring() {
         let center = DeviceActivityCenter()
 
@@ -70,7 +67,9 @@ import ManagedSettings
     }
 
     public func validateAndExtendTime() {
-            if enteredPin == correctPin {
+        
+        if enteredPin == UserDefaults.standard.string(forKey: LocalStorageKeys.timeExtensionRequestCode) {
+                
                 pinError = nil
 
                 // 1) Stop existing monitoring session
@@ -82,17 +81,21 @@ import ManagedSettings
                     print("Failed to stop monitoring: \(error)")
                 }
 
-                // 2) Increase daily limit, e.g. add 15 more minutes
                 let currentLimit = Int(timeLimitMinutesString) ?? 1
-                let newLimit = currentLimit + 15 // Increase by 15, or any value you want
+                
+                let newLimit = currentLimit + 15
                 timeLimitMinutesString = String(newLimit)
 
                 // 3) Restart monitoring with new limit
                 startMonitoring()
+                
+                UserDefaults.standard.removeObject(forKey: "timeExtensionRequestCode")
 
             } else {
                 pinError = "Invalid PIN. Please try again."
             }
+        
+        
         }
     
     public func saveSelection(for selection: FamilyActivitySelection) {

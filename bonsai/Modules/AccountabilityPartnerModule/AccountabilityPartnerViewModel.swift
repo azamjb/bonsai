@@ -30,6 +30,7 @@ import FamilyControls
     }
     
     public func sendInvite() async {
+        
         isSendInvitePressed = true
         isSendingInvite = true
         
@@ -57,6 +58,8 @@ import FamilyControls
     public func sendTimeRequest() async {
         let smsApi = SMSApi()
         isSendingTimeRequest = true
+        code = generateRandomCode()
+        
         
         do {
             try await smsApi.timeRequest(
@@ -64,9 +67,10 @@ import FamilyControls
                     number: phoneNumber,
                     username: "Azam",
                     accountabilityPartnerName: "Bob",
-                    code: "123432"
+                    code: code
                 )
             )
+            UserDefaults.standard.set(code, forKey: LocalStorageKeys.timeExtensionRequestCode) // set code in local
         } catch let error as StringError {
             timeRequestErrorMessage = error.message
         } catch {

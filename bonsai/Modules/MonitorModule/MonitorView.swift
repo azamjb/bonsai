@@ -10,6 +10,8 @@ import DeviceActivity
 import ManagedSettings
 
 struct MonitorView: View {
+    
+    @AppStorage(LocalStorageKeys.timeExtensionRequestCode) private var timeExtensionRequestCode: String?
     @StateObject private var viewModel = MonitorViewModel()
     
     var body: some View {
@@ -76,7 +78,7 @@ struct MonitorView: View {
                     Button {
                         viewModel.clearAllRestrictions()
                     } label: {
-                        Text("Clear All Restrictions")
+                        Text("Manual Override")
                             .font(.headline)
                             .foregroundColor(.white)
                             .padding()
@@ -85,26 +87,30 @@ struct MonitorView: View {
                     }
                     .padding(.top, 4)
                     
-                    // MARK: - PIN Input
-                    VStack(spacing: 8) {
-                        SecureField("Enter 6-digit PIN", text: $viewModel.enteredPin)
-                            .keyboardType(.numberPad)
-                            .padding()
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .frame(width: 200)
+                    if (timeExtensionRequestCode != nil) {
                         
-                        Button {
-                            UIApplication.shared.dismissKeyboard() // Dismiss keyboard
-                            viewModel.validateAndExtendTime()
-                        } label: {
-                            Text("Submit PIN")
-                                .font(.headline)
-                                .foregroundColor(.white)
+                        VStack(spacing: 8) {
+                            SecureField("Enter 6-digit PIN", text: $viewModel.enteredPin)
+                                .keyboardType(.numberPad)
                                 .padding()
-                                .background(Color.blue)
-                                .cornerRadius(10)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .frame(width: 200)
+                            
+                            Button {
+                                UIApplication.shared.dismissKeyboard() // Dismiss keyboard
+                                viewModel.validateAndExtendTime()
+                            } label: {
+                                Text("Submit PIN")
+                                    .font(.headline)
+                                    .foregroundColor(.white)
+                                    .padding()
+                                    .background(Color.blue)
+                                    .cornerRadius(10)
+                            }
                         }
+                        
                     }
+                    
                     
                     // Error message for wrong PIN
                     if let error = viewModel.pinError {
