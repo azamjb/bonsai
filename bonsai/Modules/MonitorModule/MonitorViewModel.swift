@@ -29,9 +29,6 @@ import ManagedSettings
         UserDefaults(suiteName: appGroupID)
     }
 
-    // Testing
-    let correctPin = "123456"
-
     public func startMonitoring() {
         let center = DeviceActivityCenter()
 
@@ -63,25 +60,33 @@ import ManagedSettings
         )
         
         monitoringStarted = true
+        
+        updateBlocksDisplayed()
     }
 
     public func clearAllRestrictions() {
         let store = ManagedSettingsStore()
+        
         store.shield.applicationCategories = nil
         store.shield.applications = nil
+        store.shield.webDomains = nil
+        store.shield.webDomainCategories = nil
+        
         monitoringStarted = false
+        
+        updateBlocksDisplayed()
     }
     
     public func setBlockedApps() {
         let settingStore = ManagedSettingsStore()
-        blockedApps = settingStore.shield.applications!
+        blockedApps = settingStore.shield.applications ?? []
     }
     
     public func setBlockedCategories() {
         let settingStore = ManagedSettingsStore()
         
         switch settingStore.shield.applicationCategories {
-            case .specific(let categoryTokens, let selectionStatus):
+            case .specific(let categoryTokens, _):
                 blockedCategories = categoryTokens
             case .all:
                 blockedCategories = []
@@ -96,33 +101,41 @@ import ManagedSettings
     
     public func setBlockedWebDomains() {
         let settingStore = ManagedSettingsStore()
-        blockedWebDomains = settingStore.shield.webDomains!
+        blockedWebDomains = settingStore.shield.webDomains ?? []
+    }
+    
+    public func updateBlocksDisplayed() {
+        setBlockedApps()
+        setBlockedCategories()
+        setBlockedWebDomains()
     }
 
     public func validateAndExtendTime() {
-        if enteredPin == correctPin {
+    
+        if enteredPin == UserDefaults.standard.string(forKey: LocalStorageKeys.timeExtensionRequestCode) {
+                
             pinError = nil
 
             // 1) Stop existing monitoring session
             let center = DeviceActivityCenter()
-            do {
-                try center.stopMonitoring([DeviceActivityName("ScreenTimeActivity")])
-                print("Stopped existing monitoring session.")
-            } catch {
-                print("Failed to stop monitoring: \(error)")
-            }
+            center.stopMonitoring([DeviceActivityName("ScreenTimeActivity")])
+            print("Stopped existing monitoring session.")
 
-            // 2) Increase daily limit, e.g. add 15 more minutes
             let currentLimit = Int(timeLimitMinutesString) ?? 1
-            let newLimit = currentLimit + 15 // Increase by 15, or any value you want
+            
+            let newLimit = currentLimit + 15
             timeLimitMinutesString = String(newLimit)
 
             // 3) Restart monitoring with new limit
             startMonitoring()
+            
+            UserDefaults.standard.removeObject(forKey: "timeExtensionRequestCode")
 
-        } else {
-            pinError = "Invalid PIN. Please try again."
-        }
+            } else {
+                pinError = "Invalid PIN. Please try again."
+            }
+        
+        
     }
     
     public func saveSelection(for selection: FamilyActivitySelection) {

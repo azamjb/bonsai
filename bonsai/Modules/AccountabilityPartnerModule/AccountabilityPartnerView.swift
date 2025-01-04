@@ -136,6 +136,8 @@ struct AccountabilityPartnerView: View {
                         .cornerRadius(10)
                         .disabled(viewModel.isSendingTimeRequest)
                     }
+                    
+                    
                 }
                 .padding()
                 .navigationBarTitleDisplayMode(.inline)

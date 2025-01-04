@@ -45,9 +45,12 @@ class BaseApi {
         request.httpBody = try! JSONEncoder().encode(bodyObject)
         
         do {
+            print("about to make")
             let (data, httpResponse) = try await URLSession.shared.data(for: request)
+            print("reached")
             return (data, httpResponse as! HTTPURLResponse)
         } catch {
+            print("error")
             throw error // Catch error codes in child api, send them to view model, show as snackbar
         }
     }

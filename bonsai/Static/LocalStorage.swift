@@ -8,4 +8,5 @@
 struct LocalStorageKeys {
     static let bearer = "bearer"
     static let userId = "userId"
+    static let timeExtensionRequestCode = "timeExtensionRequestCode"
 }

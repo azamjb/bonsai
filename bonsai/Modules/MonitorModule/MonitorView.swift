@@ -10,6 +10,8 @@ import DeviceActivity
 import ManagedSettings
 
 struct MonitorView: View {
+    
+    @AppStorage(LocalStorageKeys.timeExtensionRequestCode) private var timeExtensionRequestCode: String?
     @StateObject private var viewModel = MonitorViewModel()
 
     var body: some View {
@@ -77,7 +79,7 @@ struct MonitorView: View {
                         Button {
                             viewModel.clearAllRestrictions()
                         } label: {
-                            Text("Clear All Restrictions")
+                            Text("Manual Override")
                                 .font(.headline)
                                 .foregroundColor(.white)
                                 .padding()
@@ -86,27 +88,29 @@ struct MonitorView: View {
                         }
                         .padding(.top, 4)
                         
-                        // MARK: - PIN Input
-                        VStack(spacing: 8) {
-                            SecureField("Enter 6-digit PIN", text: $viewModel.enteredPin)
-                                .keyboardType(.numberPad)
-                                .padding()
-                                .textFieldStyle(RoundedBorderTextFieldStyle())
-                                .frame(width: 200)
-                            
-                            Button {
-                                UIApplication.shared.dismissKeyboard() // Dismiss keyboard
-                                viewModel.validateAndExtendTime()
-                            } label: {
-                                Text("Submit PIN")
-                                    .font(.headline)
-                                    .foregroundColor(.white)
-                                    .padding()
-                                    .background(Color.blue)
-                                    .cornerRadius(10)
-                            }
-                        }
+                        if (timeExtensionRequestCode != nil) {
                         
+                            VStack(spacing: 8) {
+                                SecureField("Enter 6-digit PIN", text: $viewModel.enteredPin)
+                                    .keyboardType(.numberPad)
+                                    .padding()
+                                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                                    .frame(width: 200)
+                                
+                                Button {
+                                    UIApplication.shared.dismissKeyboard() // Dismiss keyboard
+                                    viewModel.validateAndExtendTime()
+                                } label: {
+                                    Text("Submit PIN")
+                                        .font(.headline)
+                                        .foregroundColor(.white)
+                                        .padding()
+                                        .background(Color.blue)
+                                        .cornerRadius(10)
+                                }
+                            }
+                    }
+                    
                         // Error message for wrong PIN
                         if let error = viewModel.pinError {
                             Text(error)
@@ -118,13 +122,14 @@ struct MonitorView: View {
                         
                         VStack(alignment: .leading) {
                             if viewModel.blockedApps.isEmpty {
-                                Text("No apps blocked")
-                                    .font(.subheadline)
+                                Text("No app limits reached")
+                                    .font(.title2)
                                     .foregroundColor(.gray)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                             } else {
                                 Text("App limits reached")
-                                    .font(.subheadline)
+                                    .font(.title2)
+                                    .bold()
                                     .frame(maxWidth: .infinity, alignment: .leading)
 
                                 ForEach(Array(viewModel.blockedApps), id: \.self) { token in
@@ -137,45 +142,82 @@ struct MonitorView: View {
                                             // Your button action here
                                         }) {
                                             Text("Extend")
-                                        }                                    }
+                                                .padding()
+                                                .foregroundColor(.white)
+                                                .background(Color.blue)
+                                                .cornerRadius(10)
+                                        }
+                                    }
                                 }
                             }
-                        }
-                        .onAppear {
-                            viewModel.setBlockedApps()
                         }
 
                         VStack() {
                             if viewModel.blockedCategories.isEmpty {
-                                Text("No category limits reached")
+                                Text("No category limit reached")
+                                    .font(.title2)
                                     .foregroundColor(.gray)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
                             } else {
                                 Text("Category limits reached")
+                                    .font(.title2)
+                                    .bold()
+                                    .frame(maxWidth: .infinity, alignment: .leading)
                                 ForEach(Array(viewModel.blockedCategories), id: \.self) { token in
-                                    Label(token).labelStyle(.titleAndIcon)
+                                    HStack {
+                                        Label(token)
+                                            .labelStyle(.titleAndIcon)
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                        Spacer()
+                                        Button(action: {
+                                            // Your button action here
+                                        }) {
+                                            Text("Extend")
+                                                .padding()
+                                                .foregroundColor(.white)
+                                                .background(Color.blue)
+                                                .cornerRadius(10)
+                                        }
+                                    }
                                 }
                             }
-                        }
-                        .onAppear {
-                            viewModel.setBlockedCategories()
                         }
 
                         VStack() {
                             if viewModel.blockedWebDomains.isEmpty {
                                 Text("No web domain limits reached")
+                                    .font(.title2)
                                     .foregroundColor(.gray)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
                             } else {
                                 Text("Web domain limits reached")
-                                ForEach(Array(viewModel.blockedCategories), id: \.self) { token in
-                                    Label(token).labelStyle(.titleAndIcon)
+                                    .font(.title2)
+                                    .bold()
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                ForEach(Array(viewModel.blockedWebDomains), id: \.self) { token in
+                                    HStack {
+                                        Label(token)
+                                            .labelStyle(.titleAndIcon)
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                        Spacer()
+                                        Button(action: {
+                                            // Your button action here
+                                        }) {
+                                            Text("Extend")
+                                                .padding()
+                                                .foregroundColor(.white)
+                                                .background(Color.blue)
+                                                .cornerRadius(10)
+                                        }
+                                    }
                                 }
                             }
                         }
-                        .onAppear {
-                            viewModel.setBlockedWebDomains()
-                        }
                     }
                     .padding()
+                }
+                .onAppear {
+                    viewModel.updateBlocksDisplayed()
                 }
             }
         }

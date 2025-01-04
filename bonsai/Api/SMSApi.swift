@@ -16,6 +16,7 @@ class SMSApi : BaseApi {
     
     func invite(request: SMSRequest) async throws {
         let (responseData, httpResponse) = try await self.makePOSTRequest(url: getBaseUrl(endpoint: "invite"), bodyObject: request)
+        print("invite reached")
         
         if let error = checkForErrorFromResponse(responseData: responseData!, httpResponse: httpResponse) {
             throw error
