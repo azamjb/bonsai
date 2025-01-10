@@ -25,7 +25,9 @@ struct bonsaiApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            LandingPageView()
         }
     }
+
 }
+

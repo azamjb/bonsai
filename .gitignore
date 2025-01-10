@@ -1,0 +1,29 @@
+//
+//  .gitingore
+//  bonsai
+//
+//  Created by Nicolas Mingorance-Geraldo on 2025-01-09.
+//
+
+# User and temporary files
+*.xcuserdata
+*.xcuserstate
+*.xcbkptlist
+*.swp
+*.lock
+*.xcuserdatad/xcschemes/xcschememanagement.plist
+*.xcschememanagement.plist
+.DS_Store
+
+# Build artifacts
+Build/
+DerivedData/
+
+# Dependency files
+Pods/
+Carthage/Build/
+.build/
+
+# Logs
+*.log
+
