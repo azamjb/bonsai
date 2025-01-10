@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A757DFC02D30BABB0053605E /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = A757DFBF2D30BAB40053605E /* .gitignore */; };
 		242A1CD12D271CB300D5CD5E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B76F620D2D040EB40092DA9E /* UIKit.framework */; };
 		242A1E942D2726B600D5CD5E /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B76F61FD2D03FFE20092DA9E /* ManagedSettings.framework */; };
 		242A1E9C2D2726B600D5CD5E /* shieldActionExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 242A1E932D2726B600D5CD5E /* shieldActionExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -93,7 +92,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		A757DFBF2D30BAB40053605E /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		242A1E932D2726B600D5CD5E /* shieldActionExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = shieldActionExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		B71550B72CF9519F000AFACB /* bonsai.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = bonsai.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B71550C72CF951A0000AFACB /* bonsaiTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bonsaiTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -295,7 +293,6 @@
 		B71550AE2CF9519F000AFACB = {
 			isa = PBXGroup;
 			children = (
-				A757DFBF2D30BAB40053605E /* .gitignore */,
 				B71550B92CF9519F000AFACB /* bonsai */,
 				B71550CA2CF951A0000AFACB /* bonsaiTests */,
 				B71550D42CF951A0000AFACB /* bonsaiUITests */,
@@ -567,14 +564,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B71550B52CF9519F000AFACB /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				A757DFC02D30BABB0053605E /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
