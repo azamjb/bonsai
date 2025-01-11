@@ -5,58 +5,67 @@ import DeviceActivity
 import ManagedSettings
 
 struct AccountabilityPartnerView: View {
+    
+    @AppStorage(LocalStorageKeys.AccountabilityPartnerNumber) private var AccountabilityPartnerNumber: String?
     @StateObject private var viewModel = AccountabilityPartnerViewModel()
 
     var body: some View {
+        
         NavigationView {
+            
             ScrollView {
                 VStack(spacing: 20) {
                     Text("Accountability")
                         .font(.largeTitle)
-
-                    Text("Invite Partner")
-                        .font(.title)
-                        .fontWeight(.semibold)
-                        .padding(.top, 16)
-
-                    // Phone Number Input
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.gray.opacity(0.4), lineWidth: 1)
-                        .frame(height: 50)
-                        .overlay(
-                            HStack {
-                                Image(systemName: "phone.fill")
-                                    .foregroundColor(.blue)
-
-                                // TextField for phone number
-                                iPhoneNumberField("Phone Number", text: $viewModel.phoneNumber)
-                                    .keyboardType(.phonePad)
-                                    .padding(.leading, 4)
+                    
+                    if (AccountabilityPartnerNumber == nil) { // only let user invite an accountability partner if they dont already have one
+                        
+                        Text("Invite Partner")
+                            .font(.title)
+                            .fontWeight(.semibold)
+                            .padding(.top, 16)
+                        
+                        // Phone Number Input
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color.gray.opacity(0.4), lineWidth: 1)
+                            .frame(height: 50)
+                            .overlay(
+                                HStack {
+                                    Image(systemName: "phone.fill")
+                                        .foregroundColor(.blue)
+                                    
+                                    // TextField for phone number
+                                    iPhoneNumberField("Phone Number", text: $viewModel.phoneNumber)
+                                        .keyboardType(.phonePad)
+                                        .padding(.leading, 4)
+                                }
+                                    .padding(.horizontal)
+                            )
+                        
+                        // Submit button
+                        Button(action: {
+                            UIApplication.shared.dismissKeyboard()
+                            Task {
+                                await viewModel.sendInvite()
                             }
-                            .padding(.horizontal)
-                        )
-
-                    // Submit button
-                    Button(action: {
-                        UIApplication.shared.dismissKeyboard()
-                        Task {
-                            await viewModel.sendInvite()
+                        }) {
+                            if viewModel.isSendingInvite {
+                                ProgressView()
+                            } else {
+                                Text("Send Invite")
+                                    .font(.headline)
+                                    .frame(maxWidth: .infinity)
+                            }
                         }
-                    }) {
-                        if viewModel.isSendingInvite {
-                            ProgressView()
-                        } else {
-                            Text("Send Invite")
-                                .font(.headline)
-                                .frame(maxWidth: .infinity)
-                        }
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(viewModel.isSendingInvite ? Color.gray : Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                        .disabled(viewModel.isSendingInvite)
+                        
                     }
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(viewModel.isSendingInvite ? Color.gray : Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
-                    .disabled(viewModel.isSendingInvite)
+                    
                     
                     if !viewModel.inviteErrorMessage.isEmpty {
                         Text(viewModel.inviteErrorMessage)
@@ -64,13 +73,13 @@ struct AccountabilityPartnerView: View {
                             .foregroundColor(.red)
                             .padding(.top, 8)
                     }
-
-                    if !viewModel.phoneNumber.isEmpty && viewModel.isSendInvitePressed {
+                    
+                    if AccountabilityPartnerNumber == nil && viewModel.isSendInvitePressed && viewModel.isValidated == false {
                         Text("Enter verification code")
                             .font(.title)
                             .fontWeight(.semibold)
                             .padding(.top, 16)
-
+                        
                         // Verification Input
                         RoundedRectangle(cornerRadius: 12)
                             .stroke(Color.gray.opacity(0.4), lineWidth: 1)
@@ -79,14 +88,14 @@ struct AccountabilityPartnerView: View {
                                 HStack {
                                     Image(systemName: "lock.fill")
                                         .foregroundColor(.blue)
-
+                                    
                                     TextField("PIN", text: $viewModel.userCode)
                                         .keyboardType(.phonePad)
                                         .padding(.leading, 4)
                                 }
-                                .padding(.horizontal)
+                                    .padding(.horizontal)
                             )
-
+                        
                         // Verify button
                         Button(action: {
                             UIApplication.shared.dismissKeyboard()
@@ -101,7 +110,7 @@ struct AccountabilityPartnerView: View {
                                 .cornerRadius(12)
                         }
                         .padding(.horizontal)
-
+                        
                         // Verification feedback
                         if let message = viewModel.verificationMessage {
                             Text(message)
@@ -110,9 +119,9 @@ struct AccountabilityPartnerView: View {
                                 .padding(.top, 8)
                         }
                     }
-
+                    
                     Spacer()
-
+                    
                     if viewModel.isValidated {
                         Button(action: {
                             UIApplication.shared.dismissKeyboard()
@@ -121,7 +130,7 @@ struct AccountabilityPartnerView: View {
                             }
                         })
                         {
-                            if viewModel.isSendingInvite {
+                            if viewModel.isSendingTimeRequest {
                                 ProgressView()
                             } else {
                                 Text("Request Time")
@@ -135,6 +144,34 @@ struct AccountabilityPartnerView: View {
                         .foregroundColor(.white)
                         .cornerRadius(10)
                         .disabled(viewModel.isSendingTimeRequest)
+                    }
+                    
+                    Spacer()
+                    
+                    if (AccountabilityPartnerNumber != nil) {
+                        
+                        Button(action: {
+                            
+                            Task {
+                                await viewModel.removeAccountabilityPartner()
+                            }
+                            
+                        }) {
+                            if viewModel.isRemovingAccountabilityPartner {
+                                ProgressView()
+                            } else {
+                                Text("Remove Accountability Partner")
+                                    .font(.headline)
+                                    .frame(maxWidth: .infinity)
+                            }
+                        }
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(viewModel.isSendingInvite ? Color.gray : Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                        .disabled(viewModel.isSendingInvite)
+                        
                     }
                     
                     

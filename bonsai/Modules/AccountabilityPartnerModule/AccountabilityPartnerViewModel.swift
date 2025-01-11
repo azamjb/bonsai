@@ -21,6 +21,7 @@ import FamilyControls
 
     @Published public var isSendingInvite: Bool = false
     @Published public var isSendingTimeRequest: Bool = false
+    @Published public var isRemovingAccountabilityPartner: Bool = false
 
     private let userDefaultsKey = "SelectedActivity"
     private let appGroupID = "group.com.bonsai" // Replace with your actual App Group ID
@@ -55,6 +56,35 @@ import FamilyControls
         isSendingInvite = false
     }
     
+    
+    public func removeAccountabilityPartner() async {
+        
+        isRemovingAccountabilityPartner = true
+        
+        let smsApi = SMSApi()
+        do {
+            try await smsApi.removalNotif(
+                request: SMSRequest(
+                    number: phoneNumber,
+                    username: "Azam",
+                    accountabilityPartnerName: "Bob",
+                    code: ""
+                )
+            )
+            UserDefaults.standard.removeObject(forKey: "AccountabilityPartnerNumber")
+            isValidated = false
+            isSendInvitePressed = false
+            phoneNumber = ""
+            
+        } catch let error as StringError {
+            inviteErrorMessage = error.message
+        } catch {
+            inviteErrorMessage = error.localizedDescription
+        }
+        
+        isRemovingAccountabilityPartner =  false
+    }
+    
     public func sendTimeRequest() async {
         let smsApi = SMSApi()
         isSendingTimeRequest = true
@@ -84,6 +114,8 @@ import FamilyControls
         if userCode == code {
             isValidated = true
             verificationMessage = "Verification Successful!"
+            UserDefaults.standard.set(phoneNumber, forKey: LocalStorageKeys.AccountabilityPartnerNumber) // store number when verified - accounability partner is set
+            userCode = ""
         } else {
             isValidated = false
             verificationMessage = "Invalid Code. Please try again."

@@ -106,13 +106,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		A70B21A42D25FF5A0002AAE6 /* Exceptions for "bonsai" folder in "bonsai" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Modules/LandingPageModule/Info.plist,
-			);
-			target = B71550B62CF9519F000AFACB /* bonsai */;
-		};
 		242A1E9D2D2726B600D5CD5E /* Exceptions for "shieldActionExtension" folder in "shieldActionExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -169,6 +162,13 @@
 			);
 			target = B76F61FB2D03FFE20092DA9E /* shieldConfiguration */;
 		};
+		B7FFE6122D3204FE0019B65D /* Exceptions for "bonsai" folder in "bonsai" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Modules/LandingPageModule/Info.plist,
+			);
+			target = B71550B62CF9519F000AFACB /* bonsai */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -183,7 +183,7 @@
 		B71550B92CF9519F000AFACB /* bonsai */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				A70B21A42D25FF5A0002AAE6 /* Exceptions for "bonsai" folder in "bonsai" target */,
+				B7FFE6122D3204FE0019B65D /* Exceptions for "bonsai" folder in "bonsai" target */,
 				B7F0144C2D238F09002BB521 /* Exceptions for "bonsai" folder in "deviceactivitymonitor" target */,
 				B7F0144D2D238F09002BB521 /* Exceptions for "bonsai" folder in "deviceactivityreport" target */,
 				B7F0144E2D238F09002BB521 /* Exceptions for "bonsai" folder in "shieldConfiguration" target */,
@@ -567,6 +567,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B71550B52CF9519F000AFACB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B71550C52CF951A0000AFACB /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -871,7 +878,6 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = bonsai/bonsai.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -904,7 +910,6 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = bonsai/bonsai.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;

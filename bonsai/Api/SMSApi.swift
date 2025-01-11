@@ -31,4 +31,13 @@ class SMSApi : BaseApi {
         }
     }
     // Send request for more time to accountability partner ^
+    
+    func removalNotif(request: SMSRequest) async throws {
+        let (responseData, httpResponse) = try await self.makePOSTRequest(url: getBaseUrl(endpoint: "remove"), bodyObject: request)
+        
+        if let error = checkForErrorFromResponse(responseData: responseData!, httpResponse: httpResponse) {
+            throw error
+        }
+    }
+    // Send request for more time to accountability partner ^
 }
