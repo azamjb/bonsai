@@ -16,12 +16,12 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
             color: .lightGray
         ),
         primaryButtonLabel: ShieldConfiguration.Label(
-            text: "OK",
+            text: "Keep going strong",
             color: .white
         ),
         primaryButtonBackgroundColor: .systemGray,
         secondaryButtonLabel: ShieldConfiguration.Label(
-            text: "Extend",
+            text: "Give in",
             color: .white
         )
     )

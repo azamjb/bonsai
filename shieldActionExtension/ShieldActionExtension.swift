@@ -50,21 +50,31 @@ class ShieldActionExtension: ShieldActionDelegate {
     }
     
     private func openBonsai(application: ApplicationToken) {
-        print("Extend for app: \(application)")
+        NSLog("Extend for app: \(application)")
         
-        if let url = URL(string: "bonsaiapp://?application=\(application)") {
-            print("gud url")
-            let context = NSExtensionContext()
-            
-            context.open(url)
+        let content = UNMutableNotificationContent()
+        content.title = "Extend time"
+        content.body = "Extend time for this app"
+        content.sound = .default
+        
+        let identifier = "extension-\(UUID().uuidString)"
+        
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0, repeats: false)
+        
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+        
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                NSLog("Error scheduling notification: \(error)")
+            }
         }
     }
     
     private func openBonsai(category: ActivityCategoryToken) {
-        print("Extend for app in category: \(category)")
+        NSLog("Extend for app in category: \(category)")
     }
 
     private func openBonsai(webDomain: WebDomainToken) {
-        print("Extend for app in web domain: \(webDomain)")
+        NSLog("Extend for app in web domain: \(webDomain)")
     }
 }

@@ -113,13 +113,6 @@
 			);
 			target = 242A1E922D2726B600D5CD5E /* shieldActionExtension */;
 		};
-		242A1EA62D27284000D5CD5E /* Exceptions for "bonsai" folder in "shieldActionExtension" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				GlobalFunctions.swift,
-			);
-			target = 242A1E922D2726B600D5CD5E /* shieldActionExtension */;
-		};
 		B715514A2CF96667000AFACB /* Exceptions for "deviceactivitymonitor" folder in "deviceactivitymonitor" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -179,7 +172,6 @@
 				B7F0144C2D238F09002BB521 /* Exceptions for "bonsai" folder in "deviceactivitymonitor" target */,
 				B7F0144D2D238F09002BB521 /* Exceptions for "bonsai" folder in "deviceactivityreport" target */,
 				B7F0144E2D238F09002BB521 /* Exceptions for "bonsai" folder in "shieldConfiguration" target */,
-				242A1EA62D27284000D5CD5E /* Exceptions for "bonsai" folder in "shieldActionExtension" target */,
 			);
 			path = bonsai;
 			sourceTree = "<group>";

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     //@StateObject var navGuardService = NavGuardService()
-    
+
     var body: some View {
         //if navGuardService.isLoggedIn {
         TabView {

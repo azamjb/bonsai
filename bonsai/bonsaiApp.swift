@@ -6,9 +6,23 @@
 //
 
 import SwiftUI
+import DeviceActivity
+import _DeviceActivity_SwiftUI
+import ManagedSettings
+import ManagedSettingsUI
 
 @main
 struct bonsaiApp: App {
+    init() {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            if granted {
+                print("Notification permission granted")
+            } else {
+                print("Notification permission denied")
+            }
+        }
+    }
+
     var body: some Scene {
         WindowGroup {
             ContentView()

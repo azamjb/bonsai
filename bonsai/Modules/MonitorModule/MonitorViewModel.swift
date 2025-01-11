@@ -18,6 +18,9 @@ import ManagedSettings
     @Published var enteredPin: String = ""
     @Published var pinError: String? = nil
     @Published var activitySelection = FamilyActivitySelection()
+    @Published var blockedApps: Set<ApplicationToken> = []
+    @Published var blockedCategories: Set<ActivityCategoryToken> = []
+    @Published var blockedWebDomains: Set<WebDomainToken> = []
 
     private let userDefaultsKey = "SelectedActivity"
     private let appGroupID = "group.com.bonsai" // Replace with your actual App Group ID
@@ -68,32 +71,59 @@ import ManagedSettings
         store.shield.applications = nil
         monitoringStarted = false
     }
+    
+    public func setBlockedApps() {
+        let settingStore = ManagedSettingsStore()
+        blockedApps = settingStore.shield.applications!
+    }
+    
+    public func setBlockedCategories() {
+        let settingStore = ManagedSettingsStore()
+        
+        switch settingStore.shield.applicationCategories {
+            case .specific(let categoryTokens, let selectionStatus):
+                blockedCategories = categoryTokens
+            case .all:
+                blockedCategories = []
+            case .some(_):
+                blockedCategories = []
+            case nil:
+                blockedCategories = []
+            @unknown default:
+                blockedCategories = []
+        }
+    }
+    
+    public func setBlockedWebDomains() {
+        let settingStore = ManagedSettingsStore()
+        blockedWebDomains = settingStore.shield.webDomains!
+    }
 
     public func validateAndExtendTime() {
-            if enteredPin == correctPin {
-                pinError = nil
+        if enteredPin == correctPin {
+            pinError = nil
 
-                // 1) Stop existing monitoring session
-                let center = DeviceActivityCenter()
-                do {
-                    try center.stopMonitoring([DeviceActivityName("ScreenTimeActivity")])
-                    print("Stopped existing monitoring session.")
-                } catch {
-                    print("Failed to stop monitoring: \(error)")
-                }
-
-                // 2) Increase daily limit, e.g. add 15 more minutes
-                let currentLimit = Int(timeLimitMinutesString) ?? 1
-                let newLimit = currentLimit + 15 // Increase by 15, or any value you want
-                timeLimitMinutesString = String(newLimit)
-
-                // 3) Restart monitoring with new limit
-                startMonitoring()
-
-            } else {
-                pinError = "Invalid PIN. Please try again."
+            // 1) Stop existing monitoring session
+            let center = DeviceActivityCenter()
+            do {
+                try center.stopMonitoring([DeviceActivityName("ScreenTimeActivity")])
+                print("Stopped existing monitoring session.")
+            } catch {
+                print("Failed to stop monitoring: \(error)")
             }
+
+            // 2) Increase daily limit, e.g. add 15 more minutes
+            let currentLimit = Int(timeLimitMinutesString) ?? 1
+            let newLimit = currentLimit + 15 // Increase by 15, or any value you want
+            timeLimitMinutesString = String(newLimit)
+
+            // 3) Restart monitoring with new limit
+            startMonitoring()
+
+        } else {
+            pinError = "Invalid PIN. Please try again."
         }
+    }
     
     public func saveSelection(for selection: FamilyActivitySelection) {
         activitySelection = selection
