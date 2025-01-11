@@ -13,6 +13,8 @@
 *.lock
 *.xcuserdatad/xcschemes/xcschememanagement.plist
 *.xcschememanagement.plist
+*.xcuserdatad/xcschemes/xcschememanagement.plist
+
 .DS_Store
 
 # Build artifacts
