@@ -78,7 +78,8 @@ struct MonitorView: View {
                         // MARK: - Clear All Restrictions
                         Button {
                             viewModel.clearAllRestrictions()
-                        } label: {
+                            
+                    } label: {
                             Text("Manual Override")
                                 .font(.headline)
                                 .foregroundColor(.white)
