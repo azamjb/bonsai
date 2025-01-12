@@ -76,7 +76,10 @@ struct MonitorView: View {
                     
                     // MARK: - Clear All Restrictions
                     Button {
-                        viewModel.clearAllRestrictions()
+                        Task {
+                            // viewModel.clearAllRestrictions() - NO IN APP PURCHASE (testing)
+                            await viewModel.purchaseManualOverride() // in app purchase
+                        }
                         
                     } label: {
                         Text("Manual Override")
