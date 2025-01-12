@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import iPhoneNumberField
 
 struct ProfileCreationView: View {
     @State private var presentContentView = false
@@ -66,7 +67,8 @@ struct ProfileCreationView: View {
                             Text("Phone Number")
                                 .foregroundColor(.gray) // Light grey title
                                 .font(.headline)
-                            TextField("Enter your phone number", text: $phoneNumber)
+                            iPhoneNumberField("Phone Number", text: $phoneNumber)
+                                .keyboardType(.phonePad)
                                 .padding()
                                 .background(Color.gray.opacity(0.2)) // Light grey background
                                 .cornerRadius(8)

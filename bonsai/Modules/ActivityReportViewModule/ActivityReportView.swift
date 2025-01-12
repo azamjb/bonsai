@@ -10,6 +10,8 @@ import DeviceActivity
 import FamilyControls
 
 struct ActivityReportView: View {
+    @Binding var tabSelection: Int
+
     let center = AuthorizationCenter.shared
 
     @State private var context: DeviceActivityReport.Context = .init(rawValue: "pie Chart")

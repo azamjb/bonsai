@@ -8,7 +8,7 @@ import Foundation
 
 class BaseApi {
     // Change this to your network IP for the wifi that your testing device and mac are connected to
-    let hostName = "10.0.0.136"
+    let hostName = "192.168.0.171"
     
     let apiBaseUrl: String
     var endpointControllerName: String {
@@ -45,12 +45,9 @@ class BaseApi {
         request.httpBody = try! JSONEncoder().encode(bodyObject)
         
         do {
-            print("about to make")
             let (data, httpResponse) = try await URLSession.shared.data(for: request)
-            print("reached")
             return (data, httpResponse as! HTTPURLResponse)
         } catch {
-            print("error")
             throw error // Catch error codes in child api, send them to view model, show as snackbar
         }
     }

@@ -10,7 +10,9 @@ import DeviceActivity
 import ManagedSettings
 
 struct MonitorView: View {
-    
+    @Binding var tabSelection: Int
+    @ObservedObject var sharedAppData: SharedAppData
+
     @AppStorage(LocalStorageKeys.timeExtensionRequestCode) private var timeExtensionRequestCode: String?
     @StateObject private var viewModel = MonitorViewModel()
 
@@ -140,7 +142,10 @@ struct MonitorView: View {
                                             .frame(maxWidth: .infinity, alignment: .leading)
                                         Spacer()
                                         Button(action: {
-                                            // Your button action here
+                                            sharedAppData.$selectedAppToken = token
+                                            sharedAppData.$selectedCategoryToken = nil
+                                            sharedAppData.$webDomainToken = nil
+                                            tabSelection = 3;
                                         }) {
                                             Text("Extend")
                                                 .padding()
@@ -171,7 +176,10 @@ struct MonitorView: View {
                                             .frame(maxWidth: .infinity, alignment: .leading)
                                         Spacer()
                                         Button(action: {
-                                            // Your button action here
+                                            sharedAppData.$selectedAppToken = nil
+                                            sharedAppData.$selectedCategoryToken = token
+                                            sharedAppData.$webDomainToken = nil
+                                            tabSelection = 3;
                                         }) {
                                             Text("Extend")
                                                 .padding()
@@ -202,7 +210,10 @@ struct MonitorView: View {
                                             .frame(maxWidth: .infinity, alignment: .leading)
                                         Spacer()
                                         Button(action: {
-                                            // Your button action here
+                                            sharedAppData.$selectedAppToken = nil
+                                            sharedAppData.$selectedCategoryToken = nil
+                                            sharedAppData.$webDomainToken = token
+                                            tabSelection = 3;
                                         }) {
                                             Text("Extend")
                                                 .padding()

@@ -29,7 +29,7 @@ import FamilyControls
     private var sharedDefaults: UserDefaults? {
         UserDefaults(suiteName: appGroupID)
     }
-    
+
     public func sendInvite() async {
         
         isSendInvitePressed = true
@@ -39,7 +39,6 @@ import FamilyControls
         code = generateRandomCode()
         
         do {
-            print("at send invite")
             try await smsApi.invite(
                 request: SMSRequest(
                     number: phoneNumber,
@@ -90,7 +89,6 @@ import FamilyControls
         let smsApi = SMSApi()
         isSendingTimeRequest = true
         code = generateRandomCode()
-        
         
         do {
             try await smsApi.timeRequest(

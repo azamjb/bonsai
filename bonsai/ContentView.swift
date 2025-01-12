@@ -6,34 +6,39 @@
 //
 
 import SwiftUI
+import ManagedSettings
+
+class SharedAppData: ObservableObject {
+    @Published var selectedAppToken: ApplicationToken?
+    @Published var selectedCategoryToken: ActivityCategoryToken?
+    @Published var webDomainToken: WebDomainToken?
+}
 
 struct ContentView: View {
-    //@StateObject var navGuardService = NavGuardService()
-
+    @StateObject private var sharedAppData = SharedAppData()
+    @State private var tabSelection = 1
+    
     var body: some View {
-        //if navGuardService.isLoggedIn {
-        TabView {
-            ActivityReportView()
+        TabView(selection: $tabSelection) {
+            ActivityReportView(tabSelection: $tabSelection)
                 .tabItem {
                     Label("Activity", systemImage: "chart.pie")
                 }
+                .tag(1)
             
-            MonitorView()
+            MonitorView(tabSelection: $tabSelection, sharedAppData: sharedAppData)
                 .tabItem {
                     Label("Monitoring", systemImage: "gearshape")
                 }
-            
-            AccountabilityPartnerView()
+                .tag(2)
+
+            AccountabilityPartnerView(tabSelection: $tabSelection, sharedAppData: sharedAppData)
                 .tabItem {
                     Label("Accountability", systemImage: "person.fill")
                 }
+                .tag(3)
         }
     }
-    //    else {
-    //            LoginView()
-    //                .environmentObject(navGuardService)
-    //        }
-//  }
 }
 
 // A SwiftUI preview.

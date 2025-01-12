@@ -5,14 +5,14 @@ import DeviceActivity
 import ManagedSettings
 
 struct AccountabilityPartnerView: View {
-    
+    @Binding var tabSelection: Int
+    @ObservedObject var sharedAppData: SharedAppData
+
     @AppStorage(LocalStorageKeys.AccountabilityPartnerNumber) private var AccountabilityPartnerNumber: String?
     @StateObject private var viewModel = AccountabilityPartnerViewModel()
-
+    
     var body: some View {
-        
         NavigationView {
-            
             ScrollView {
                 VStack(spacing: 20) {
                     Text("Accountability")
@@ -149,7 +149,6 @@ struct AccountabilityPartnerView: View {
                     Spacer()
                     
                     if (AccountabilityPartnerNumber != nil) {
-                        
                         Button(action: {
                             
                             Task {

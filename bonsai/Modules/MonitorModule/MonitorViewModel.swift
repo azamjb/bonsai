@@ -134,10 +134,20 @@ import ManagedSettings
             } else {
                 pinError = "Invalid PIN. Please try again."
             }
-        
+    }
+    
+    public func onExtendPress(applicationToken: ApplicationToken) {
         
     }
     
+    public func onExtendPress(categoryToken: ActivityCategoryToken) {
+        
+    }
+    
+    public func onExtendPress(webDomainToken: WebDomainToken) {
+        
+    }
+
     public func saveSelection(for selection: FamilyActivitySelection) {
         activitySelection = selection
     }
