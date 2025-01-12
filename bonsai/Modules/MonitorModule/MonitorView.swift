@@ -11,10 +11,10 @@ import ManagedSettings
 
 struct MonitorView: View {
     @Binding var tabSelection: Int
-    @ObservedObject var sharedAppData: SharedAppData
 
     @AppStorage(LocalStorageKeys.timeExtensionRequestCode) private var timeExtensionRequestCode: String?
     @StateObject private var viewModel = MonitorViewModel()
+    @State private var isSheetPresented: Bool = false
 
     var body: some View {
         NavigationView {
@@ -80,12 +80,11 @@ struct MonitorView: View {
                         // MARK: - Clear All Restrictions
                         Button {
                             Task {
-                            // viewModel.clearAllRestrictions() - NO IN APP PURCHASE (testing)
-                            await viewModel.purchaseManualOverride() // in app purchase
+                                // viewModel.clearAllRestrictions() - NO IN APP PURCHASE (testing)
+                                await viewModel.purchaseManualOverride()
+                            }
                         }
-                        
-                            
-                    } label: {
+                     label: {
                         Text("Manual Override")
                             .font(.headline)
                             .foregroundColor(.white)
@@ -119,7 +118,6 @@ struct MonitorView: View {
                         
                     }
                     
-                    
                         // Error message for wrong PIN
                         if let error = viewModel.pinError {
                             Text(error)
@@ -131,112 +129,175 @@ struct MonitorView: View {
                         
                         VStack(alignment: .leading) {
                             if viewModel.blockedApps.isEmpty {
-                                Text("No app limits reached")
-                                    .font(.title2)
-                                    .foregroundColor(.gray)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                noLimitsView(type: .app)
                             } else {
-                                Text("App limits reached")
-                                    .font(.title2)
-                                    .bold()
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                                ForEach(Array(viewModel.blockedApps), id: \.self) { token in
-                                    HStack {
-                                        Label(token)
-                                            .labelStyle(.titleAndIcon)
-                                            .frame(maxWidth: .infinity, alignment: .leading)
-                                        Spacer()
-                                        Button(action: {
-                                            sharedAppData.$selectedAppToken = token
-                                            sharedAppData.$selectedCategoryToken = nil
-                                            sharedAppData.$webDomainToken = nil
-                                            tabSelection = 3;
-                                        }) {
-                                            Text("Extend")
-                                                .padding()
-                                                .foregroundColor(.white)
-                                                .background(Color.blue)
-                                                .cornerRadius(10)
-                                        }
-                                    }
-                                }
+                                limitsReachedView(blockType: .app)
+                            }
+                        }
+                        
+                        VStack(alignment: .leading) {
+                            if viewModel.blockedApps.isEmpty {
+                                noLimitsView(type: .category)
+                            } else {
+                                limitsReachedView(blockType: .category)
+                            }
+                        }
+                        
+                        VStack(alignment: .leading) {
+                            if viewModel.blockedApps.isEmpty {
+                                noLimitsView(type: .webDomain)
+                            } else {
+                                limitsReachedView(blockType: .webDomain)
                             }
                         }
 
-                        VStack() {
-                            if viewModel.blockedCategories.isEmpty {
-                                Text("No category limit reached")
-                                    .font(.title2)
-                                    .foregroundColor(.gray)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                            } else {
-                                Text("Category limits reached")
-                                    .font(.title2)
-                                    .bold()
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                ForEach(Array(viewModel.blockedCategories), id: \.self) { token in
-                                    HStack {
-                                        Label(token)
-                                            .labelStyle(.titleAndIcon)
-                                            .frame(maxWidth: .infinity, alignment: .leading)
-                                        Spacer()
-                                        Button(action: {
-                                            sharedAppData.$selectedAppToken = nil
-                                            sharedAppData.$selectedCategoryToken = token
-                                            sharedAppData.$webDomainToken = nil
-                                            tabSelection = 3;
-                                        }) {
-                                            Text("Extend")
-                                                .padding()
-                                                .foregroundColor(.white)
-                                                .background(Color.blue)
-                                                .cornerRadius(10)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        VStack() {
-                            if viewModel.blockedWebDomains.isEmpty {
-                                Text("No web domain limits reached")
-                                    .font(.title2)
-                                    .foregroundColor(.gray)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                            } else {
-                                Text("Web domain limits reached")
-                                    .font(.title2)
-                                    .bold()
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                ForEach(Array(viewModel.blockedWebDomains), id: \.self) { token in
-                                    HStack {
-                                        Label(token)
-                                            .labelStyle(.titleAndIcon)
-                                            .frame(maxWidth: .infinity, alignment: .leading)
-                                        Spacer()
-                                        Button(action: {
-                                            sharedAppData.$selectedAppToken = nil
-                                            sharedAppData.$selectedCategoryToken = nil
-                                            sharedAppData.$webDomainToken = token
-                                            tabSelection = 3;
-                                        }) {
-                                            Text("Extend")
-                                                .padding()
-                                                .foregroundColor(.white)
-                                                .background(Color.blue)
-                                                .cornerRadius(10)
-                                        }
-                                    }
-                                }
-                            }
-                        }
                     }
                     .padding()
                 }
                 .onAppear {
                     viewModel.updateBlocksDisplayed()
                 }
+            }
+        }
+    }
+    
+    enum BlockTypes: String {
+        case app
+        case category
+        case webDomain
+    }
+    
+    private func noLimitsView(type: BlockTypes) -> some View {
+        switch type {
+            case .app:
+                return Text("No app limits reached")
+                    .font(.title2)
+                    .foregroundColor(.gray)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            case .category:
+                return Text("No category limits reached")
+                    .font(.title2)
+                    .foregroundColor(.gray)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            case .webDomain:
+                return Text("No web domain reached")
+                    .font(.title2)
+                    .foregroundColor(.gray)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+
+    private func limitsReachedView(blockType: BlockTypes) -> some View {
+        switch blockType {
+            case .app:
+                return AnyView(
+                    VStack(alignment: .leading) {
+                        Text("App limits reached")
+                            .font(.title2)
+                            .bold()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        ForEach(Array(viewModel.blockedApps), id: \.self) { token in
+                            BlockedRow(token: token)
+                        }
+                    }
+                )
+                
+            case .category:
+                return AnyView(
+                    VStack(alignment: .leading) {
+                        Text("Category limits reached")
+                            .font(.title2)
+                            .bold()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        ForEach(Array(viewModel.blockedCategories), id: \.self) { token in
+                            BlockedRow(token: token)
+                        }
+                    }
+                )
+                
+            case .webDomain:
+                return AnyView(
+                    VStack(alignment: .leading) {
+                        Text("Web domain limits reached")
+                            .font(.title2)
+                            .bold()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        ForEach(Array(viewModel.blockedWebDomains), id: \.self) { token in
+                            BlockedRow(token: token)
+                        }
+                    }
+                )
+        }
+    }
+
+    private func BlockedRow(token: ApplicationToken) -> some View {
+        HStack {
+            Label(token)
+                .labelStyle(.titleAndIcon)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            
+            Spacer()
+            
+            Button("Extend") {
+                isSheetPresented = true
+            }
+            .sheet(isPresented: $isSheetPresented) {
+                VStack {
+                    Text("Popup Content")
+                    Button("Dismiss") {
+                        isSheetPresented = false
+                    }
+                }
+                .padding()
+            }
+        }
+    }
+    
+    private func BlockedRow(token: ActivityCategoryToken) -> some View {
+        HStack {
+            Label(token)
+                .labelStyle(.titleAndIcon)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            
+            Spacer()
+            
+            Button("Extend") {
+                isSheetPresented = true
+            }
+            .sheet(isPresented: $isSheetPresented) {
+                VStack {
+                    Text("Popup Content")
+                    Button("Dismiss") {
+                        isSheetPresented = false
+                    }
+                }
+                .padding()
+            }
+        }
+    }
+    
+    private func BlockedRow(token: WebDomainToken) -> some View {
+        HStack {
+            Label(token)
+                .labelStyle(.titleAndIcon)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            
+            Spacer()
+            
+            Button("Extend") {
+                isSheetPresented = true
+            }
+            .sheet(isPresented: $isSheetPresented) {
+                VStack {
+                    Text("Popup Content")
+                    Button("Dismiss") {
+                        isSheetPresented = false
+                    }
+                }
+                .padding()
             }
         }
     }

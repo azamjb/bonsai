@@ -67,7 +67,7 @@ class MonitorViewModel: ObservableObject {
         let eventName = DeviceActivityEvent.Name("ScreenTimeThreshold")
 
         do {
-            try center.stopMonitoring([activityName]) // Stop any previous monitoring session
+            center.stopMonitoring([activityName]) // Stop any previous monitoring session
             print("Stopped previous session if any.")
 
             let encoded = try JSONEncoder().encode(activitySelection)
@@ -136,12 +136,8 @@ class MonitorViewModel: ObservableObject {
             pinError = nil
 
             let center = DeviceActivityCenter()
-            do {
-                try center.stopMonitoring([DeviceActivityName("ScreenTimeActivity")])
-                print("Stopped existing monitoring session.")
-            } catch {
-                print("Failed to stop monitoring: \(error)")
-            }
+            center.stopMonitoring([DeviceActivityName("ScreenTimeActivity")])
+            print("Stopped existing monitoring session.")
 
             let currentLimit = Int(timeLimitMinutesString) ?? 1
             let newLimit = currentLimit + 15
@@ -156,6 +152,16 @@ class MonitorViewModel: ObservableObject {
 
     public func saveSelection(for selection: FamilyActivitySelection) {
         activitySelection = selection
+    }
+    
+    public func onExtendPressed(appToken: ApplicationToken?, categoryToken: ActivityCategoryToken?, webToken: WebDomainToken?) {
+        if(appToken != nil) {
+            
+        } else if (categoryToken != nil) {
+            
+        } else if (webToken != nil) {
+            
+        }
     }
 
     // MARK: - In-App Purchase Methods

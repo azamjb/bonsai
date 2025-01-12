@@ -7,9 +7,10 @@
 
 import Foundation
 import FamilyControls
+import ManagedSettings
 
 @MainActor public class AccountabilityPartnerViewModel: ObservableObject {
-    @Published public var phoneNumber: String = ""
+    @Published public var phoneNumber: String = "9053348591"
     @Published public var code: String = ""
     @Published public var userCode: String = ""
     @Published public var isValidated: Bool = false
@@ -18,10 +19,12 @@ import FamilyControls
     @Published public var verificationMessage: String? = nil
     @Published public var inviteErrorMessage: String = ""
     @Published public var timeRequestErrorMessage: String = ""
+    @Published public var appTokenToExtend: ApplicationToken? = nil
+    @Published public var categoryTokenToExtend: ActivityCategoryToken? = nil
+    @Published public var webDomainTokenToExtend: WebDomainToken? = nil
 
     @Published public var isSendingInvite: Bool = false
     @Published public var isSendingTimeRequest: Bool = false
-    @Published public var isRemovingAccountabilityPartner: Bool = false
     @Published public var isRemovingAccountabilityPartner: Bool = false
 
     private let userDefaultsKey = "SelectedActivity"
@@ -32,8 +35,6 @@ import FamilyControls
     }
 
     public func sendInvite() async {
-        
-        
         isSendInvitePressed = true
         isSendingInvite = true
         
@@ -58,38 +59,7 @@ import FamilyControls
         isSendingInvite = false
     }
     
-    
     public func removeAccountabilityPartner() async {
-        
-        isRemovingAccountabilityPartner = true
-        
-        let smsApi = SMSApi()
-        do {
-            try await smsApi.removalNotif(
-                request: SMSRequest(
-                    number: phoneNumber,
-                    username: "Azam",
-                    accountabilityPartnerName: "Bob",
-                    code: ""
-                )
-            )
-            UserDefaults.standard.removeObject(forKey: "AccountabilityPartnerNumber")
-            isValidated = false
-            isSendInvitePressed = false
-            phoneNumber = ""
-            
-        } catch let error as StringError {
-            inviteErrorMessage = error.message
-        } catch {
-            inviteErrorMessage = error.localizedDescription
-        }
-        
-        isRemovingAccountabilityPartner =  false
-    }
-    
-    
-    public func removeAccountabilityPartner() async {
-        
         isRemovingAccountabilityPartner = true
         
         let smsApi = SMSApi()
@@ -130,7 +100,6 @@ import FamilyControls
                     code: code
                 )
             )
-            UserDefaults.standard.set(code, forKey: LocalStorageKeys.timeExtensionRequestCode) // set code in local
             UserDefaults.standard.set(code, forKey: LocalStorageKeys.timeExtensionRequestCode) // set code in local
         } catch let error as StringError {
             timeRequestErrorMessage = error.message
