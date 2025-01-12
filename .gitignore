@@ -13,6 +13,8 @@
 *.lock
 *.xcuserdatad/xcschemes/xcschememanagement.plist
 *.xcschememanagement.plist
+*.xcuserdatad/xcschemes/xcschememanagement.plist
+
 .DS_Store
 
 # Build artifacts
@@ -27,3 +29,4 @@ Carthage/Build/
 # Logs
 *.log
 
+bonsai.xcodeproj/xcuserdata/nicolasmingorance.xcuserdatad/xcschemes/xcschememanagement.plist
