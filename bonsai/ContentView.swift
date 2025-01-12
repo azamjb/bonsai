@@ -45,3 +45,8 @@ struct ContentView: View {
 #Preview {
     ContentView()
 }
+
+// A SwiftUI preview.
+#Preview {
+    ContentView()
+}

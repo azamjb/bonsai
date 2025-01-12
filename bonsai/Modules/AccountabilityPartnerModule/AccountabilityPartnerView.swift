@@ -9,10 +9,14 @@ struct AccountabilityPartnerView: View {
     @ObservedObject var sharedAppData: SharedAppData
 
     @AppStorage(LocalStorageKeys.AccountabilityPartnerNumber) private var AccountabilityPartnerNumber: String?
+    
+    @AppStorage(LocalStorageKeys.AccountabilityPartnerNumber) private var AccountabilityPartnerNumber: String?
     @StateObject private var viewModel = AccountabilityPartnerViewModel()
     
     var body: some View {
+        
         NavigationView {
+            
             ScrollView {
                 VStack(spacing: 20) {
                     Text("Accountability")

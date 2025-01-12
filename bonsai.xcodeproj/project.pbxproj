@@ -14,6 +14,7 @@
 		B71551412CF96667000AFACB /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71551012CF957FF000AFACB /* DeviceActivity.framework */; };
 		B71551492CF96667000AFACB /* deviceactivitymonitor.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B71551402CF96667000AFACB /* deviceactivitymonitor.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B715517C2CFABBF4000AFACB /* deviceactivityreport.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = B71551702CFABBF4000AFACB /* deviceactivityreport.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B7186B4D2D333920000723BE /* StoreKitConfig.storekit in Resources */ = {isa = PBXBuildFile; fileRef = B7186B4C2D333920000723BE /* StoreKitConfig.storekit */; };
 		B76F61FE2D03FFE20092DA9E /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B76F61FD2D03FFE20092DA9E /* ManagedSettings.framework */; };
 		B76F62002D03FFE20092DA9E /* ManagedSettingsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B76F61FF2D03FFE20092DA9E /* ManagedSettingsUI.framework */; };
 		B76F62082D03FFE20092DA9E /* shieldConfiguration.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B76F61FC2D03FFE20092DA9E /* shieldConfiguration.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -99,6 +100,7 @@
 		B71551012CF957FF000AFACB /* DeviceActivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeviceActivity.framework; path = System/Library/Frameworks/DeviceActivity.framework; sourceTree = SDKROOT; };
 		B71551402CF96667000AFACB /* deviceactivitymonitor.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = deviceactivitymonitor.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		B71551702CFABBF4000AFACB /* deviceactivityreport.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.extensionkit-extension"; includeInIndex = 0; path = deviceactivityreport.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		B7186B4C2D333920000723BE /* StoreKitConfig.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = StoreKitConfig.storekit; sourceTree = "<group>"; };
 		B76F61FC2D03FFE20092DA9E /* shieldConfiguration.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = shieldConfiguration.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		B76F61FD2D03FFE20092DA9E /* ManagedSettings.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ManagedSettings.framework; path = System/Library/Frameworks/ManagedSettings.framework; sourceTree = SDKROOT; };
 		B76F61FF2D03FFE20092DA9E /* ManagedSettingsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ManagedSettingsUI.framework; path = System/Library/Frameworks/ManagedSettingsUI.framework; sourceTree = SDKROOT; };
@@ -285,6 +287,7 @@
 		B71550AE2CF9519F000AFACB = {
 			isa = PBXGroup;
 			children = (
+				B7186B4C2D333920000723BE /* StoreKitConfig.storekit */,
 				B71550B92CF9519F000AFACB /* bonsai */,
 				B71550CA2CF951A0000AFACB /* bonsaiTests */,
 				B71550D42CF951A0000AFACB /* bonsaiUITests */,
@@ -563,6 +566,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B7186B4D2D333920000723BE /* StoreKitConfig.storekit in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
