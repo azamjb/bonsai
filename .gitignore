@@ -11,9 +11,12 @@
 *.xcbkptlist
 *.swp
 *.lock
+*.xcuserdata/
 *.xcuserdatad/xcschemes/xcschememanagement.plist
 *.xcschememanagement.plist
 *.xcuserdatad/xcschemes/xcschememanagement.plist
+*/xcuserdata/*/WorkspaceSettings.xcsettings
+
 
 .DS_Store
 

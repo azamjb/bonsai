@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1620"
-   wasCreatedForAppExtension = "YES"
+   LastUpgradeVersion = "1610"
    version = "2.0">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -67,9 +66,6 @@
             ReferencedContainer = "container:bonsai.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <StoreKitConfigurationFileReference
-         identifier = "../../StoreKitConfig.storekit">
-      </StoreKitConfigurationFileReference>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"

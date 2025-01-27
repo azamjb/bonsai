@@ -7,40 +7,37 @@
 
 import SwiftUI
 
+
 struct EducateView: View {
-    @State private var isEducated = false
+    @StateObject var viewModel: EducateViewModel = EducateViewModel()
+    @Environment(\.dismiss) private var dismiss // Environment property for dismissing the view
+
     
     var body: some View {
-        if isEducated {
-            ProfileCreationView()
-        } else {
+        NavigationStack{
             VStack {
                 Text("Educate Page")
                     .font(.title)
                     .padding(.bottom, 20)
                 
-                Button(action: signIn) {
-                    HStack {
-                        Image(systemName: "arrow.up")
-                        Text("Let's Get Started")
-                            .fontWeight(.bold)
-                    }
-                    .foregroundColor(.white) // White text and icon
-                    .padding() // Padding inside the button
-                    .frame(maxWidth: .infinity) // Full-width button
-                    .background(Color.black) // Black background
-                    .cornerRadius(12) // Rounded corners
+                NavigationLink(destination: ProfileCreation1View()) {
+                    Text("I'm Inspired. Scary phone stuff!!")
+                        .foregroundColor(.white)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.black)
+                        .cornerRadius(12)
                 }
-                .shadow(color: .gray.opacity(0.5), radius: 10, x: 0, y: 5) // Shadow with gray color
+                
+                .foregroundColor(.white)
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(Color.black)
+                .cornerRadius(12)
             }
             .padding()
             .preferredColorScheme(.light)
-
-                
         }
-    }
-    func signIn(){
-        isEducated = true
     }
 }
 
