@@ -63,7 +63,6 @@ struct AccountabilityPartnerView: View {
                         .foregroundColor(.white)
                         .cornerRadius(10)
                         .disabled(viewModel.isSendingInvite)
-                        
                     }
                     
                     

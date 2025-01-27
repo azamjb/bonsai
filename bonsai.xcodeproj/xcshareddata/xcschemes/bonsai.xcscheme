@@ -21,6 +21,62 @@
                ReferencedContainer = "container:bonsai.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B715513F2CF96667000AFACB"
+               BuildableName = "deviceactivitymonitor.appex"
+               BlueprintName = "deviceactivitymonitor"
+               ReferencedContainer = "container:bonsai.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B715516F2CFABBF4000AFACB"
+               BuildableName = "deviceactivityreport.appex"
+               BlueprintName = "deviceactivityreport"
+               ReferencedContainer = "container:bonsai.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "242A1E922D2726B600D5CD5E"
+               BuildableName = "shieldActionExtension.appex"
+               BlueprintName = "shieldActionExtension"
+               ReferencedContainer = "container:bonsai.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B76F61FB2D03FFE20092DA9E"
+               BuildableName = "shieldConfiguration.appex"
+               BlueprintName = "shieldConfiguration"
+               ReferencedContainer = "container:bonsai.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction

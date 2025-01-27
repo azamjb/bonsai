@@ -11,6 +11,7 @@
 		242A1E942D2726B600D5CD5E /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B76F61FD2D03FFE20092DA9E /* ManagedSettings.framework */; };
 		242A1E9C2D2726B600D5CD5E /* shieldActionExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 242A1E932D2726B600D5CD5E /* shieldActionExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		242A1FC52D274E8200D5CD5E /* iPhoneNumberField in Frameworks */ = {isa = PBXBuildFile; productRef = 242A1FC42D274E8200D5CD5E /* iPhoneNumberField */; };
+		249650312D345D0D0091B4F4 /* DigitEntryView in Frameworks */ = {isa = PBXBuildFile; productRef = 249650302D345D0D0091B4F4 /* DigitEntryView */; };
 		B71551412CF96667000AFACB /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71551012CF957FF000AFACB /* DeviceActivity.framework */; };
 		B71551492CF96667000AFACB /* deviceactivitymonitor.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B71551402CF96667000AFACB /* deviceactivitymonitor.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B715517C2CFABBF4000AFACB /* deviceactivityreport.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = B71551702CFABBF4000AFACB /* deviceactivityreport.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -238,6 +239,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				249650312D345D0D0091B4F4 /* DigitEntryView in Frameworks */,
 				242A1FC52D274E8200D5CD5E /* iPhoneNumberField in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -374,6 +376,7 @@
 			name = bonsai;
 			packageProductDependencies = (
 				242A1FC42D274E8200D5CD5E /* iPhoneNumberField */,
+				249650302D345D0D0091B4F4 /* DigitEntryView */,
 			);
 			productName = bonsaitest;
 			productReference = B71550B72CF9519F000AFACB /* bonsai.app */;
@@ -537,6 +540,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				242A1FC32D274E5200D5CD5E /* XCRemoteSwiftPackageReference "iPhoneNumberField" */,
+				2496502F2D345CB00091B4F4 /* XCRemoteSwiftPackageReference "DigitEntryView" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B71550B82CF9519F000AFACB /* Products */;
@@ -1245,6 +1249,14 @@
 				minimumVersion = 0.10.4;
 			};
 		};
+		2496502F2D345CB00091B4F4 /* XCRemoteSwiftPackageReference "DigitEntryView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/iAmrMohamed/DigitEntryView";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.3;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1252,6 +1264,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 242A1FC32D274E5200D5CD5E /* XCRemoteSwiftPackageReference "iPhoneNumberField" */;
 			productName = iPhoneNumberField;
+		};
+		249650302D345D0D0091B4F4 /* DigitEntryView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2496502F2D345CB00091B4F4 /* XCRemoteSwiftPackageReference "DigitEntryView" */;
+			productName = DigitEntryView;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
