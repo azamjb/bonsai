@@ -36,4 +36,6 @@ class ProfileCreationViewModel: ObservableObject {
         userProfile = profileService.fetchUserProfile()
     }
     
+    
+    
 }

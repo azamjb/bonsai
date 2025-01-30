@@ -19,91 +19,80 @@ struct ProfileCreation2View: View {
     
     var body: some View {
         NavigationStack{
-            VStack {
-                Text("Welcome, \(viewModel.userProfile.name)")
-                    .font(.title)
-                    .fontWeight(.bold)
-                    .foregroundColor(.black)
-                    .padding(20)
-                Spacer()
-                Text("Your journey starts now.")
-                    .padding(.bottom, 40)
-                
-                Text("What matters most to you? ")
-                    .multilineTextAlignment(.center)
-                    .padding(10)
-                
-                Text("Choose up to 5 areas to reallocate your time and start living with purpose.")
-                    .padding(.bottom, 25)
-                    .multilineTextAlignment(.center)
-                
-                LazyVGrid(
-                    columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: 4),
-                    spacing: 16
-                ) {
-                    ForEach(systemHobbies, id: \.self) { hobby in
-                        hobbyTile(
-                            hobby: hobby,
-                            isSelected: hobbies.contains(hobby),
-                            onTap: {
-                                if hobbies.contains(hobby) {
-                                    hobbies.removeAll { $0 == hobby }
-                                } else if hobbies.count < 5 {
-                                    hobbies.append(hobby)
+            ScrollView{
+                VStack {
+                    Text("Welcome, \(viewModel.userProfile.name)")
+                        .font(.title)
+                        .fontWeight(.bold)
+                        .foregroundColor(.black)
+                        .padding(20)
+                    Spacer()
+                    Text("Your journey starts now.")
+                        .padding(.bottom, 40)
+                    
+                    Text("What matters most to you? ")
+                        .multilineTextAlignment(.center)
+                        .padding(10)
+                    
+                    Text("Choose up to 5 areas to reallocate your time and start living with purpose.")
+                        .padding(.bottom, 25)
+                        .multilineTextAlignment(.center)
+                    
+                    LazyVGrid(
+                        columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: 4),
+                        spacing: 16
+                    ) {
+                        ForEach(systemHobbies, id: \.self) { hobby in
+                            hobbyTile(
+                                hobby: hobby,
+                                isSelected: hobbies.contains(hobby),
+                                onTap: {
+                                    if hobbies.contains(hobby) {
+                                        hobbies.removeAll { $0 == hobby }
+                                    } else if hobbies.count < 5 {
+                                        hobbies.append(hobby)
+                                    }
                                 }
-                            }
-                        )
+                            )
+                        }
                     }
+                    .padding()
+                    Text("Selected Hobbies: \(hobbies.joined(separator: ", "))")
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                        .padding(.bottom, 10)
+                    
+                    VStack(spacing: 16) {
+                        Group {
+                            TextField("Enter accountability partner's name", text: $accountabilityPartnerName)
+                                .modifier(CustomTextFieldStyle(placeholder: "Name"))
+                            TextField("Enter accountability partner's phone number", text: $accountabilityPartnerPhone)
+                                .keyboardType(.phonePad)
+                                .modifier(CustomTextFieldStyle(placeholder: "Phone Number"))
+                        }
+                        .focused($isFieldFocused)
+                    }
+                    .padding()
+                    .onTapGesture {
+                        isFieldFocused = false // Dismiss keyboard when tapping outside fields
+                    }
+                    Spacer()
+                    NavigationLink(destination: ContentView()) {
+                        Text("Get Started")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color.black)
+                            .cornerRadius(12)
+                            .shadow(color: .gray.opacity(0.5), radius: 10, x: 0, y: 5)
+                    }
+                    .simultaneousGesture(TapGesture().onEnded {
+                        viewModel.saveAccountabilityPartner(name: accountabilityPartnerName, phoneNumber: accountabilityPartnerPhone)
+                        isProfileCreated = true
+                    })
                 }
                 .padding()
-                Text("Selected Hobbies: \(hobbies.joined(separator: ", "))")
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
-                    .padding(.bottom, 20)
-                
-                VStack(alignment: .leading, spacing: 20) {
-                    // Name Text Box
-                    Text("Name")
-                        .foregroundColor(.gray) // Light grey title
-                        .font(.headline)
-                        .padding( 10)
-                    TextField("Enter your accountability partner's name", text: $accountabilityPartnerName)
-                        .padding()
-                        .background(Color.gray.opacity(0.2)) // Light grey background
-                        .cornerRadius(8)
-                        .foregroundColor(.black)
-                        .focused($isFieldFocused)
-                    
-                    // Phone Number Text Box
-                    Text("Phone Number")
-                        .foregroundColor(.gray) // Light grey title
-                        .font(.headline)
-                    TextField("Accountability Parnter Phone Number", text: $accountabilityPartnerPhone)
-                        .padding()
-                        .background(Color.gray.opacity(0.2))
-                        .cornerRadius(8)
-                        .keyboardType(.phonePad)
-                        .foregroundColor(.black)
-                        .focused($isFieldFocused)
-                        
-                    
-                    Spacer()
-                }
-                NavigationLink(destination: ContentView()) {
-                    HStack {
-                        Text("Add a partner")
-                            .fontWeight(.bold)
-                    }
-                    .foregroundColor(.white)
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color.black)
-                    .cornerRadius(12)
-                }
-                .simultaneousGesture(TapGesture().onEnded {
-                    viewModel.saveAccountabilityPartner(name: accountabilityPartnerName, phoneNumber: accountabilityPartnerPhone)
-                    isProfileCreated = true
-                })
             }
         }
         .onAppear() {
@@ -128,6 +117,7 @@ struct ProfileCreation2View: View {
         }
     }
 }
+
 
 #Preview {
     ProfileCreation2View()

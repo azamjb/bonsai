@@ -29,6 +29,10 @@ struct ContentView: View {
                 .tabItem {
                     Label("Accountability", systemImage: "person.fill")
                 }
+            ProfileView()
+                .tabItem {
+                    Label("Profile", systemImage: "person.fill")
+                }
                 .tag(3)
         }
     }

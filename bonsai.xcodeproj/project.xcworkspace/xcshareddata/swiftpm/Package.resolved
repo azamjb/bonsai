@@ -1,15 +1,6 @@
 {
-  "originHash" : "839ddf00614f511aec576ee08b6759953ec274e8f8adacd94b28e5d422a43f97",
+  "originHash" : "dfafabe9eb2f82df194905da7bcf8588b98ed393efaa5134e1fcb892e06d86c8",
   "pins" : [
-    {
-      "identity" : "digitentryview",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/iAmrMohamed/DigitEntryView",
-      "state" : {
-        "revision" : "00a1d4aa08103e168155da05cc20f3c2c394155c",
-        "version" : "1.0.3"
-      }
-    },
     {
       "identity" : "iphonenumberfield",
       "kind" : "remoteSourceControl",

@@ -30,7 +30,6 @@ class ProfileService: ProfileServiceProtocol {
         saveUserProfile()
     }
     
-    // Maybe limit to 5 strings (hobby1, hobby2, hobby3)?
     func saveHobbies(_ hobbies: [String]) {
         userProfile.hobbies = hobbies
         saveUserProfile()

@@ -181,3 +181,7 @@ struct AccountabilityPartnerView: View {
         }
     }
 }
+
+#Preview {
+    AccountabilityPartnerView()
+}

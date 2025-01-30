@@ -5,117 +5,104 @@
 //  Created by Nicolas Mingorance-Geraldo on 2025-01-08.
 //
 
-import SwiftUI
-import Combine
-import Foundation
 
+import SwiftUI
 
 struct ProfileCreation1View: View {
     @StateObject var viewModel: ProfileCreationViewModel = ProfileCreationViewModel()
-    
     @State private var name: String = ""
     @State private var phoneNumber: String = ""
     @FocusState private var isFieldFocused: Bool
     
-    
     var body: some View {
-        NavigationStack{
-            VStack {
-                Image("BonsaiLogo_grey")
-                Text("BONSAI")
-                    .font(.system(size: 32, weight: .bold))
-                    .foregroundColor(.black)
-                Text("Let's Grow Together")
-                    .font(.system(size: 22, weight: .semibold))
-                    .foregroundColor(.black)
-                    .padding(.top, 16.0)
-                    .padding(.bottom, 14.0)
-                    .shadow(radius:30)
-                
-                ZStack (alignment: .leading){
-                    Rectangle()
-                        .foregroundColor(.clear)
-                        .frame(width: 310, height: 8)
-                        .background(Color(red: 0.85, green: 0.85, blue: 0.85))
-                        .cornerRadius(5)
-                    
-                    Rectangle()
-                        .foregroundColor(.clear)
-                        .frame(width: 162, height: 8)
-                        .background(
-                            LinearGradient(
-                                stops: [
-                                    Gradient.Stop(color: Color(red: 0.1, green: 0.69, blue: 0.18), location: 0.00),
-                                    Gradient.Stop(color: Color(red: 0.56, green: 0.78, blue: 0.59), location: 1.00),
-                                ],
-                                startPoint: UnitPoint(x: 0, y: 0.5),
-                                endPoint: UnitPoint(x: 1, y: 0.5)
-                            )
-                        )
-                        .cornerRadius(5)
-                }
-                .padding(.bottom, 65)
-                
-                VStack(alignment: .leading, spacing: 20) {
-                    // Name Text Box
-                    Text("Name")
-                        .foregroundColor(.gray) // Light grey title
-                        .font(.headline)
-                    TextField("Enter your name", text: $name)
-                        .padding()
-                        .background(Color.gray.opacity(0.2)) // Light grey background
-                        .cornerRadius(8)
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: 20) {
+                    // Logo and Header
+                    Image("BonsaiLogo_grey")
+                    Text("BONSAI")
+                        .font(.system(size: 32, weight: .bold))
                         .foregroundColor(.black)
-                        .focused($isFieldFocused)
-                    
-                    // Phone Number Text Box
-                    Text("Phone Number")
-                        .foregroundColor(.gray) // Light grey title
-                        .font(.headline)
-                    TextField("Enter your phone number", text: $phoneNumber)
-                        .padding()
-                        .background(Color.gray.opacity(0.2)) // Light grey background
-                        .cornerRadius(8)
-                        .keyboardType(.phonePad) // Set to phone number input
+                    Text("Let's Grow Together")
+                        .font(.system(size: 22, weight: .semibold))
                         .foregroundColor(.black)
-                        .focused($isFieldFocused)
+                        .padding(.top, 8)
                     
-                    Spacer()
+                    // Progress Indicator
+                    ProgressView(value: 0.5)
+                        .progressViewStyle(LinearProgressViewStyle(tint: Color.green))
+                        .padding(.vertical, 30)
+                    
+                    // Input Fields
+                    VStack(spacing: 16) {
+                        Group {
+                            TextField("Enter your name", text: $name)
+                                .modifier(CustomTextFieldStyle(placeholder: "Name"))
+                            TextField("Enter your phone number", text: $phoneNumber)
+                                .keyboardType(.phonePad)
+                                .modifier(CustomTextFieldStyle(placeholder: "Phone Number"))
+                        }
+                        .focused($isFieldFocused)
+                    }
+                    .onTapGesture {
+                        isFieldFocused = false // Dismiss keyboard when tapping outside fields
+                    }
+                    
+                    // Create Profile Button
+                    NavigationLink(destination: TermsAndConditionsView()) {
+                        Text("Create Profile")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color.black)
+                            .cornerRadius(12)
+                            .shadow(color: .gray.opacity(0.5), radius: 10, x: 0, y: 5)
+                    }
+                    .padding(.top, 30)
+                    .simultaneousGesture(TapGesture().onEnded{
+                        viewModel.saveBasicInfo(name: name, phoneNumber: phoneNumber)
+                    })
                 }
                 .padding()
-                
-                NavigationLink(destination: TermsAndConditionsView()) {
-                    HStack {
-                        Text("Create Profile")
-                            .fontWeight(.bold)
-                    }
-                    .foregroundColor(.white) // White text and icon
-                    .padding() // Padding inside the button
-                    .frame(maxWidth: .infinity) // Full-width button
-                    .background(Color.black) // Black background
-                    .cornerRadius(12) // Rounded corners
+                .onTapGesture {
+                    isFieldFocused = false // Dismiss keyboard when tapping outside
                 }
-                .shadow(color: .gray.opacity(0.5), radius: 10, x: 0, y: 5) // Shadow with gray color
-                .padding(.bottom, isFieldFocused ? 300 : 0) // Moves button when keyboard appears
-                .simultaneousGesture(TapGesture().onEnded{
-                    viewModel.saveBasicInfo(name: name, phoneNumber: phoneNumber)
-                })
-                
-                
             }
-            .onTapGesture {
-                isFieldFocused = false // Dismiss the keyboard when tapping outside
-            }
-            .padding()
-            .preferredColorScheme(.light)
-            
-            Spacer()
-            
+            .background(Color.white.ignoresSafeArea())
+        }
+        .preferredColorScheme(.light)
+        .onTapGesture {
+            isFieldFocused = false // Dismiss keyboard globally
         }
     }
 }
 
+// Custom Modifier for Input Fields
+struct CustomTextFieldStyle: ViewModifier {
+    let placeholder: String
+    
+    func body(content: Content) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(placeholder)
+                .foregroundColor(.gray)
+                .font(.headline)
+            content
+                .padding()
+                .background(Color.gray.opacity(0.2))
+                .cornerRadius(8)
+                .foregroundColor(.black)
+        }
+    }
+}
 
 #Preview {
     ProfileCreation1View()
 }
+
+
+
+
+
+
+

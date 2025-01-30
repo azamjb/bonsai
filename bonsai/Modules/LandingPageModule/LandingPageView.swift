@@ -8,34 +8,47 @@
 import SwiftUI
 
 struct LandingPageView: View {
-    @State private var size = 0.01
-    @State private var opacity = 0.5
+    @State private var textCount: Int = 0
     
     var body: some View {
-        VStack {
-            Image("Bonsai_Splash")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 100, height: 100)
-            Text("Bonsai.")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .foregroundColor(.black)
-                .padding(.top, 20)
-        }
-        .scaleEffect(size)
-        .opacity(opacity)
-        .onAppear {
-            withAnimation(.easeIn(duration: 0.5)) {
-                size = 0.7
-                opacity = 1.0
+        ZStack {
+            Color.black // Background color
+                .ignoresSafeArea()
+            
+            VStack(spacing: 10) {
+                // Animated Texts
+                ForEach(0..<textCount, id: \.self) { index in
+                    Text("bonsai")
+                        .font(.custom("San Francisco", size: 90).weight(index == 4 ? .bold : .regular))
+                        .foregroundColor(index == 5
+                                         ? Color(red: 0.33, green: 1, blue: 0) // Green for the 6th text
+                                         : .white)
+                        .transition(.opacity.combined(with: .move(edge: .top)))
+                }
+                
+                // Header below the green text
+                if textCount > 5 {
+                    Text("Your time. Your purpose.")
+                        .font(.custom("San Francisco", size: 24).weight(.semibold))
+                        .foregroundColor(Color(red: 0.33, green: 1, blue: 0))
+                        .transition(.opacity)
+                }
             }
-            withAnimation(.easeIn(duration: 0.8)) {
-                size = 0.9
-                opacity = 1.0
+            .padding()
+            .onAppear {
+                animateTextAppearance()
             }
         }
-        .preferredColorScheme(.light)
+    }
+    
+    private func animateTextAppearance() {
+        for i in 0...5 {
+            DispatchQueue.main.asyncAfter(deadline: .now() + Double(i) * 0.4) {
+                withAnimation(.easeInOut(duration: 0.4)) {
+                    textCount = i + 1
+                }
+            }
+        }
     }
 }
                 
