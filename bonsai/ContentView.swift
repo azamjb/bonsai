@@ -29,11 +29,12 @@ struct ContentView: View {
                 .tabItem {
                     Label("Accountability", systemImage: "person.fill")
                 }
+                .tag(3)
             ProfileView()
                 .tabItem {
                     Label("Profile", systemImage: "person.fill")
                 }
-                .tag(3)
+                .tag(4)
         }
     }
 }

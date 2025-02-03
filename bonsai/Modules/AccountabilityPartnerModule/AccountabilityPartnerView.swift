@@ -29,17 +29,16 @@ struct AccountabilityPartnerView: View {
                         RoundedRectangle(cornerRadius: 12)
                             .stroke(Color.gray.opacity(0.4), lineWidth: 1)
                             .frame(height: 50)
-                            .overlay(
+                            .background(
                                 HStack {
                                     Image(systemName: "phone.fill")
                                         .foregroundColor(.blue)
-                                    
-                                    // TextField for phone number
+
                                     iPhoneNumberField("Phone Number", text: $viewModel.phoneNumber)
                                         .keyboardType(.phonePad)
                                         .padding(.leading, 4)
                                 }
-                                    .padding(.horizontal)
+                                .padding(.horizontal)
                             )
                         
                         // Submit button
@@ -182,6 +181,3 @@ struct AccountabilityPartnerView: View {
     }
 }
 
-#Preview {
-    AccountabilityPartnerView()
-}

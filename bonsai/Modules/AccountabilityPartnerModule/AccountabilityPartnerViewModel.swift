@@ -10,7 +10,7 @@ import FamilyControls
 import ManagedSettings
 
 @MainActor public class AccountabilityPartnerViewModel: ObservableObject {
-    @Published public var phoneNumber: String = "9053348591"
+    @Published public var phoneNumber: String = ""
     @Published public var code: String = ""
     @Published public var userCode: String = ""
     @Published public var isValidated: Bool = false
@@ -28,7 +28,7 @@ import ManagedSettings
     @Published public var isRemovingAccountabilityPartner: Bool = false
 
     private let userDefaultsKey = "SelectedActivity"
-    private let appGroupID = "group.com.bonsai" // Replace with your actual App Group ID
+    private let appGroupID = "group.com.bonsai" 
     
     private var sharedDefaults: UserDefaults? {
         UserDefaults(suiteName: appGroupID)

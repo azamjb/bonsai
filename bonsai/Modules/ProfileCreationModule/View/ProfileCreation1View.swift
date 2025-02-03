@@ -48,21 +48,20 @@ struct ProfileCreation1View: View {
                         isFieldFocused = false // Dismiss keyboard when tapping outside fields
                     }
                     
-                    // Create Profile Button
-                    NavigationLink(destination: TermsAndConditionsView()) {
-                        Text("Create Profile")
+                    // Create Profile Buttonx
+                    NavigationLink(
+                        destination: TermsAndConditionsView(name: name, phoneNumber: phoneNumber)
+                    ) {
+                        Text("Go to Terms & Conditions")
                             .font(.headline)
-                            .foregroundColor(.white)
                             .padding()
                             .frame(maxWidth: .infinity)
-                            .background(Color.black)
+                            .background(Color.blue)
+                            .foregroundColor(.white)
                             .cornerRadius(12)
-                            .shadow(color: .gray.opacity(0.5), radius: 10, x: 0, y: 5)
                     }
-                    .padding(.top, 30)
-                    .simultaneousGesture(TapGesture().onEnded{
-                        viewModel.saveBasicInfo(name: name, phoneNumber: phoneNumber)
-                    })
+                    .padding(.horizontal)
+                    
                 }
                 .padding()
                 .onTapGesture {

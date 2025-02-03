@@ -10,13 +10,14 @@ import SwiftUI
 struct TermsAndConditionsView: View {
     @ObservedObject var viewModel: ProfileCreationViewModel = ProfileCreationViewModel()
     
+    let name: String
+    let phoneNumber: String
+    
     var body: some View {
         NavigationStack{
             VStack {
                 Text("Please accept our Terms and Conditions")
-                Button("Test") {
-                    testProfileService()
-                }
+                
                 NavigationLink(destination: PastUsageInspireView()) {
                     Text("Accept")
                         .foregroundColor(.white) // White text and icon
@@ -24,16 +25,17 @@ struct TermsAndConditionsView: View {
                         .frame(maxWidth: .infinity) // Full-width button
                         .background(Color.black) // Black background
                         .cornerRadius(12) // Rounded corners
+                        .simultaneousGesture(TapGesture().onEnded{
+                            viewModel.saveBasicInfo(name: name, phoneNumber: phoneNumber)
+                        })
                 }
             }
         }
         
     }
-    func testProfileService() {
-    }
     
 }
 
 #Preview {
-    TermsAndConditionsView()
+    TermsAndConditionsView(name: "John Doe", phoneNumber: "1234567890")
 }

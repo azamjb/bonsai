@@ -9,6 +9,7 @@ import Combine
 
 
 class ProfileCreationViewModel: ObservableObject {
+    
     @Published var userProfile = UserProfile()
     private let profileService: ProfileServiceProtocol = ProfileService()
     
@@ -27,8 +28,8 @@ class ProfileCreationViewModel: ObservableObject {
         fetchUserProfile()
     }
     
-    func saveAccountabilityPartner(name: String, phoneNumber: String) {
-        profileService.saveAccountabilityPartner(name: name, phoneNumber: phoneNumber)
+    func saveAccountabilityPartner(name: String, phoneNumber: String) async {
+        await profileService.saveAccountabilityPartner(name: name, phoneNumber: phoneNumber)
         fetchUserProfile()
     }
     
