@@ -12,7 +12,13 @@ import SwiftUICore
 import FamilyControls
 import _DeviceActivity_SwiftUI
 
+public enum GroupDisplayType: String {
+    case limit = "LimitEvent+"
+    case block = "BlockGroup+"
+}
+
 struct ScreenTimeActivityEvent: Codable {
+    let id: UUID
     let appTokens: Set<ApplicationToken>?
     let categoryTokens: Set<ActivityCategoryToken>?
     let webDomainTokens: Set<WebDomainToken>?
@@ -40,7 +46,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     override func eventDidReachThreshold(_ event: DeviceActivityEvent.Name, activity: DeviceActivityName) {
         super.eventDidReachThreshold(event, activity: activity)
         
-        let data = sharedDefaults!.data(forKey: "LimitEvent+" + activity.rawValue)
+        let data = sharedDefaults!.data(forKey: GroupDisplayType.limit.rawValue + activity.rawValue)
         
         do {
             let activityEvent = try JSONDecoder().decode(ScreenTimeActivityEvent.self, from: data!)
@@ -54,6 +60,8 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
             if let webDomainTokens = activityEvent.webDomainTokens {
                 webDomainTokens.forEach { token in handleThresholdReached(webDomainToken: token) }
             }
+            
+            sharedDefaults?.set(data, forKey: GroupDisplayType.block.rawValue + activityEvent.id.uuidString)
         } catch {
             print("Failed to decode limit event")
         }

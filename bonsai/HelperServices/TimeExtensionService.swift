@@ -11,31 +11,28 @@ import ManagedSettings
 import DeviceActivity
 import FamilyControls
 
-enum BlockTypes: String {
-    case app
-    case category
-    case webDomain
+public enum GroupDisplayType: String {
+    case limit = "LimitEvent+"
+    case block = "BlockGroup+"
 }
 
-public struct ScreenTimeActivityEvent: Codable {
+public struct ScreenTimeActivityEvent: Codable, Identifiable, Hashable {
+    public let id: UUID
     let appTokens: Set<ApplicationToken>?
     let categoryTokens: Set<ActivityCategoryToken>?
     let webDomainTokens: Set<WebDomainToken>?
     let hours: Int
     let minutes: Int
+    let invisibleLimit: Bool
 }
 
-// To show the ScreenTimeActivityEvent in the UI it must be Identifiable
-public struct IdentifiableScreenTimeActivityEvent: Identifiable {
-    public let id = UUID()
-    let screenTimeActivityEvent: ScreenTimeActivityEvent
-}
-
-public class TimeExtensionService {
+public class TimeExtensionService: ObservableObject {
     public var code: String = ""
     public var timeRequestErrorMessage: String = ""
+    public var timeExtensionRequestCode: String? = nil
     public var enteredPin: String = ""
     public var isSendingTimeRequest: Bool = false
+    public var sentTimeRequest: Bool = false
     public var monitoringStarted: Bool = false
     public var purchaseSuccessful: Bool = false
     public var pinError: String? = nil
@@ -75,17 +72,19 @@ public class TimeExtensionService {
         Task { await fetchProduct() }
     }
     
-    public func getActiveLimitsDisplay() -> [IdentifiableScreenTimeActivityEvent] {
+    public func getGroupDisplay(displayType: GroupDisplayType) -> [ScreenTimeActivityEvent] {
         let filteredEvents = sharedDefaults!.dictionaryRepresentation()
-            .filter { $0.key.hasPrefix("LimitEvent+") }
+            .filter { $0.key.hasPrefix(displayType.rawValue) }
             .compactMapValues { $0 as? Data }
         
-        var events: [IdentifiableScreenTimeActivityEvent] = []
+        var events: [ScreenTimeActivityEvent] = []
         
         filteredEvents.forEach { data in
             let activityEvent = try! JSONDecoder().decode(ScreenTimeActivityEvent.self, from: data.value)
             
-            events.append(IdentifiableScreenTimeActivityEvent(screenTimeActivityEvent: activityEvent))
+            if(!activityEvent.invisibleLimit) {
+                events.append(activityEvent)
+            }
         }
         
         return events
@@ -104,6 +103,8 @@ public class TimeExtensionService {
                     code: code
                 )
             )
+            
+            timeExtensionRequestCode = code
             UserDefaults.standard.set(code, forKey: LocalStorageKeys.timeExtensionRequestCode) // set code in local
         } catch let error as StringError {
             timeRequestErrorMessage = error.message
@@ -112,6 +113,7 @@ public class TimeExtensionService {
         }
         
         isSendingTimeRequest = false
+        sentTimeRequest = true
     }
     
     public func generateRandomCode() -> String {
@@ -125,23 +127,24 @@ public class TimeExtensionService {
             intervalEnd: DateComponents(hour: 23, minute: 59, second: 59),
             repeats: true)
         
-        center.stopMonitoring(center.activities)
-        
-        // This needs to be unique
-        let activtyName = getCurrentDateTimeAsString().replacingOccurrences(of: " ", with: "")
+        let eventId = UUID()
         
         let activityEvent = ScreenTimeActivityEvent(
+            id: eventId,
             appTokens: activitySelection.applicationTokens,
             categoryTokens: activitySelection.categoryTokens,
             webDomainTokens: activitySelection.webDomainTokens,
             hours: limitHours,
-            minutes: limitMinutes)
+            minutes: limitMinutes,
+            invisibleLimit: false)
+        
+        let activityName = eventId.uuidString
         
         let encoded = try! JSONEncoder().encode(activityEvent)
-        sharedDefaults?.set(encoded, forKey: "LimitEvent+" + activtyName)
+        sharedDefaults?.set(encoded, forKey: GroupDisplayType.limit.rawValue + activityName)
         
         try! center.startMonitoring(
-            DeviceActivityName(activtyName),
+            DeviceActivityName(activityName),
             during: schedule,
             events: [DeviceActivityEvent.Name("LimitEvent"): DeviceActivityEvent (
                 applications: activitySelection.applicationTokens,
@@ -184,55 +187,103 @@ public class TimeExtensionService {
             sharedDefaults?.removeObject(forKey: event.key)
         }
     }
-
-    public func validateAndExtendTime() {
-        if enteredPin == UserDefaults.standard.string(forKey: LocalStorageKeys.timeExtensionRequestCode) {
+    
+    public func validateExtensionCode(inputPin: String, correctPin: String, group: ScreenTimeActivityEvent) {
+        print(inputPin, correctPin)
+        if inputPin == correctPin {
+            extendLimitForGroup(group: group)
             pinError = nil
-
-            let center = DeviceActivityCenter()
-            center.stopMonitoring([DeviceActivityName("ScreenTimeActivity")])
-
-//            let currentLimit = Int(timeLimitMinutesString) ?? 1
-//            let newLimit = currentLimit + 15
-//            timeLimitMinutesString = String(newLimit)
-//
-//            startMonitoring()
-            UserDefaults.standard.removeObject(forKey: "timeExtensionRequestCode")
         } else {
-            pinError = "Invalid PIN. Please try again."
+            pinError = "Invalid PIN"
         }
     }
 
-    public func extendLimitForToken(appToken: ApplicationToken) {
-        // Remove the token from the set of currently shielded token
-        var appTokens = Array(settingsStore.shield.applications!)
+    private func extendLimitForGroup(group: ScreenTimeActivityEvent) {
+        // These 3 variables get reassigned with the tokens to extend for removed.
+        var shieldedApps = settingsStore.shield.applications ?? []
+        var shieldedWebDomainTokens = settingsStore.shield.webDomains ?? []
+        var shieldedCategoryTokens = getShieldedCategoryTokens()
         
-        appTokens.removeAll { $0 == appToken }
-        settingsStore.shield.applications = Set(appTokens)
-        
-        // Create the monitoring sesh
-        let event = DeviceActivityEvent (
-            applications: [appToken],
-            threshold: DateComponents(minute: 2) // Figure out how long we actually want to extend for
-        )
-        
-        do {
-            try activityCenter.startMonitoring(
-                activityName,
-                during: dayLongSchedule,
-                events: [eventName: event]
-            )
-        } catch {
-           print("Failed to start monitoring session.")
+        print(group)
+        if let groupAppTokens = group.appTokens {
+            groupAppTokens.forEach { token in
+                shieldedApps.remove(token)
+            }
+            
+            settingsStore.shield.applications = shieldedApps
         }
+        
+        if let groupCategoryTokens = group.categoryTokens {
+            groupCategoryTokens.forEach { token in
+                shieldedCategoryTokens.remove(token)
+            }
+            
+            settingsStore.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.specific(shieldedCategoryTokens)
+        }
+        
+        if let groupWebDomainTokens = group.webDomainTokens {
+            groupWebDomainTokens.forEach { token in
+                shieldedWebDomainTokens.remove(token)
+            }
+            
+            settingsStore.shield.webDomains = shieldedWebDomainTokens
+        }
+        
+        // Remove the current block local storage object before starting the new seshski
+        sharedDefaults?.removeObject(forKey: GroupDisplayType.block.rawValue + group.id.uuidString)
+        
+        startMonitoringPostExtension(group: group)
     }
     
-    public func extendLimitForToken(categoryToken: ActivityCategoryToken) {
+    private func startMonitoringPostExtension(group: ScreenTimeActivityEvent) {
+        let schedule = DeviceActivitySchedule(
+            intervalStart: DateComponents(hour: 0, minute: 0, second: 0),
+            intervalEnd: DateComponents(hour: 23, minute: 59, second: 59),
+            repeats: true)
         
+        let eventId = UUID()
+        
+        let activityEvent = ScreenTimeActivityEvent(
+            id: eventId,
+            appTokens: group.appTokens,
+            categoryTokens: group.categoryTokens,
+            webDomainTokens: group.webDomainTokens,
+            hours: 0,
+            minutes: 15,
+            invisibleLimit: true)
+        
+        let activityName = eventId.uuidString
+        
+        let encoded = try! JSONEncoder().encode(activityEvent)
+        sharedDefaults?.set(encoded, forKey: GroupDisplayType.limit.rawValue + activityName)
+
+        try! center.startMonitoring(
+            DeviceActivityName(activityName),
+            during: schedule,
+            events: [DeviceActivityEvent.Name("LimitEvent"): DeviceActivityEvent (
+                applications: group.appTokens ?? [],
+                categories: group.categoryTokens ?? [],
+                webDomains: group.webDomainTokens ?? [],
+                threshold: DateComponents(hour: 0, second: 15)
+            )]
+        )
     }
     
-    public func extendLimitForToken(webDomainToken: WebDomainToken) {
+    private func getShieldedCategoryTokens() -> Set<ActivityCategoryToken> {
+        if let categories = settingsStore.shield.applicationCategories {
+            switch categories {
+            case .none:
+                return []
+            case .specific(let specificCategories, _):
+                return specificCategories
+            case .all(except: _):
+                return []
+            @unknown default:
+                return []
+            }
+        }
         
+        return []
     }
     
     // MARK: - In-App Purchase Methods
