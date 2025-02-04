@@ -38,14 +38,11 @@ struct RootView: View {
     @State private var isSplashScreenActive:Bool = true
     
     var body: some View {
-        
-        
         Group {
             if isSplashScreenActive {
                 LandingPageView()
-                    .transition(.opacity)
                     .onAppear {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                             withAnimation {
                                 // Switch to main app after 3 seconds
                                 isSplashScreenActive = false
