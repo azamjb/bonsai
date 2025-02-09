@@ -8,6 +8,7 @@
 import DeviceActivity
 import SwiftUI
 
+
 @main
 struct deviceactivityreport: DeviceActivityReportExtension {
     var body: some DeviceActivityReportScene {
@@ -17,6 +18,7 @@ struct deviceactivityreport: DeviceActivityReportExtension {
         }
         
         PieChartReport()
+        PillBarReport()
         // Add more reports here...
     }
 }
