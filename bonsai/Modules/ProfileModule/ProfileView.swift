@@ -8,115 +8,257 @@
 import SwiftUI
 
 struct ProfileView: View {
+    
     @StateObject var viewModel: ProfileViewModel = ProfileViewModel()
     
     var body: some View {
-        VStack {
-            VStack(alignment: .leading, spacing: 0.5){
-                Text("THE")
-                    .fontWeight(.bold)
-                HStack (spacing: 0.05){
-                    Text("GREEN")
-                        .foregroundColor(Color(red: 0.33, green: 0.6, blue: 0))
-                        .fontWeight(.bold)
-                    Text("HOUSE")
-                        .fontWeight(.bold)
-                }
-                
-            }
-            .padding(.horizontal, 25)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .font(.system(size: 36))
-            
-            Spacer()
-            
-            
-            Group{
-                HStack{
-                    Text("Profile")
-                        .fontWeight(.bold)
-                        .multilineTextAlignment(.leading)
-                        .font(.system(size: 23))
-                    Spacer()
-                    Button(action: {
-                        print("switch to edit screen")
-                    }) {
-                        Image(systemName: "square.and.pencil")
-                            .foregroundColor(.black)
-                            .font(.system(size: 27))
+        
+        NavigationStack {
+            ScrollView {
+                VStack {
+                    
+                    
+                    
+                    Group{
+                        
+                        HStack {
+                            Spacer()
+                            Text("...")
+                                .font(.system(size: 24))
+                                .fontWeight(.bold)
+                                .padding(.bottom, 5)
+                                .padding(.top, 12)
+                        }
+                        
+                        HStack {
+                            Text(viewModel.userProfile.name)
+                                .fontWeight(.bold)
+                                .multilineTextAlignment(.leading)
+                                .font(.system(size: 28))
+                            
+                            Spacer()
+                            
+                            VStack {
+                                Spacer()
+                                Text(viewModel.currentMonth)
+                                    .fontWeight(.bold)
+                                    .multilineTextAlignment(.center)
+                                    .font(.system(size: 20))
+                                Spacer() 
+                            }
+                        }
+                        .padding(.bottom, 15)
                     }
-                }
-                .padding(.bottom, 20)
-                
-                Text("Name:")
-                Text(viewModel.userProfile.name)
-                    .textCase(.uppercase)
-                    .font(.system(size: 25))
-                    .fontWeight(.bold)
-                    .padding(.bottom, 10)
-                
-                Text("Phone #:")
-                Text(viewModel.userProfile.phoneNumber)
-                    .font(.system(size: 22))
-                Text("Hobbies")
-                
-                LazyVGrid(
-                    columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: 4),
-                    spacing: 16
-                ) {
-                    ForEach(viewModel.userProfile.hobbies, id: \.self)
-                    { hobby in hobbyTile(hobby: hobby)}
-                }
-            }
-            .padding(.horizontal, 25)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            Spacer()
-            Group{
-                HStack{
-                    Text("Accountability Partner")
-                        .fontWeight(.bold)
-                        .multilineTextAlignment(.leading)
-                        .font(.title)
-                    Spacer()
-                    Button(action: {
-                        print("switch to edit screen")
-                    }) {
-                        Image(systemName: "square.and.pencil")
-                            .foregroundColor(.black)
-                            .font(.system(size: 27))
+                    .padding(.horizontal, 18)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    HStack {
+                        Image("design")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 330, height: 330)
+                            .padding(.bottom, 20)
                     }
+                    
+                    Group {
+                        
+                        HStack {
+                            Text("OBJECTIVES")
+                                .fontWeight(.bold)
+                            
+                            Spacer()
+                            
+                            Text(viewModel.userProfile.hobbies.first ?? "")
+                                .font(.system(size: 14))
+                        }
+                        
+                        HStack {
+                            Spacer()
+                            VStack(alignment: .trailing) {
+                                
+                                ForEach(viewModel.userProfile.hobbies.dropFirst(), id: \.self) { hobby in
+                                    Text(hobby)
+                                        .font(.system(size: 14))
+                                }
+                            }
+                        }
+                        
+                        
+                        HStack {
+                            
+                            Text("PHONE")
+                                .fontWeight(.bold)
+                            
+                            Spacer()
+                            Text(viewModel.phoneNumberFormatter.string(for: viewModel.userProfile.phoneNumber) ?? "")
+                                .font(.system(size: 14))
+                        }
+                        .padding(.top, 20)
+                        .padding(.bottom, 20)
+                        
+                        
+                        
+                    }
+                    .padding(.horizontal, 18)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    NavigationLink(destination: ProfileEditView()) {
+                        HStack {
+                            Text("edit profile")
+                                .font(.system(size: 15))
+                                .foregroundColor(.black)
+                                .padding(.vertical, 5)
+                                .padding(.horizontal, 20)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 20)
+                                        .stroke(Color.black, lineWidth: 1)
+                                )
+                        }
+                    }
+                    .padding(.bottom, 20)
+                    .padding(.top, 10)
+                    
+                    
+                    Divider()
+                        .frame(height: 1) // Line thickness
+                        .background(Color.black) // Line color
+                        .padding(.horizontal, 15)
+                    
+                    Text("BALANCE STATS")
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.top, 20)
+                        .padding(.bottom, 20)
+                        .padding(.horizontal, 18)
+                        .font(.system(size: 15))
+                    
+                    HStack {
+                        
+                        VStack(alignment: .leading) {
+                            
+                            Text("0")
+                                .font(.system(size: 40))
+                            Text("CURRENT")
+                                .font(.system(size: 10))
+                            Text("STREAK")
+                                .font(.system(size: 10))
+                            
+                        }
+                        
+                        Spacer()
+                        
+                        VStack(alignment: .leading) {
+                            
+                            Text("0")
+                                .font(.system(size: 40))
+                            Text("BEST")
+                                .font(.system(size: 10))
+                            Text("STREAK")
+                                .font(.system(size: 10))
+                            
+                        }
+                        
+                        Spacer()
+                        
+                        VStack(alignment: .leading) {
+                            
+                            Text("0")
+                                .font(.system(size: 40))
+                            Text("HOURS")
+                                .font(.system(size: 10))
+                            Text("BACK")
+                                .font(.system(size: 10))
+                            
+                        }
+                        
+                        Spacer()
+                        
+                        VStack(alignment: .leading) {
+                            
+                            Text("0")
+                                .font(.system(size: 40))
+                            Text("DAYS")
+                                .font(.system(size: 10))
+                            Text("BALANCED")
+                                .font(.system(size: 10))
+                            
+                        }
+                        
+                    }
+                    .padding(.horizontal, 18)
+                    
+                    Divider()
+                        .frame(height: 1)
+                        .background(Color.black)
+                        .padding(.horizontal, 15)
+                        .padding(.top, 20)
+                    
+                    Spacer()
+                    
+                    VStack(alignment: .leading)  {
+                        
+                        Text("Accountability Partner")
+                            .padding(.bottom, 10)
+                            .padding(.top, 3)
+                            .font(.system(size: 15))
+                        
+                        Text(viewModel.userProfile.accountabilityPartner?.name ?? "")
+                            .fontWeight(.bold)
+                        Spacer()
+                        Text(viewModel.phoneNumberFormatter.string(for: viewModel.userProfile.accountabilityPartner?.phoneNumber) ?? "")
+                            .font(.system(size: 14))
+                        
+                        
+                    }
+                    .padding(.horizontal, 18)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    NavigationLink(destination: ProfileCreation1View()) {
+                        HStack {
+                            Text("remove partner")
+                                .font(.system(size: 15))
+                                .foregroundColor(.black)
+                                .padding(.vertical, 5)
+                                .padding(.horizontal, 20)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 20)
+                                        .stroke(Color.black, lineWidth: 1)
+                                )
+                        }
+                        
+                    }
+                    .padding(.top, 10)
+                    .padding(.bottom, 30)
+                    
+                    
+                    HStack {
+                        Image("placeholder")
+                            .resizable()
+                            .scaledToFit()
+                    }
+                    
+                    VStack {
+                        
+                        Text("“The man who moves a mountain begins by carrying away small stones.”")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        Text("- Confucius")
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                        
+                        Text("BONSAI")
+                            .font(.system(size: 25))
+                            .foregroundColor(.black)
+                            .padding(.top, 30)
+                    }
+                    .padding(.horizontal, 18)
+                    .padding(.top, 20)
+                    
+                    
                 }
-                .padding(.bottom, 30)
-                
-                Text("Name:")
-                Text(viewModel.userProfile.accountabilityPartner?.name ?? "Need to setup accountability partner")
-                    .font(.system(size: 30))
-                    .fontWeight(.bold)
-                    .padding(.bottom, 10)
-                
-                Text("Phone #:")
-                Text(viewModel.userProfile.accountabilityPartner?.phoneNumber ?? "")
-                    .font(.system(size: 22))
-                
+                .padding()
+                .onAppear() {
+                    viewModel.fetchUserProfile()
+                }
             }
-            .padding(.horizontal, 25)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            
-        }
-        .padding()
-        .onAppear() {
-            viewModel.fetchUserProfile()
-        }
-    }
-    func hobbyTile(hobby: String) -> some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 10)
-                .fill(Color.green)
-                .frame(width: 80, height: 30)
-            Text(hobby)
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundColor(.white)
-                .multilineTextAlignment(.center)
         }
     }
 }

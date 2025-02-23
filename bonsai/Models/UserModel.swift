@@ -17,6 +17,13 @@ struct AddAccountabilityPartner: Encodable {
     let Id: String
 }
 
+
+struct checkAccountabilityPartner: Encodable {
+    
+    let Id: String
+}
+
+
 struct AddUserResponse: Decodable {
     let id: String
 }

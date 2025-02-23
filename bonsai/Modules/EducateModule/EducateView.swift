@@ -116,23 +116,24 @@ struct EducateView: View {
                     Image("tagline")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 230)
-                        .padding(.bottom,100)
+                        .frame(width: 270)
+                        .padding(.bottom,70)
                         
                     
                     NavigationLink(destination: ProfileCreation1View()) {
                         HStack {
                             Text("Get Started")
                                 .font(.system(size: 18))
-                                .foregroundStyle(.black)
-
-                            Image(systemName: "arrowshape.right.fill")
-                                .font(.system(size: 20))
-                                .foregroundStyle(.black)
+                                .foregroundColor(.black)
+                                .padding(.vertical, 10)
+                                .padding(.horizontal, 40)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 5)
+                                        .stroke(Color.black, lineWidth: 1)
+                                )
                         }
                     }
-                    .frame(maxWidth: .infinity, alignment: .trailing)
-                    .padding(.trailing, 40)
+
                 }
                 .padding()
             }

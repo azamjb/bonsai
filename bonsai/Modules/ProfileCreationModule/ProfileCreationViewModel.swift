@@ -28,7 +28,9 @@ class ProfileCreationViewModel: ObservableObject {
         fetchUserProfile()
     }
     
-    func saveAccountabilityPartner(name: String, phoneNumber: String) async {
+    func saveAccountabilityPartner(name: String, phoneNumber: String, hobbies: [String]) async {
+        
+        await profileService.saveHobbies(hobbies)
         await profileService.saveAccountabilityPartner(name: name, phoneNumber: phoneNumber)
         fetchUserProfile()
     }
