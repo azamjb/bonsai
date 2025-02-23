@@ -116,6 +116,13 @@
 			);
 			target = 242A1E922D2726B600D5CD5E /* shieldActionExtension */;
 		};
+		A7B6446F2D595F2900E894BA /* Exceptions for "deviceactivityreport" folder in "bonsai" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				PillBarReport.swift,
+			);
+			target = B71550B62CF9519F000AFACB /* bonsai */;
+		};
 		B715514A2CF96667000AFACB /* Exceptions for "deviceactivitymonitor" folder in "deviceactivitymonitor" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -200,6 +207,7 @@
 		B71551712CFABBF4000AFACB /* deviceactivityreport */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				A7B6446F2D595F2900E894BA /* Exceptions for "deviceactivityreport" folder in "bonsai" target */,
 				B715517D2CFABBF4000AFACB /* Exceptions for "deviceactivityreport" folder in "deviceactivityreport" target */,
 			);
 			path = deviceactivityreport;
