@@ -116,6 +116,13 @@
 			);
 			target = 242A1E922D2726B600D5CD5E /* shieldActionExtension */;
 		};
+		24E3C57D2D5586D60087940E /* Exceptions for "bonsai" folder in "bonsai" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = B71550B62CF9519F000AFACB /* bonsai */;
+		};
 		B715514A2CF96667000AFACB /* Exceptions for "deviceactivitymonitor" folder in "deviceactivitymonitor" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -172,6 +179,7 @@
 		B71550B92CF9519F000AFACB /* bonsai */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				24E3C57D2D5586D60087940E /* Exceptions for "bonsai" folder in "bonsai" target */,
 				B7F0144C2D238F09002BB521 /* Exceptions for "bonsai" folder in "deviceactivitymonitor" target */,
 				B7F0144D2D238F09002BB521 /* Exceptions for "bonsai" folder in "deviceactivityreport" target */,
 				B7F0144E2D238F09002BB521 /* Exceptions for "bonsai" folder in "shieldConfiguration" target */,
@@ -878,6 +886,7 @@
 				DEVELOPMENT_TEAM = WNKZNZ5B7R;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = bonsai/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -909,6 +918,7 @@
 				DEVELOPMENT_TEAM = WNKZNZ5B7R;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = bonsai/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

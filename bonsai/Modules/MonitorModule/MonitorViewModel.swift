@@ -13,5 +13,10 @@ import ManagedSettings
 import StoreKit
 
 @MainActor
-class MonitorViewModel: ObservableObject { }
+class MonitorViewModel: ObservableObject {
+    // For testing conditionals in view. Can't print stuff directly.
+    public func printHere() {
+        print("here")
+    }
+}
  

@@ -10,10 +10,13 @@ import DeviceActivity
 import _DeviceActivity_SwiftUI
 import ManagedSettings
 import ManagedSettingsUI
+import BackgroundTasks
 
 @main
 struct bonsaiApp: App {
     init() {
+        AppShieldSchedulerService.shared.setupDailyUnshield()
+
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
             if granted {
                 print("Notification permission granted")
@@ -25,8 +28,8 @@ struct bonsaiApp: App {
 
     var body: some Scene {
         WindowGroup {
-            RootView()
-            //ContentView()
+            //RootView()
+            ContentView()
         }
     }
 

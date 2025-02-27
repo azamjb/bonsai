@@ -17,13 +17,39 @@ public enum GroupDisplayType: String {
     case block = "BlockGroup+"
 }
 
-struct ScreenTimeActivityEvent: Codable {
-    let id: UUID
+public enum Weekday: Int, CaseIterable, Codable {
+    case sunday = 1, monday = 2, tuesday = 3, wednesday = 4, thursday = 5, friday = 6, saturday = 7
+    
+    static var today: Weekday {
+        let today = Date()
+        let calendar = Calendar.current
+        return Weekday(rawValue: calendar.component(.weekday, from: today))!
+    }
+    
+    var label: String {
+        switch self {
+        case .sunday: return "S"
+        case .monday: return "M"
+        case .tuesday: return "T"
+        case .wednesday: return "W"
+        case .thursday: return "T"
+        case .friday: return "F"
+        case .saturday: return "S"
+        }
+    }
+}
+
+struct ScreenTimeActivityEvent: Codable, Identifiable, Hashable {
+    public let id: UUID
+    var givenName: String = "Limit group"
     let appTokens: Set<ApplicationToken>?
     let categoryTokens: Set<ActivityCategoryToken>?
     let webDomainTokens: Set<WebDomainToken>?
     let hours: Int
     let minutes: Int
+    let weekdays: Set<Weekday>
+    // An invisble limit is one that is set after they get an app unblocked from an accountability partner code. This bool tells us it isn't to be shown as a limit.
+    let invisibleLimit: Bool
 }
 
 class DeviceActivityMonitorExtension: DeviceActivityMonitor {
