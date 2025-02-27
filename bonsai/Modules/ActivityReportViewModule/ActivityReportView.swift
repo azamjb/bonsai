@@ -26,18 +26,21 @@ struct ActivityReportView: View {
 
     var body: some View {
         NavigationView {
-            VStack(alignment: .center, spacing: 0) {
-                Text("My Activity")
-                    .font(.largeTitle)
-                    .padding(.top, 50)
-
-                DeviceActivityReport(context2, filter: filter)
-                    .padding(.bottom, 0)
-                    .offset(y: -100)
-
-                DeviceActivityReport(context, filter: filter)
-                    .padding(.horizontal, 16)
-                    .offset(y: -150)
+            ScrollView {
+                VStack {
+                    Group {
+                        DeviceActivityReport(.init(rawValue: "Total Activity"), filter: filter)
+                            .frame(height: 300)
+                    }
+                    Group {
+                        DeviceActivityReport(.init(rawValue: "pie Chart"), filter: filter)
+                            .frame(height: 400)
+                    }
+                    Group {
+                        DeviceActivityReport(.init(rawValue: "pill Bar"), filter: filter)
+                            .frame(height: 1536)
+                    }
+                }
             }
             .onAppear {
                 Task {

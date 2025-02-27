@@ -46,5 +46,16 @@ class AccountApi : BaseApi {
             print("Accountability partner added")
         }
     }
+    
+    func retrieveAccountabilityParnter(request: checkAccountabilityPartner) async throws {
+        let (responseData, httpResponse) = try await self.makePOSTRequest(url: getBaseUrl(endpoint: "user/retrieveAccountabilityPartner"), bodyObject: request)
+
+        if let error = checkForErrorFromResponse(responseData: responseData!, httpResponse: httpResponse) {
+            throw error
+        } else {
+            print("Accountability partner number retrieved")
+        }
+    }
+
 
 }

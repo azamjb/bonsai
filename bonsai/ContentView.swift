@@ -9,7 +9,9 @@ import SwiftUI
 import ManagedSettings
 
 struct ContentView: View {
+    
     @State private var tabSelection = 1
+    @StateObject var viewModel: ProfileViewModel = ProfileViewModel()
     
     var body: some View {
         TabView(selection: $tabSelection) {
@@ -30,7 +32,7 @@ struct ContentView: View {
                     Label("Accountability", systemImage: "person.fill")
                 }
                 .tag(3)
-            ProfileView()
+            ProfileView(viewModel: viewModel)
                 .tabItem {
                     Label("Profile", systemImage: "person.fill")
                 }

@@ -89,7 +89,7 @@ struct ProfileCreation2View: View {
                     }
                     .simultaneousGesture(TapGesture().onEnded {
                         Task {
-                            await viewModel.saveAccountabilityPartner(name: accountabilityPartnerName, phoneNumber: accountabilityPartnerPhone)
+                            await viewModel.saveAccountabilityPartner(name: accountabilityPartnerName, phoneNumber: accountabilityPartnerPhone, hobbies: hobbies)
                         }
                         
                         isProfileCreated = true
