@@ -455,26 +455,12 @@ struct MonitorView: View {
                 }
                 
                 Button("Save") {
-                    screenTime.limitHours = tempHours
-                    screenTime.limitMinutes = tempMinutes
-                    screenTime.selectedWeekdays = !screenTime.selectedWeekdays.isEmpty ? screenTime.selectedWeekdays : tempSelectedWeekdays
                     isScheduleSheetPresented = false
                 }
                 .frame(maxWidth: .infinity)
                 .buttonStyle(.borderedProminent)
             }
             .presentationDetents([.height(400)])
-        }
-        .onAppear() {
-            if let selectedLimit = screenTime.selectedLimit {
-                tempHours = selectedLimit.hours
-                tempMinutes = selectedLimit.minutes
-                tempSelectedWeekdays = selectedLimit.weekdays
-            } else {
-                tempHours = screenTime.limitHours
-                tempMinutes = screenTime.limitMinutes
-                tempSelectedWeekdays = screenTime.selectedWeekdays
-            }
         }
     }
     
