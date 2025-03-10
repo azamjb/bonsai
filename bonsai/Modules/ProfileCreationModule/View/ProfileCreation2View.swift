@@ -1,127 +1,132 @@
-//
-//  ProfileCreation2View.swift
-//  bonsai
-//
-//  Created by Nicolas Mingorance-Geraldo on 2025-01-11.
-//
-
 import SwiftUI
 
 struct ProfileCreation2View: View {
-    @ObservedObject var viewModel: ProfileCreationViewModel = ProfileCreationViewModel()
-    @State private var hobbies: [String] = []
-    @State private var accountabilityPartnerName: String = ""
-    @State private var accountabilityPartnerPhone: String = ""
-    @FocusState private var isFieldFocused: Bool
-    @AppStorage("isProfileCreated") private var isProfileCreated = false
-    
-    let systemHobbies = ["Friends", "Family", "Work", "School", "Sports", "Music", "Art", "Reading", "Gaming", "Traveling", "Cooking", "Fitness", "Movies", "Nature", "Writing", "SLEEEEP!"]
-    
+    @Environment(\.presentationMode) var presentationMode 
+    @StateObject var viewModel: ProfileCreationViewModel = ProfileCreationViewModel()
+    @State var name: String
+    @State var phoneNumber: String = ""
+    @FocusState var isFieldFocused: Bool
+    @State private var isShaking = false
+    @State private var isNavigating = false
+
     var body: some View {
-        NavigationStack{
-            ScrollView{
-                VStack {
-                    Text("Welcome, \(viewModel.userProfile.name)")
-                        .font(.title)
-                        .fontWeight(.bold)
-                        .foregroundColor(.black)
-                        .padding(20)
+        NavigationStack {
+            ZStack {
+                Color.white.ignoresSafeArea()
+                
+                VStack(spacing: 20) {
+                    // Logo and Header
                     Spacer()
-                    Text("Your journey starts now.")
-                        .padding(.bottom, 40)
                     
-                    Text("What matters most to you? ")
-                        .multilineTextAlignment(.center)
-                        .padding(10)
-                    
-                    Text("Choose up to 5 areas to reallocate your time and start living with purpose.")
+                    Image("BonsaiLogo_grey")
                         .padding(.bottom, 25)
-                        .multilineTextAlignment(.center)
-                    
-                    LazyVGrid(
-                        columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: 4),
-                        spacing: 16
-                    ) {
-                        ForEach(systemHobbies, id: \.self) { hobby in
-                            hobbyTile(
-                                hobby: hobby,
-                                isSelected: hobbies.contains(hobby),
-                                onTap: {
-                                    if hobbies.contains(hobby) {
-                                        hobbies.removeAll { $0 == hobby }
-                                    } else if hobbies.count < 5 {
-                                        hobbies.append(hobby)
-                                    }
-                                }
-                            )
-                        }
-                    }
-                    .padding()
-                    Text("Selected Hobbies: \(hobbies.joined(separator: ", "))")
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
-                        .padding(.bottom, 10)
-                    
+                                        
+                    // Input Fields
                     VStack(spacing: 16) {
                         Group {
-                            TextField("Enter accountability partner's name", text: $accountabilityPartnerName)
-                                .modifier(CustomTextFieldStyle(placeholder: "Name"))
-                            TextField("Enter accountability partner's phone number", text: $accountabilityPartnerPhone)
-                                .keyboardType(.phonePad)
-                                .modifier(CustomTextFieldStyle(placeholder: "Phone Number"))
+                            HStack(alignment: .center) {
+                                TextField("", text: $phoneNumber)
+                                    .keyboardType(.numberPad)
+                                    .modifier(CustomTextFieldStyle(placeholder: "Enter phone number:"))
+                                    .frame(height: 40)
+                                    .focused($isFieldFocused)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 20)
+                                            .stroke( Color.clear, lineWidth: 2)
+                                    )
+                                    .offset(x: isShaking ? -10 : 0) // Shake effect
+                                    .animation(isShaking ? .default.repeatCount(3, autoreverses: true) : .default, value: isShaking)
+                                    .onChange(of: phoneNumber) { newValue in
+                                        phoneNumber = formatPhoneNumber(newValue)
+                                    }
+                                
+                                let forwardButton = Image(systemName: "chevron.right")
+                                    .font(.system(size: 18))
+                                    .foregroundColor(.white)
+                                    .padding(12)
+                                    .background(Color.black)
+                                    .clipShape(Circle())
+                                
+                                Button(action: {
+                                    if phoneNumber.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                                        isShaking = true
+                                        
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                            isShaking = false
+                                        }
+                                    } else {
+                                        // Navigate if valid
+                                        isNavigating = true
+                                    }
+                                }) {
+                                    forwardButton
+                                }
+                                .padding(.top, 24)
+                                
+                            }
+                            .frame(height: 50)
                         }
-                        .focused($isFieldFocused)
                     }
-                    .padding()
-                    .onTapGesture {
-                        isFieldFocused = false // Dismiss keyboard when tapping outside fields
-                    }
+                    .padding(.horizontal, 16)
+                    
                     Spacer()
-                    NavigationLink(destination: ContentView()) {
-                        Text("Get Started")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(Color.black)
-                            .cornerRadius(12)
-                            .shadow(color: .gray.opacity(0.5), radius: 10, x: 0, y: 5)
-                    }
-                    .simultaneousGesture(TapGesture().onEnded {
-                        Task {
-                            await viewModel.saveAccountabilityPartner(name: accountabilityPartnerName, phoneNumber: accountabilityPartnerPhone, hobbies: hobbies)
-                        }
-                        
-                        isProfileCreated = true
-                    })
+                    Spacer()
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .padding()
             }
+            .onTapGesture {
+                hideKeyboard()
+                isFieldFocused = false
+            }
+            .navigationBarBackButtonHidden(true) // Hides the default back button
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: {
+                        presentationMode.wrappedValue.dismiss()
+                    }) {
+                        HStack {
+                            Image(systemName: "chevron.left") // Custom back arrow icon
+                                .font(.system(size: 16))
+                                .foregroundColor(.black)
+                        }
+                    }
+                }
+            }
+            .navigationDestination(isPresented: $isNavigating) {
+                DailyScreenTimeView(name: name, phoneNumber: phoneNumber)
+            }
         }
-        .onAppear() {
-            viewModel.fetchUserProfile()
+        .preferredColorScheme(.light)
+        .onTapGesture {
+            hideKeyboard()
+            isFieldFocused = false
         }
-        
-        
     }
     
-    func hobbyTile(hobby: String, isSelected: Bool, onTap: @escaping () -> Void) -> some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 10)
-                .fill(isSelected ? Color.green : Color.gray)
-                .frame(width: 80, height: 30)
-            Text(hobby)
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundColor(.white)
-                .multilineTextAlignment(.center)
+    private func formatPhoneNumber(_ number: String) -> String {
+        let digits = number.filter { $0.isNumber }
+        
+        let areaCode = digits.prefix(3)
+        let prefix = digits.dropFirst(3).prefix(3)
+        let lineNumber = digits.dropFirst(6).prefix(4)
+        
+        var formatted = ""
+        
+        if !areaCode.isEmpty {
+            formatted += "(\(areaCode)) "
         }
-        .onTapGesture {
-            onTap()
+        if !prefix.isEmpty {
+            formatted += "\(prefix)-"
         }
+        if !lineNumber.isEmpty {
+            formatted += "\(lineNumber)"
+        }
+        
+        return formatted
     }
 }
 
-
 #Preview {
-    ProfileCreation2View()
+    ProfileCreation2View(name: "azam")
 }

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct EducateView: View {
     @StateObject var viewModel: EducateViewModel = EducateViewModel()
-    @Environment(\.dismiss) private var dismiss // Environment property for dismissing the view
+    @Environment(\.dismiss) private var dismiss 
 
     var body: some View {
         NavigationStack {
@@ -21,27 +21,41 @@ struct EducateView: View {
                         .font(.system(size: 20, weight: .bold))
                         .padding(.top, 60)
 
-                    Text("BONSAI.")
-                        .font(.system(size: 240, weight: .black))
-                        .italic()
-                        .lineSpacing(0)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .multilineTextAlignment(.center)
-                        .padding(.bottom, 160)
+                    VStack(spacing: -115) {
+                        Text("BO")
+                            .font(.system(size: 245, weight: .black))
+                            .italic()
+                            .fixedSize(horizontal: false, vertical: true)
+                            .multilineTextAlignment(.center)
+                        
+                        Text("NS")
+                            .font(.system(size: 245, weight: .black))
+                            .italic()
+                            .fixedSize(horizontal: false, vertical: true)
+                            .multilineTextAlignment(.center)
+
+                        Text("AI.")
+                            .font(.system(size: 245, weight: .black))
+                            .italic()
+                            .fixedSize(horizontal: false, vertical: true)
+                            .multilineTextAlignment(.center)
+                    }
+
                     
                     VStack(alignment: .leading) {
                         
-                        Text("Find Your Balance")
+                        Text("FIND YOUR BALANCE")
                             .font(.title2)
                             .padding(.bottom, 5)
+                            .fontWeight(.bold)
                         
-                        Text("• Choose the apps you want to track")
+                        Text("• Pick the apps you want to track")
                             .font(.caption)
                         
-                        Text("• Set daily screen time limits")
+                        Text("• Set screen time goals")
                             .font(.caption)
                         
-                        Text("• Take control of your time")
+                        Text("• Stay focused and in control")
                             .font(.caption)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -52,17 +66,18 @@ struct EducateView: View {
                     
                     VStack(alignment: .trailing) {
                         
-                        Text("Partner with a Purpose")
+                        Text("PARTNER WITH PURPOSE")
                             .font(.title2)
                             .padding(.bottom, 5)
+                            .fontWeight(.bold)
                         
-                        Text("• Choose your accountability partner")
+                        Text("• Choose an Accountability Partner to keep you ontrack")
                             .font(.caption)
                         
-                        Text("• your partner can grant you extra time")
+                        Text("• When you reach a limit, the Shield appears - time to step away")
                             .font(.caption)
                         
-                        Text("• Don't want to reach out? be prepared to pay")
+                        Text("• Need more time? Your partner can send a code to grant you access")
                             .font(.caption)
                     }
                     .frame(maxWidth: .infinity, alignment: .trailing)
@@ -73,45 +88,31 @@ struct EducateView: View {
                     
                     VStack(alignment: .leading) {
                         
-                        Text("Own Your Time")
+                        Text("OWN YOUR TIME")
                             .font(.title2)
-                            .padding(.bottom, 5)
-                        
-                        Text("• Apps will be blocked once you hit your time limit")
-                            .font(.caption)
-                        
-                        Text("• Accountability partners help you stick to your limits.")
-                            .font(.caption)
-                        
-                        Text("• Use your time wisely and productively")
-                            .font(.caption)
-                        
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.leading, 5)
-                    .padding(.bottom, 160)
-                    
-                    
-                    
-                    VStack(alignment: .trailing) {
+                            .fontWeight(.bold)
                         
                         Text("Track. Grow. Balance.")
-                            .font(.title2)
+                            .font(.title3)
                             .padding(.bottom, 5)
                         
-                        Text("• View detailed analytics of your screen time")
+                        Text("• Check your dashboard")
                             .font(.caption)
                         
-                        Text("• Monitor your progress toward your goals")
+                        Text("• See your progress")
                             .font(.caption)
                         
-                        Text("• Achieve balance in your digital life")
+                        Text("• Create space for what matters")
                             .font(.caption)
                         
                     }
-                    .frame(maxWidth: .infinity, alignment: .trailing)
-                    .padding(.trailing, 5)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.leading, 5)
                     .padding(.bottom, 160)
+                    
+                    
+                    
+                    
 
                     Image("tagline")
                         .resizable()
@@ -126,9 +127,9 @@ struct EducateView: View {
                                 .font(.system(size: 18))
                                 .foregroundColor(.black)
                                 .padding(.vertical, 10)
-                                .padding(.horizontal, 40)
+                                .padding(.horizontal, 70)
                                 .overlay(
-                                    RoundedRectangle(cornerRadius: 5)
+                                    RoundedRectangle(cornerRadius: 20)
                                         .stroke(Color.black, lineWidth: 1)
                                 )
                         }

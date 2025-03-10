@@ -1,79 +1,102 @@
-//
-//  ProfileCreationView.swift
-//  bonsai
-//
-//  Created by Nicolas Mingorance-Geraldo on 2025-01-08.
-//
-
-
 import SwiftUI
 
 struct ProfileCreation1View: View {
+    @Environment(\.presentationMode) var presentationMode
     @StateObject var viewModel: ProfileCreationViewModel = ProfileCreationViewModel()
     @State private var name: String = ""
-    @State private var phoneNumber: String = ""
     @FocusState private var isFieldFocused: Bool
     
+    @State private var isShaking = false 
+    @State private var isNavigating = false 
+
     var body: some View {
         NavigationStack {
-            ScrollView {
+            ZStack {
+                Color.white.ignoresSafeArea()
+
                 VStack(spacing: 20) {
-                    // Logo and Header
+                    Spacer()
+                    
                     Image("BonsaiLogo_grey")
-                    Text("BONSAI")
-                        .font(.system(size: 32, weight: .bold))
-                        .foregroundColor(.black)
-                    Text("Let's Grow Together")
-                        .font(.system(size: 22, weight: .semibold))
-                        .foregroundColor(.black)
-                        .padding(.top, 8)
-                    
-                    // Progress Indicator
-                    ProgressView(value: 0.5)
-                        .progressViewStyle(LinearProgressViewStyle(tint: Color.green))
-                        .padding(.vertical, 30)
-                    
-                    // Input Fields
+                        .padding(.bottom, 25)
+                                        
                     VStack(spacing: 16) {
                         Group {
-                            TextField("Enter your name", text: $name)
-                                .modifier(CustomTextFieldStyle(placeholder: "Name"))
-                            TextField("Enter your phone number", text: $phoneNumber)
-                                .keyboardType(.phonePad)
-                                .modifier(CustomTextFieldStyle(placeholder: "Phone Number"))
+                            HStack(alignment: .center) {
+                                TextField("", text: $name)
+                                    .modifier(CustomTextFieldStyle(placeholder: "Enter name:"))
+                                    .frame(height: 40)
+                                    .focused($isFieldFocused)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 20)
+                                            .stroke( Color.clear, lineWidth: 2)
+                                    )
+                                    .offset(x: isShaking ? -10 : 0) // Shake effect
+                                    .animation(isShaking ? .default.repeatCount(3, autoreverses: true) : .default, value: isShaking)
+
+                                let forwardButton = Image(systemName: "chevron.right")
+                                    .font(.system(size: 18))
+                                    .foregroundColor(.white)
+                                    .padding(12)
+                                    .background(Color.black)
+                                    .clipShape(Circle())
+
+                                Button(action: {
+                                    if name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                                        isShaking = true
+                                        
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                            isShaking = false
+                                        }
+                                    } else {
+                                        // Navigate if valid
+                                        isNavigating = true
+                                    }
+                                }) {
+                                    forwardButton
+                                }
+                                .padding(.top, 24)
+                            }
+                            .frame(height: 50)
                         }
-                        .focused($isFieldFocused)
                     }
-                    .onTapGesture {
-                        isFieldFocused = false // Dismiss keyboard when tapping outside fields
-                    }
+                    .padding(.horizontal, 16)
                     
-                    // Create Profile Buttonx
-                    NavigationLink(
-                        destination: TermsAndConditionsView(name: name, phoneNumber: phoneNumber)
-                    ) {
-                        Text("Go to Terms & Conditions")
-                            .font(.headline)
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(Color.blue)
-                            .foregroundColor(.white)
-                            .cornerRadius(12)
-                    }
-                    .padding(.horizontal)
-                    
+                    Spacer()
+                    Spacer()
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .padding()
-                .onTapGesture {
-                    isFieldFocused = false // Dismiss keyboard when tapping outside
+            }
+            .onTapGesture {
+                hideKeyboard()
+            }
+            .navigationBarBackButtonHidden(true)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: {
+                        presentationMode.wrappedValue.dismiss()
+                    }) {
+                        HStack {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 16))
+                                .foregroundColor(.black)
+                        }
+                    }
                 }
             }
-            .background(Color.white.ignoresSafeArea())
+            .navigationDestination(isPresented: $isNavigating) {
+                ProfileCreation2View(name: name)
+            }
         }
         .preferredColorScheme(.light)
-        .onTapGesture {
-            isFieldFocused = false // Dismiss keyboard globally
-        }
+    }
+}
+
+extension View {
+    func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),
+                                        to: nil, from: nil, for: nil)
     }
 }
 
@@ -84,12 +107,14 @@ struct CustomTextFieldStyle: ViewModifier {
     func body(content: Content) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(placeholder)
-                .foregroundColor(.gray)
-                .font(.headline)
+                .foregroundColor(.black)
+                .font(.body)
+                .padding(.leading, 10)
             content
-                .padding()
+                .padding(.vertical, 8)
+                .padding(.horizontal, 12)
                 .background(Color.gray.opacity(0.2))
-                .cornerRadius(8)
+                .cornerRadius(20)
                 .foregroundColor(.black)
         }
     }
@@ -98,10 +123,3 @@ struct CustomTextFieldStyle: ViewModifier {
 #Preview {
     ProfileCreation1View()
 }
-
-
-
-
-
-
-

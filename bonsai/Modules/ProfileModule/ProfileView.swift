@@ -229,7 +229,6 @@ struct ProfileView: View {
                     .padding(.top, 10)
                     .padding(.bottom, 30)
                     
-                    
                     HStack {
                         Image("placeholder")
                             .resizable()
@@ -237,11 +236,10 @@ struct ProfileView: View {
                     }
                     
                     VStack {
-                        
                         Text("“The man who moves a mountain begins by carrying away small stones.”")
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        Text("- Confucius")
+                        Text("- Brayden O'Neil")
                             .frame(maxWidth: .infinity, alignment: .trailing)
                         
                         Text("BONSAI")

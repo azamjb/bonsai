@@ -1,87 +1,152 @@
-//
-//  PastUsageInspireView.swift
-//  bonsai
-//
-//  Created by Nicolas Mingorance-Geraldo on 2025-01-19.
-//
-
 import SwiftUI
 import DeviceActivity
 import FamilyControls
 
 struct PastUsageInspireView: View {
-    @State var usageYears: Int = 20
+    
+    @State var screenTime: String
+    @State var hobbies: [String]
+    @Environment(\.presentationMode) var presentationMode
     
     let center = AuthorizationCenter.shared
-
     
-    var body: some View{
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 20) {
-                    // Logo and Header
-                    Image("BonsaiLogo_grey")
-                    Text("BONSAI")
-                        .font(.system(size: 32, weight: .bold))
-                        .foregroundColor(.black)
-                    Text("Let's Grow Together")
-                        .font(.system(size: 22, weight: .semibold))
-                        .foregroundColor(.black)
-                        .padding(.top, 8)
-                    
-                    // Progress Indicator
-                    ProgressView(value: 0.75)
-                        .progressViewStyle(LinearProgressViewStyle(tint: Color.green))
-                        .padding(.vertical, 30)
-                        
-                    
-                    VStack(alignment: .center, spacing: 20) {
-                        Text("Based on your current\nscreen usage you're set\nto spend: ")
-                            .multilineTextAlignment(.center)
-                            .padding()
-                        
-                        Text(String(usageYears) + " years")
-                            .padding()
-                        
-                        Text("Take control.")
-                            .padding(.bottom, 20)
-                        
-                        Text("Make the change.")
-                            .padding(.bottom, 50)
-                        
-                        HStack (spacing: 0){
-                            Text("Your ")
-                            Text("time.  ").bold()
-                            Text("Your ")
-                            Text("purpose").bold()
-                        }
-
-                    }
-                    
-                    
-                    // Move forward button
-                    NavigationLink(destination: ProfileCreation2View()) {
-                        Text("Let's do it different!")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding()
-                            .frame(maxWidth: 220)
-                            .background(Color.black)
-                            .cornerRadius(39)
-                            .shadow(color: .gray.opacity(0.5), radius: 10, x: 0, y: 5)
-                    }
-                }
-                .padding()
-            }
-            .background(Color.white.ignoresSafeArea())
-        }
-        .preferredColorScheme(.light)
-        
+    var usageYears: Int {
+        return calculateUsage(screenTime: screenTime)
     }
     
+    @State private var currentStep = 0
+    @State private var showText = true
+    @State private var navigateToNextView = false
     
+    var texts: [AnyView] {
+           return [
+               AnyView(Text("At your current pace, you're on track to spend")),
+               AnyView(
+                   HStack {
+                       Text("\(calculateUsage(screenTime: screenTime))")
+                           .font(.system(size: 50, weight: .bold))
+                           .frame(alignment: .leading)
+
+                       Text("years of your life, staring at your screen")
+                               .font(.body)
+                               .multilineTextAlignment(.leading)
+                   }
+               ),
+               AnyView(Text("But starting today, you choose differently")),
+               AnyView(
+                    
+                       Text("Starting today, you make the commitment to reclaim your time, for ") + Text(hobbiesOutput(hobbies: hobbies))
+                           
+                   
+               )
+           ]
+       }
+
+
+    
+    var body: some View {
+        NavigationStack {
+            
+            Spacer()
+            
+            VStack(spacing: 20) {
+                
+                if currentStep < texts.count {
+                    texts[currentStep]
+                        .multilineTextAlignment(.center)
+                        .padding()
+                        .opacity(showText ? 1 : 0)
+                        .animation(.easeInOut(duration: 1), value: showText)
+                            }
+            }
+            .padding()
+            .navigationDestination(isPresented: $navigateToNextView) {
+                ProfileCreation4View()
+            }
+            
+            Spacer()
+            Spacer()
+            
+            
+        }
+        .preferredColorScheme(.light)
+        .onAppear {
+            showTextSequentially()
+        }
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: {
+                    presentationMode.wrappedValue.dismiss() // Custom back action
+                }) {
+                    HStack {
+                        Image(systemName: "chevron.left") // Custom back arrow icon
+                            .font(.system(size: 16))
+                            .foregroundColor(.black)
+                            
+                    }
+                }
+            }
+        }
+    }
+    
+    func showTextSequentially() {
+        for i in 0..<texts.count {
+            DispatchQueue.main.asyncAfter(deadline: .now() + Double(i * 4)) { // Wait before showing
+                withAnimation {
+                    showText = true
+                }
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) { // Wait before fading out
+                    withAnimation {
+                        showText = false
+                    }
+                }
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3) { // Move to next text after fade-out
+                    if i == texts.count - 1 {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                            navigateToNextView = true // Trigger navigation after the last text fades
+                        }
+                    } else {
+                        currentStep += 1
+                    }
+                }
+            }
+        }
+    }
 }
 
-#Preview{
-    PastUsageInspireView()
+// Helper function for formatting hobbies
+func hobbiesOutput(hobbies: [String]) -> String {
+    switch hobbies.count {
+    case 1:
+        return hobbies[0].lowercased()
+    case 2:
+        return hobbies.joined(separator: " and ").lowercased()
+    default:
+        let lastHobby = hobbies.last!
+        let otherHobbies = hobbies.dropLast().joined(separator: ", ")
+        return otherHobbies.lowercased() + ", and " + lastHobby.lowercased()
+    }
+}
+
+// Function to calculate usage in years
+func calculateUsage(screenTime: String) -> Int {
+    switch screenTime {
+    case "1-2 hours":
+        return 6
+    case "2-4 hours":
+        return 12
+    case "4-6 hours":
+        return 18
+    case "7+ hours":
+        return 23
+    default:
+        return 0
+    }
+}
+
+#Preview {
+    PastUsageInspireView(screenTime: "4-6 hours", hobbies: ["Friends", "Family"])
 }
