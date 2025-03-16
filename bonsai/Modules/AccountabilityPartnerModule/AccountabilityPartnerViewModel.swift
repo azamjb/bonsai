@@ -12,6 +12,7 @@ import ManagedSettings
 @MainActor public class AccountabilityPartnerViewModel: ObservableObject {
     @Published public var phoneNumber: String = ""
     @Published public var code: String = ""
+    @Published public var note: String = ""
     @Published public var userCode: String = ""
     @Published public var isValidated: Bool = false
     @Published public var isSendInvitePressed: Bool = false
@@ -43,7 +44,7 @@ import ManagedSettings
         
         do {
             try await smsApi.invite(
-                request: SMSRequest(
+                request: SMSInvite(
                     number: phoneNumber,
                     username: "Azam",
                     accountabilityPartnerName: "Bob",
@@ -65,7 +66,7 @@ import ManagedSettings
         let smsApi = SMSApi()
         do {
             try await smsApi.removalNotif(
-                request: SMSRequest(
+                request: SMSInvite(
                     number: phoneNumber,
                     username: "Azam",
                     accountabilityPartnerName: "Bob",
@@ -97,6 +98,7 @@ import ManagedSettings
                     number: phoneNumber,
                     username: "Azam",
                     accountabilityPartnerName: "Bob",
+                    note: "",
                     code: code
                 )
             )

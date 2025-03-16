@@ -1,38 +1,28 @@
-//
-//  TotalActivityReport.swift
-//  deviceactivityreport
-//
-//  Created by Azam Jawad on 2024-11-29.
-//
-
 import DeviceActivity
 import SwiftUI
 
 extension DeviceActivityReport.Context {
-    // If your app initializes a DeviceActivityReport with this context, then the system will use
-    // your extension's corresponding DeviceActivityReportScene to render the contents of the
-    // report.
     static let totalActivity = Self("Total Activity")
 }
 
 struct TotalActivityReport: DeviceActivityReportScene {
-    // Define which context your scene will represent.
     let context: DeviceActivityReport.Context = .totalActivity
-    
-    // Define the custom configuration and the resulting view for this report.
-    let content: (String) -> TotalActivityView
-    
+    let content: (String) -> TotalActivityView  // 🔹 Expecting a String instead of AttributedString
+
     func makeConfiguration(representing data: DeviceActivityResults<DeviceActivityData>) async -> String {
-        // Reformat the data into a configuration that can be used to create
-        // the report's view.
         let formatter = DateComponentsFormatter()
-        formatter.allowedUnits = [.day, .hour, .minute, .second]
+        formatter.allowedUnits = [.hour, .minute]
         formatter.unitsStyle = .abbreviated
         formatter.zeroFormattingBehavior = .dropAll
-        
+
         let totalActivityDuration = await data.flatMap { $0.activitySegments }.reduce(0, {
             $0 + $1.totalActivityDuration
         })
-        return formatter.string(from: totalActivityDuration) ?? "No activity data"
+
+        guard let formattedTime = formatter.string(from: totalActivityDuration) else {
+            return "No activity data"
+        }
+
+        return formattedTime  
     }
 }

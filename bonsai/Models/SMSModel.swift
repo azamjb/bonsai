@@ -11,7 +11,11 @@
 //
 //  Created by Brayden O on 2024-12-31.
 //
-struct SMSRequest : Encodable {
+struct SMSInvite : Encodable {
     let number, username, accountabilityPartnerName, code: String
 }
 
+
+struct SMSRequest : Encodable {
+    let number, username, accountabilityPartnerName, note, code: String
+}

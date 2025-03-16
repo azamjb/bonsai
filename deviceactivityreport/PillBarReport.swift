@@ -44,26 +44,46 @@ struct TimeLimitSliderView: View {
     }
     
     var body: some View {
+        
         VStack(alignment: .leading, spacing: 4) {
             // Display elapsed vs. allowed time.
-            Text("\(formatTime(elapsedTime)) / \(formatTime(totalTime))")
-                .font(.caption)
-                .foregroundColor(.secondary)
+            
+            
             GeometryReader { geometry in
                 ZStack(alignment: .leading) {
                     // Background pill (empty state)
                     Capsule()
                         .fill(Color.gray.opacity(0.2))
-                        .frame(height: 20)
-                    // Foreground pill (filled portion)
-                    Capsule()
-                        .fill(Color.green)
-                        .frame(width: geometry.size.width * CGFloat(progress), height: 20)
-                        .animation(.easeInOut, value: progress)
+                        .frame(height: 10)
+
+                    // Foreground gradient (full width)
+                    LinearGradient(
+                        gradient: Gradient(stops: [
+                            Gradient.Stop(color: Color(hex: "0x121961"), location: 0.0),
+                            Gradient.Stop(color: Color(hex: "0x534E88"), location: 0.25),
+                            Gradient.Stop(color: Color(hex: "0x97366B"), location: 0.5),
+                            Gradient.Stop(color: Color(hex: "0xF87946"), location: 0.75),
+                            Gradient.Stop(color: Color(hex: "0xC95001"), location: 1.0)
+                        ]),
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                    .frame(width: geometry.size.width, height: 10) // ✅ Progress width now controls fill area
+                    .mask( // ✅ Only reveal the filled portion
+                                    HStack {
+                                        Rectangle()
+                                            .frame(width: geometry.size.width * CGFloat(progress), height: 10)
+                                        Spacer() // Ensures gradient starts from the left
+                                    }
+                                )
+                    .clipShape(Capsule()) // ✅ Keeps rounded edges when clipped
+                    .animation(.easeInOut, value: progress)
                 }
             }
             .frame(height: 20)
         }
+
+
     }
 }
 
@@ -71,21 +91,78 @@ struct TimeLimitSliderView: View {
 struct PillBarView: View {
     let configuration: PillBarViewConfiguration
     
+    /// Format seconds as "Hh Mm"
+    private func formatTime(_ time: TimeInterval) -> String {
+        let hours = Int(time) / 3600
+        let minutes = (Int(time) % 3600) / 60
+        return "\(hours)h \(minutes)m"
+    }
+     
+    
     var body: some View {
         // Use a vertical stack to list the pill bars.
         VStack(alignment: .leading, spacing: 16) {
             ForEach(configuration.usageGroups) { group in
+                
+                
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(group.groupName)
-                        .font(.headline)
+                    
+                    HStack {
+                        
+                        Text("LABEL")
+                            .font(.system(size: 10))
+                        
+                        Spacer()
+                        
+                        Text("DAILY LIMIT")
+                            .font(.system(size: 10))
+                        
+                    }
+                    
+                    HStack {
+                        
+                        Text(group.groupName)
+                            .font(.headline)
+                        
+                        Spacer()
+                        
+                        Text("\(formatTime(group.elapsedTime)) / \(formatTime(group.totalAllowedTime))")
+                            .font(.system(size: 15))
+                            .foregroundColor(.black)
+
+                        
+                    }
+                    
+                        
+                                        
                     TimeLimitSliderView(elapsedTime: group.elapsedTime, totalTime: group.totalAllowedTime)
                 }
             }
         }
+        .fixedSize(horizontal: false, vertical: true)
+        .frame( height: 500)
         .padding()
     }
 }
 
+
+extension Color {
+    init(hex: String) {
+        var hexSanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines)
+        hexSanitized = hexSanitized.replacingOccurrences(of: "#", with: "")
+        
+        var rgb: UInt64 = 0
+        Scanner(string: hexSanitized).scanHexInt64(&rgb)
+        
+        let red = Double((rgb >> 16) & 0xFF) / 255.0
+        let green = Double((rgb >> 8) & 0xFF) / 255.0
+        let blue = Double(rgb & 0xFF) / 255.0
+        
+        self.init(red: red, green: green, blue: blue)
+    }
+}
+    
+    
 // MARK: - PillBarReport Scene
 struct PillBarReport: DeviceActivityReportScene {
     // Use the custom context for the pill bar report.

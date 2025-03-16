@@ -13,8 +13,9 @@ class ProfileCreationViewModel: ObservableObject {
     @Published var userProfile = UserProfile()
     private let profileService: ProfileServiceProtocol = ProfileService()
     
-    func saveBasicInfo(name: String, phoneNumber: String) {
-        profileService.saveBasicInfo(name: name, phoneNumber: phoneNumber)
+    func saveBasicInfo(name: String, phoneNumber: String) async {
+        
+        await profileService.saveBasicInfo(name: name, phoneNumber: phoneNumber)
         fetchUserProfile()
     }
     
@@ -23,14 +24,14 @@ class ProfileCreationViewModel: ObservableObject {
         fetchUserProfile()
     }
     
-    func saveHobbies(hobbies: [String]) {
+    func saveHobbies(hobbies: [String])async {
         profileService.saveHobbies(hobbies)
         fetchUserProfile()
     }
     
-    func saveAccountabilityPartner(name: String, phoneNumber: String, hobbies: [String]) async {
+    func saveAccountabilityPartner(name: String, phoneNumber: String) async {
         
-        await profileService.saveHobbies(hobbies)
+        
         await profileService.saveAccountabilityPartner(name: name, phoneNumber: phoneNumber)
         fetchUserProfile()
     }

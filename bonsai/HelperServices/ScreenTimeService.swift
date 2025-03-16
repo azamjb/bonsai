@@ -139,6 +139,7 @@ public class ScreenTimeService: ObservableObject {
                     number: accountabilityPartnerNumber!,
                     username: "Azam",
                     accountabilityPartnerName: "Bob",
+                    note: "",
                     code: code
                 )
             )

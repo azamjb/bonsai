@@ -8,7 +8,8 @@
 import Foundation
 
 protocol ProfileServiceProtocol {
-    func saveBasicInfo(name: String, phoneNumber: String)
+    
+    func saveBasicInfo(name: String, phoneNumber: String) async
     func saveHobbies(_ hobbies: [String])
     func saveAccountabilityPartner(name: String, phoneNumber: String) async
     func markTermsAccepted()
@@ -32,16 +33,15 @@ class ProfileService: ProfileServiceProtocol {
     
     func markTermsAccepted() {
         userProfile.termsAccepted = true
-        Task {
-            await saveUserProfile()
+        if let encoded = try? JSONEncoder().encode(userProfile) {
+            UserDefaults.standard.set(encoded, forKey: userDefaultsKey)
         }
     }
     
     func saveHobbies(_ hobbies: [String]) {
         userProfile.hobbies = hobbies
-        Task {
-            await saveUserProfile()
-        }
+        
+        
     }
     
     
@@ -57,7 +57,7 @@ class ProfileService: ProfileServiceProtocol {
         let request = AddAccountabilityPartner(AccountabilityPartnerName: name, AccountabilityPartnerPhoneNumber: phoneNumber, Id: idString ?? "")
 
         do {
-            try await accountApi.addAccountabilityParnter(request: request)
+            try await accountApi.addAccountabilityPartner(request: request)
             print("Successfully added accountability partner")
         } catch {
             print("Failed to add user: \(error.localizedDescription)")
@@ -68,14 +68,13 @@ class ProfileService: ProfileServiceProtocol {
                 print("Raw error: \(error)")
             }
         }
+        
 
         if let encoded = try? JSONEncoder().encode(userProfile) {
             UserDefaults.standard.set(encoded, forKey: userDefaultsKey)
         }
     }
 
-
-    
     func fetchUserProfile() -> UserProfile {
         if let data = UserDefaults.standard.data(forKey: userDefaultsKey),
            let decodedProfile = try? JSONDecoder().decode(UserProfile.self, from: data) {
@@ -85,7 +84,9 @@ class ProfileService: ProfileServiceProtocol {
         return userProfile
     }
     
+    
     private func saveUserProfile() async {
+        
         let request = RegisterUser(FirstName: userProfile.name, lastName: userProfile.name, phoneNumber: userProfile.phoneNumber)
         
         do {
@@ -95,6 +96,7 @@ class ProfileService: ProfileServiceProtocol {
             print("User added successfully with ID: \(userId)")
             
             userProfile.Id = userId
+            
         } catch {
             print("Failed to add user: \(error)")
         }
@@ -104,6 +106,5 @@ class ProfileService: ProfileServiceProtocol {
             UserDefaults.standard.set(encoded, forKey: userDefaultsKey)
         }
     }
-
 
 }

@@ -18,7 +18,16 @@ struct AccountabilityPartnerView: View {
                     Text("Accountability")
                         .font(.largeTitle)
                     
+                    
+                    
+                    
+                    Text("THIS PAGE WILL BE REMOVED")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                    
                     if (AccountabilityPartnerNumber == nil) { // only let user invite an accountability partner if they dont already have one
+                        
+                        
                         
                         Text("Invite Partner")
                             .font(.title)
@@ -62,6 +71,14 @@ struct AccountabilityPartnerView: View {
                         .foregroundColor(.white)
                         .cornerRadius(10)
                         .disabled(viewModel.isSendingInvite)
+                    }
+                    
+                    NavigationLink(destination: BoundaryExtensionRequestView()) {
+                        Text("Go to Destination")
+                            .padding()
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .cornerRadius(8)
                     }
                     
                     
@@ -180,4 +197,3 @@ struct AccountabilityPartnerView: View {
         }
     }
 }
-

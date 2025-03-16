@@ -27,16 +27,11 @@ struct ContentView: View {
                 }
                 .tag(2)
 
-            AccountabilityPartnerView(tabSelection: $tabSelection)
-                .tabItem {
-                    Label("Accountability", systemImage: "person.fill")
-                }
-                .tag(3)
             ProfileView(viewModel: viewModel)
                 .tabItem {
                     Label("Profile", systemImage: "person.fill")
                 }
-                .tag(4)
+                .tag(3)
         }
     }
 }

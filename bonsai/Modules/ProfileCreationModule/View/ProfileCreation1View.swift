@@ -7,7 +7,8 @@ struct ProfileCreation1View: View {
     @FocusState private var isFieldFocused: Bool
     
     @State private var isShaking = false 
-    @State private var isNavigating = false 
+    @State private var isNavigating = false
+    let accountApi = AccountApi()
 
     var body: some View {
         NavigationStack {
@@ -50,6 +51,10 @@ struct ProfileCreation1View: View {
                                         }
                                     } else {
                                         // Navigate if valid
+                                        Task {
+                                            try await AccountApi().connectionPrompt()
+                                        }
+                                        
                                         isNavigating = true
                                     }
                                 }) {

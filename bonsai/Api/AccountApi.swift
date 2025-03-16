@@ -14,6 +14,18 @@ class AccountApi : BaseApi {
         super.init()
     }
     
+    func connectionPrompt() async throws -> LoginResponse { // only serves purpose of prompting network access
+            let (responseData, httpResponse) = try await self.makePOSTRequest(url: getBaseUrl(endpoint: "abcd"), bodyObject: "null")
+            
+            if let error = checkForErrorFromResponse(responseData: responseData!, httpResponse: httpResponse) {
+                throw error
+            } else {
+                return try! JSONDecoder().decode(LoginResponse.self, from: responseData!)
+            }
+        }
+
+    
+    
     func login(request: LoginRequest) async throws -> LoginResponse {
         let (responseData, httpResponse) = try await self.makePOSTRequest(url: getBaseUrl(endpoint: "login"), bodyObject: request)
         
@@ -37,7 +49,7 @@ class AccountApi : BaseApi {
     }
     
     
-    func addAccountabilityParnter(request: AddAccountabilityPartner) async throws {
+    func addAccountabilityPartner(request: AddAccountabilityPartner) async throws {
         let (responseData, httpResponse) = try await self.makePOSTRequest(url: getBaseUrl(endpoint: "user/addAccountabilityPartner"), bodyObject: request)
 
         if let error = checkForErrorFromResponse(responseData: responseData!, httpResponse: httpResponse) {
@@ -47,7 +59,7 @@ class AccountApi : BaseApi {
         }
     }
     
-    func retrieveAccountabilityParnter(request: checkAccountabilityPartner) async throws {
+    func retrieveAccountabilityPartner(request: checkAccountabilityPartner) async throws {
         let (responseData, httpResponse) = try await self.makePOSTRequest(url: getBaseUrl(endpoint: "user/retrieveAccountabilityPartner"), bodyObject: request)
 
         if let error = checkForErrorFromResponse(responseData: responseData!, httpResponse: httpResponse) {

@@ -57,6 +57,10 @@ struct ProfileCreation2View: View {
                                     } else {
                                         // Navigate if valid
                                         isNavigating = true
+                                        
+                                        Task {
+                                            await viewModel.saveBasicInfo(name: name, phoneNumber: phoneNumber) // save name and phone number
+                                        }
                                     }
                                 }) {
                                     forwardButton

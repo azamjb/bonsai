@@ -14,7 +14,7 @@ class SMSApi : BaseApi {
         super.init()
     }
     
-    func invite(request: SMSRequest) async throws {
+    func invite(request: SMSInvite) async throws {
         let (responseData, httpResponse) = try await self.makePOSTRequest(url: getBaseUrl(endpoint: "invite"), bodyObject: request)
         
         if let error = checkForErrorFromResponse(responseData: responseData!, httpResponse: httpResponse) {
@@ -32,7 +32,7 @@ class SMSApi : BaseApi {
     }
     // Send request for more time to accountability partner ^
     
-    func removalNotif(request: SMSRequest) async throws {
+    func removalNotif(request: SMSInvite) async throws {
         let (responseData, httpResponse) = try await self.makePOSTRequest(url: getBaseUrl(endpoint: "remove"), bodyObject: request)
         
         if let error = checkForErrorFromResponse(responseData: responseData!, httpResponse: httpResponse) {

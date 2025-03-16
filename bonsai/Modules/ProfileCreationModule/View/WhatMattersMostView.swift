@@ -12,6 +12,7 @@ struct WhatMattersMostView: View {
     @ObservedObject var viewModel: ProfileCreationViewModel = ProfileCreationViewModel()
     @Environment(\.presentationMode) var presentationMode 
     
+    
     @State var hobbies: [String] = []
     @State var screenTime: String
     
@@ -197,9 +198,17 @@ struct WhatMattersMostView: View {
                     forwardButton
                 }
                 .padding(.leading, 200)
+                .simultaneousGesture(TapGesture().onEnded {
+                    Task {
+                        await viewModel.saveHobbies(hobbies: hobbies) // save hobbies here
+                    }
+                })
                 
                 Spacer()
             }
+        }
+        .onAppear {
+            viewModel.fetchUserProfile()
         }
         .navigationBarBackButtonHidden(true)
         .toolbar {
@@ -217,7 +226,6 @@ struct WhatMattersMostView: View {
         }
         
     }
-    
     
     func screenTimeButton(title: String, color: String) -> some View {
         Button(action: {
