@@ -31,6 +31,10 @@ struct ProfileEditView: View {
     private var hobbiesChanged: Bool { originalHobbies != editedHobbies }
     private var hasChanges: Bool { nameChanged || phoneChanged || hobbiesChanged }
     
+    // Navigation overlay variables
+    @Environment(\.presentationMode) var presentationMode
+    @State private var showingDiscardAlert = false
+    
     var body: some View {
         ScrollView {
             VStack {
@@ -171,6 +175,30 @@ struct ProfileEditView: View {
                 }
             }
         }
+        .navigationBarBackButtonHidden(true)
+        .navigationBarItems(leading: Button(action: {
+            if hasChanges {
+                showingDiscardAlert = true
+            } else {
+                presentationMode.wrappedValue.dismiss()
+            }
+        }) {
+            HStack {
+                Image(systemName: "chevron.left")
+                Text("Back")
+            }
+        })
+        .alert(isPresented: $showingDiscardAlert) {
+            Alert(
+                title: Text("Unsaved Changes"),
+                message: Text("You have unsaved changes. Are you sure you want to go back?"),
+                primaryButton: .destructive(Text("Discard Changes")) {
+                    presentationMode.wrappedValue.dismiss()
+                },
+                secondaryButton: .cancel()
+            )
+        }
+        .interactiveDismissDisabled(hasChanges)
     }
     
     // Helper function to load initial data from database
