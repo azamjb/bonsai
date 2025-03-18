@@ -21,9 +21,9 @@ struct ContentView: View {
                 }
                 .tag(1)
             
-            MonitorView(tabSelection: $tabSelection)
+            BoundaryViewerView(tabSelection: $tabSelection)
                 .tabItem {
-                    Label("Monitoring", systemImage: "gearshape")
+                    Label("Boundaries", systemImage: "gearshape")
                 }
                 .tag(2)
 

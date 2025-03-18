@@ -17,14 +17,14 @@ public enum GroupDisplayType: String {
 }
 
 public struct ScreenTimeActivityEvent: Codable, Identifiable, Hashable {
-    public let id: UUID
-    let givenName: String
-    let appTokens: Set<ApplicationToken>?
-    let categoryTokens: Set<ActivityCategoryToken>?
-    let webDomainTokens: Set<WebDomainToken>?
-    let hours: Int
-    let minutes: Int
-    let weekdays: Set<Weekday>
+    public var id: UUID
+    var givenName: String
+    var appTokens: Set<ApplicationToken> = []
+    var categoryTokens: Set<ActivityCategoryToken> = []
+    var webDomainTokens: Set<WebDomainToken> = []
+    var hours: Int
+    var minutes: Int
+    var weekdays: Set<Weekday>
     // An invisble limit is one that is set after they get an app unblocked from an accountability partner code. This bool tells us it isn't to be shown as a limit.
     let invisibleLimit: Bool
 }
@@ -38,6 +38,18 @@ public enum Weekday: Int, CaseIterable, Codable {
         return Weekday(rawValue: calendar.component(.weekday, from: today))!
     }
     
+    var fullName: String {
+        switch self {
+        case .sunday: return "Sunday"
+        case .monday: return "Monday"
+        case .tuesday: return "Tuesday"
+        case .wednesday: return "Wednesday"
+        case .thursday: return "Thursday"
+        case .friday: return "Friday"
+        case .saturday: return "Saturday"
+        }
+    }
+
     var label: String {
         switch self {
         case .sunday: return "S"
@@ -66,13 +78,6 @@ public class ScreenTimeService: ObservableObject {
     @Published public var limitsReached: [ScreenTimeActivityEvent] = []
     @Published public var pinError: String? = nil
     @Published public var timeRequestErrorMessage: String = ""
-    @Published public var limitHours: Int = 0
-    @Published public var limitMinutes: Int = 15
-    @Published public var selectedWeekdays: Set<Weekday> = []
-    @Published public var selectedBlock: ScreenTimeActivityEvent? = nil
-    @Published public var selectedLimit: ScreenTimeActivityEvent? = nil
-    @Published public var limitToDelete: ScreenTimeActivityEvent? = nil
-    @Published public var limitGroupName: String = ""
 
     public var activitySelection = FamilyActivitySelection()
     private let settingsStore = ManagedSettingsStore()
@@ -161,18 +166,10 @@ public class ScreenTimeService: ObservableObject {
         return String(randomCode)
     }
     
-    public func weekdaySelected(day: Weekday) {
-        if !selectedWeekdays.contains(day) {
-            selectedWeekdays.insert(day)
-        } else {
-            selectedWeekdays.remove(day)
-        }
-        print(selectedWeekdays)
-    }
-    
-    public func startMonitoring(existingLimitId: UUID?) {
-        if existingLimitId != nil {
-            removeLimitById(id: existingLimitId!)
+    public func startMonitoring(limit: ScreenTimeActivityEvent) {
+        
+        if limitsSet.contains(where: { $0.id == limit.id }) {
+            removeLimitById(id: limit.id)
         }
         
         let schedule = DeviceActivitySchedule(
@@ -180,26 +177,13 @@ public class ScreenTimeService: ObservableObject {
             intervalEnd: DateComponents(hour: 23, minute: 59, second: 59),
             repeats: true
         )
-
-        let eventId = existingLimitId != nil ? existingLimitId! : UUID()
         
-        let activityEvent = ScreenTimeActivityEvent(
-            id: eventId,
-            givenName: limitGroupName,
-            appTokens: activitySelection.applicationTokens,
-            categoryTokens: activitySelection.categoryTokens,
-            webDomainTokens: activitySelection.webDomainTokens,
-            hours: limitHours,
-            minutes: limitMinutes,
-            weekdays: selectedWeekdays,
-            invisibleLimit: false)
+        let activityName = limit.id.uuidString
         
-        let activityName = eventId.uuidString
-        
-        let encoded = try! JSONEncoder().encode(activityEvent)
+        let encoded = try! JSONEncoder().encode(limit)
         sharedDefaults?.set(encoded, forKey: GroupDisplayType.limit.rawValue + activityName)
         
-        if activityEvent.weekdays.contains(Weekday.today) {
+        if limit.weekdays.contains(Weekday.today) {
             try! center.startMonitoring(
                 DeviceActivityName(activityName),
                 during: schedule,
@@ -207,7 +191,7 @@ public class ScreenTimeService: ObservableObject {
                     applications: activitySelection.applicationTokens,
                     categories: activitySelection.categoryTokens,
                     webDomains: activitySelection.webDomainTokens,
-                    threshold: DateComponents(hour: limitHours, second: limitMinutes)
+                    threshold: DateComponents(hour: limit.hours, second: limit.minutes)
                 )]
             )
         }
@@ -219,13 +203,7 @@ public class ScreenTimeService: ObservableObject {
     }
     
     public func resetSelectedLimit() {
-        print("here")
         activitySelection = FamilyActivitySelection()
-        limitHours = 0
-        limitMinutes = 15
-        selectedWeekdays = []
-        limitGroupName = ""
-        selectedLimit = nil
     }
 
     // This removes everything. Blocked apps, active monitoring sessions, and set limits. Basically a fresh start for testing + unbricks phone.
@@ -243,7 +221,7 @@ public class ScreenTimeService: ObservableObject {
         setGroupDisplays()
     }
     
-    private func setGroupDisplays() {
+    public func setGroupDisplays() {
         limitsSet = getGroupDisplay(displayType: .limit)
         limitsReached = getGroupDisplay(displayType: .block)
     }
@@ -256,26 +234,6 @@ public class ScreenTimeService: ObservableObject {
         eventsToRemove.forEach { event in
             sharedDefaults?.removeObject(forKey: event.key)
         }
-    }
-    
-    public func setFromSelectedLimit(selectedLimit: ScreenTimeActivityEvent) {
-        print("existing limit selected")
-        if selectedLimit.appTokens != nil {
-            activitySelection.applicationTokens = selectedLimit.appTokens!
-        }
-        
-        if selectedLimit.categoryTokens != nil {
-            activitySelection.categoryTokens = selectedLimit.categoryTokens!
-        }
-        
-        if selectedLimit.webDomainTokens != nil {
-            activitySelection.webDomainTokens = selectedLimit.webDomainTokens!
-        }
-        
-        self.selectedWeekdays = selectedLimit.weekdays
-        self.limitHours = selectedLimit.hours
-        self.limitMinutes = selectedLimit.minutes
-        self.limitGroupName = selectedLimit.givenName
     }
     
     public func validateExtensionCode(inputPin: String, correctPin: String, group: ScreenTimeActivityEvent) {
@@ -293,29 +251,23 @@ public class ScreenTimeService: ObservableObject {
         var shieldedWebDomainTokens = settingsStore.shield.webDomains ?? []
         var shieldedCategoryTokens = getShieldedCategoryTokens()
         
-        if let groupAppTokens = group.appTokens {
-            groupAppTokens.forEach { token in
-                shieldedApps.remove(token)
-            }
-            
-            settingsStore.shield.applications = shieldedApps
+        group.appTokens.forEach { token in
+            shieldedApps.remove(token)
         }
         
-        if let groupCategoryTokens = group.categoryTokens {
-            groupCategoryTokens.forEach { token in
-                shieldedCategoryTokens.remove(token)
-            }
-            
-            settingsStore.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.specific(shieldedCategoryTokens)
+        settingsStore.shield.applications = shieldedApps
+        
+        group.categoryTokens.forEach { token in
+            shieldedCategoryTokens.remove(token)
         }
         
-        if let groupWebDomainTokens = group.webDomainTokens {
-            groupWebDomainTokens.forEach { token in
-                shieldedWebDomainTokens.remove(token)
-            }
-            
-            settingsStore.shield.webDomains = shieldedWebDomainTokens
+        settingsStore.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.specific(shieldedCategoryTokens)
+        
+        group.webDomainTokens.forEach { token in
+            shieldedWebDomainTokens.remove(token)
         }
+        
+        settingsStore.shield.webDomains = shieldedWebDomainTokens
         
         // Remove the current block local storage object before starting the new session
         sharedDefaults?.removeObject(forKey: GroupDisplayType.block.rawValue + group.id.uuidString)
@@ -352,9 +304,9 @@ public class ScreenTimeService: ObservableObject {
                 DeviceActivityName(activityName),
                 during: schedule,
                 events: [DeviceActivityEvent.Name("LimitEvent"): DeviceActivityEvent (
-                    applications: group.appTokens ?? [],
-                    categories: group.categoryTokens ?? [],
-                    webDomains: group.webDomainTokens ?? [],
+                    applications: group.appTokens,
+                    categories: group.categoryTokens,
+                    webDomains: group.webDomainTokens,
                     threshold: DateComponents(hour: 0, second: 15)
                 )]
             )
@@ -380,8 +332,8 @@ public class ScreenTimeService: ObservableObject {
         return []
     }
     
-    public func deleteLimit(limit: ScreenTimeActivityEvent) {
-        removeLimitById(id: limit.id)
+    public func deleteLimit(limitId: UUID) {
+        removeLimitById(id: limitId)
         setGroupDisplays()
     }
     
