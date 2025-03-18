@@ -21,7 +21,6 @@ struct BoundaryEditorView: View {
 
     var body: some View {
         VStack {
-            
             ScrollView(.vertical) {
                 VStack {
                     headerContent
@@ -29,7 +28,6 @@ struct BoundaryEditorView: View {
                 }
                 .frame(maxHeight: .infinity)
             }
-            .padding(.top, 25)
             buttonContent
         }
         .navigationDestination(isPresented: $showViewScreen) {

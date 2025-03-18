@@ -18,7 +18,6 @@ struct BoundaryViewerView: View {
     
     var body: some View {
         NavigationStack {
-            ScrollView(.vertical) {
                 ZStack(alignment: .top) {
                     // Transparent background that catches taps
                     Color.clear
@@ -29,7 +28,7 @@ struct BoundaryViewerView: View {
                         .ignoresSafeArea()
                     
                     VStack(spacing: 16) {
-                        Spacer(minLength: 50)
+                        Spacer(minLength: 20)
                         
                         Text("BOUNDARIES")
                             .bold()
@@ -50,15 +49,10 @@ struct BoundaryViewerView: View {
                                 }
                             }
                             .listStyle(PlainListStyle())
-                            .frame(minHeight: 175 * CGFloat(screenTime.limitsSet.count))
+                            .frame(minHeight: 150 * CGFloat(screenTime.limitsSet.count))
                         }
                     }
-                }
                 
-                VStack {
-                    EditBoundariesButton(showEditScreen: $showEditScren)
-                }
-                .padding(.bottom, 40)
             }
             .navigationDestination(isPresented: $showEditScren) {
                 BoundaryEditorView()
@@ -66,7 +60,17 @@ struct BoundaryViewerView: View {
                         screenTime.setGroupDisplays()
                     }
             }
+            .frame(maxHeight: .infinity)
+            
+            buttonContent
         }
+    }
+    
+    private var buttonContent: some View {
+        VStack {
+            EditBoundariesButton(showEditScreen: $showEditScren)
+        }
+        .padding(.bottom, 20)
     }
 }
 
