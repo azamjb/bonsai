@@ -14,6 +14,7 @@ import BackgroundTasks
 
 @main
 struct bonsaiApp: App {
+    
     init() {
         AppShieldSchedulerService.shared.setupDailyUnshield()
 

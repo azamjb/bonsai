@@ -10,6 +10,7 @@ import FamilyControls
 import ManagedSettings
 
 @MainActor public class AccountabilityPartnerViewModel: ObservableObject {
+    
     @Published public var phoneNumber: String = ""
     @Published public var code: String = ""
     @Published public var note: String = ""
@@ -27,6 +28,8 @@ import ManagedSettings
     @Published public var isSendingInvite: Bool = false
     @Published public var isSendingTimeRequest: Bool = false
     @Published public var isRemovingAccountabilityPartner: Bool = false
+    
+    
 
     private let userDefaultsKey = "SelectedActivity"
     private let appGroupID = "group.com.bonsai" 
@@ -35,7 +38,7 @@ import ManagedSettings
         UserDefaults(suiteName: appGroupID)
     }
 
-    public func sendInvite() async {
+    public func sendInvite(phoneNumber: String, userName: String, accountabilityPartnerName: String) async {
         isSendInvitePressed = true
         isSendingInvite = true
         
@@ -46,8 +49,8 @@ import ManagedSettings
             try await smsApi.invite(
                 request: SMSInvite(
                     number: phoneNumber,
-                    username: "Azam",
-                    accountabilityPartnerName: "Bob",
+                    username: userName,
+                    accountabilityPartnerName: accountabilityPartnerName,
                     code: code
                 )
             )
@@ -60,7 +63,9 @@ import ManagedSettings
         isSendingInvite = false
     }
     
-    public func removeAccountabilityPartner() async {
+    public func removeAccountabilityPartner( phoneNumber: String, userName: String, accountabilityPartnerName: String) async {
+       
+        
         isRemovingAccountabilityPartner = true
         
         let smsApi = SMSApi()
@@ -68,15 +73,14 @@ import ManagedSettings
             try await smsApi.removalNotif(
                 request: SMSInvite(
                     number: phoneNumber,
-                    username: "Azam",
-                    accountabilityPartnerName: "Bob",
+                    username: userName,
+                    accountabilityPartnerName: accountabilityPartnerName,
                     code: ""
                 )
             )
             UserDefaults.standard.removeObject(forKey: "AccountabilityPartnerNumber")
             isValidated = false
             isSendInvitePressed = false
-            phoneNumber = ""
             
         } catch let error as StringError {
             inviteErrorMessage = error.message
@@ -87,7 +91,7 @@ import ManagedSettings
         isRemovingAccountabilityPartner =  false
     }
     
-    public func sendTimeRequest() async {
+    public func sendTimeRequest(phoneNumber: String, userName: String, accountabilityPartnerName: String, note: String) async {
         let smsApi = SMSApi()
         isSendingTimeRequest = true
         code = generateRandomCode()
@@ -96,9 +100,9 @@ import ManagedSettings
             try await smsApi.timeRequest(
                 request: SMSRequest(
                     number: phoneNumber,
-                    username: "Azam",
-                    accountabilityPartnerName: "Bob",
-                    note: "",
+                    username: userName,
+                    accountabilityPartnerName: accountabilityPartnerName,
+                    note: note,
                     code: code
                 )
             )
@@ -112,13 +116,16 @@ import ManagedSettings
         isSendingTimeRequest = false
     }
     
-    public func validateVerificationCode() {
-        if userCode == code {
+    public func validateVerificationCode( Pin: String) {
+        
+        if Pin == code {
             isValidated = true
             verificationMessage = "Verification Successful!"
+            print("success")
             UserDefaults.standard.set(phoneNumber, forKey: LocalStorageKeys.AccountabilityPartnerNumber) // store number when verified - accounability partner is set
             userCode = ""
         } else {
+            print("failure")
             isValidated = false
             verificationMessage = "Invalid Code. Please try again."
         }

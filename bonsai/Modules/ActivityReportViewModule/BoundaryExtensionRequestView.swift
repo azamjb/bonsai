@@ -3,12 +3,17 @@ import SwiftUI
 struct BoundaryExtensionRequestView: View {
     
     @Environment(\.presentationMode) var presentationMode
+    
     @StateObject private var viewModel = AccountabilityPartnerViewModel()
+    @StateObject var UserViewModel: ProfileViewModel = ProfileViewModel()
+    
+    @ObservedObject private var screenTime = ScreenTimeService()
     
     @State private var requestNote: String = ""
     @State private var pin: String = ""
     @FocusState private var isFieldFocused: Bool
     @AppStorage("isProfileCreated") private var isProfileCreated = false
+    
     
     var body: some View {
         NavigationStack {
@@ -50,7 +55,9 @@ struct BoundaryExtensionRequestView: View {
                         
                         Button(action: {
                             Task {
-                                await viewModel.sendTimeRequest()
+                                print(UserViewModel.userProfile.accountabilityPartner?.phoneNumber)
+                                await viewModel.sendTimeRequest(phoneNumber: UserViewModel.userProfile.accountabilityPartner?.phoneNumber ?? "",
+                                                                userName: UserViewModel.userProfile.name, accountabilityPartnerName: UserViewModel.userProfile.accountabilityPartner?.name ?? "", note: requestNote)
                             }
                         }) {
                             Text("send code to partner")
@@ -101,7 +108,7 @@ struct BoundaryExtensionRequestView: View {
                          
                         Button(action: {
                             Task {
-                                await viewModel.validateVerificationCode()
+                                await viewModel.validateVerificationCode(Pin: pin)
                             }
                         }) {
                             Text("enter code")
@@ -123,6 +130,10 @@ struct BoundaryExtensionRequestView: View {
                 .onTapGesture {
                     hideKeyboard()
                 }
+                
+            }
+            .onAppear() {
+                UserViewModel.fetchUserProfile()
             }
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -137,8 +148,8 @@ struct BoundaryExtensionRequestView: View {
                     }
                 }
             }
-            .toolbarBackground(.hidden, for: .navigationBar) // ✅ Fully removes the top bar background
-            .navigationBarTitleDisplayMode(.inline) // ✅ Prevents extra spacing
+            .toolbarBackground(.hidden, for: .navigationBar)
+            .navigationBarTitleDisplayMode(.inline)
         }
         .navigationBarBackButtonHidden(true)
     }
@@ -146,7 +157,7 @@ struct BoundaryExtensionRequestView: View {
 
 struct PinEntryView: View {
     @Binding var pin: String
-    @FocusState private var isPinFocused: Bool  // ✅ Focus state to handle keyboard
+    @FocusState private var isPinFocused: Bool
 
     private let pinLength = 6
     
@@ -165,9 +176,9 @@ struct PinEntryView: View {
                 }
             }
         }
-        .contentShape(Rectangle()) // ✅ Ensures the entire view is tappable
+        .contentShape(Rectangle())
         .onTapGesture {
-            isPinFocused = true // ✅ Focus on text field when tapped
+            isPinFocused = true
         }
         .background(
             TextField("", text: $pin)

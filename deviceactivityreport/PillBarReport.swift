@@ -8,6 +8,7 @@
 import DeviceActivity
 import SwiftUI
 
+
 // MARK: - Define Custom Context for Pill Bar Report
 extension DeviceActivityReport.Context {
     static let pillBar = Self("pill Bar")
@@ -68,15 +69,15 @@ struct TimeLimitSliderView: View {
                         startPoint: .leading,
                         endPoint: .trailing
                     )
-                    .frame(width: geometry.size.width, height: 10) // ✅ Progress width now controls fill area
-                    .mask( // ✅ Only reveal the filled portion
+                    .frame(width: geometry.size.width, height: 10) 
+                    .mask(
                                     HStack {
                                         Rectangle()
                                             .frame(width: geometry.size.width * CGFloat(progress), height: 10)
                                         Spacer() // Ensures gradient starts from the left
                                     }
                                 )
-                    .clipShape(Capsule()) // ✅ Keeps rounded edges when clipped
+                    .clipShape(Capsule())
                     .animation(.easeInOut, value: progress)
                 }
             }
@@ -89,7 +90,9 @@ struct TimeLimitSliderView: View {
 
 // MARK: - PillBarView
 struct PillBarView: View {
+    
     let configuration: PillBarViewConfiguration
+    
     
     /// Format seconds as "Hh Mm"
     private func formatTime(_ time: TimeInterval) -> String {
@@ -168,8 +171,11 @@ struct PillBarReport: DeviceActivityReportScene {
     // Use the custom context for the pill bar report.
     let context: DeviceActivityReport.Context = .pillBar
     
+    
     typealias Configuration = PillBarViewConfiguration
     typealias Content = PillBarView
+    
+    
     
     // Aggregate usage data from DeviceActivityResults.
     // In this example, we group usage by category (similar to your pie chart) and assign a fixed allowed time.
@@ -200,9 +206,12 @@ struct PillBarReport: DeviceActivityReportScene {
         return PillBarViewConfiguration(usageGroups: groups)
     }
     
+    
     var content: (Configuration) -> Content {
         return { configuration in
             PillBarView(configuration: configuration)
         }
     }
+    
+    
 }
