@@ -12,57 +12,100 @@ struct BoundaryViewerView: View {
     @Binding var tabSelection: Int
     
     @ObservedObject private var viewModel = BoundaryViewerViewModel()
-    @ObservedObject private var screenTime = ScreenTimeService()
+    @EnvironmentObject var screenTime: ScreenTimeService
+    @Environment(\.presentationMode) var presentationMode
     
     @State private var showEditScren: Bool = false
-    
+
     var body: some View {
         NavigationStack {
-                ZStack(alignment: .top) {
-                    // Transparent background that catches taps
-                    Color.clear
-                        .contentShape(Rectangle())  // Make the entire area tappable
-                        .onTapGesture {
-                            UIApplication.shared.dismissKeyboard()
+            Group {
+                if screenTime.limitsSet.isEmpty {
+                    ZStack {
+                        Color.clear
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                UIApplication.shared.dismissKeyboard()
+                            }
+                            .ignoresSafeArea()
+                        
+                        VStack {
+                            Text("BOUNDARIES")
+                                .bold()
+                                .font(.system(size: 30))
+                                .multilineTextAlignment(.center)
+                                .padding(.bottom, 45)
+                            
+                            Text("New here? No worries! Let's set your first boundary. 🚀")
+                                .font(.system(size: 16))
+                                .multilineTextAlignment(.center)
+                                .padding(.bottom, 32)
+                            
+                            (
+                                Text("Tap ")
+                                + Text("\"add new boundary\"").bold()
+                                + Text(" to begin making your custom app limits and schedules. You're in control – create as many as you want to shape your ideal balance.")
+                            )
+                            .font(.system(size: 16))
+                            .multilineTextAlignment(.center)
+                            .padding(.bottom, 32)
+                            
+                            Text("Hit save and start tracking!")
+                                .font(.system(size: 16))
+                                .multilineTextAlignment(.center)
+                                .padding(.bottom, 32)
                         }
-                        .ignoresSafeArea()
-                    
-                    VStack(spacing: 16) {
-                        Spacer(minLength: 20)
-                        
-                        Text("BOUNDARIES")
-                            .bold()
-                            .font(.system(size: 30))
-                            .multilineTextAlignment(.center)
-                            .frame(width: 331, alignment: .top)
-                        
-                        Text("\"It is not that we have a short time to live, but that we waste a lot of it.\" - Seneca")
-                            .font(.system(size: 12))
-                            .multilineTextAlignment(.center)
-                            .frame(width: 245, height: 43, alignment: .top)
-                        
-                        if !screenTime.limitsSet.isEmpty {
-                            List {
-                                ForEach(screenTime.limitsSet) { limit in
-                                    LimitRow(limit: limit)
-                                        .listRowSeparator(.hidden)
+                        .padding(.horizontal, 30)
+                    }
+                } else {
+                    ScrollView {
+                        ZStack() {
+                            Color.clear
+                                .contentShape(Rectangle())
+                                .onTapGesture {
+                                    UIApplication.shared.dismissKeyboard()
+                                }
+                                .ignoresSafeArea()
+                            
+                            VStack(spacing: 16) {
+                                Text("BOUNDARIES")
+                                    .bold()
+                                    .font(.system(size: 30))
+                                    .multilineTextAlignment(.center)
+                                    .padding(.top, 40)
+                                    
+                                
+                                Text("\"It is not that we have a short time to live, but that we waste a lot of it.\" - Seneca")
+                                    .font(.system(size: 12))
+                                    .multilineTextAlignment(.center)
+                                    .padding(.horizontal, 30)
+                                
+                                if !screenTime.limitsSet.isEmpty {
+                                    List {
+                                        ForEach(screenTime.limitsSet) { limit in
+                                            if !limit.invisibleLimit {
+                                                LimitRow(limit: limit)
+                                                    .listRowSeparator(.hidden)
+                                            }
+                                        }
+                                    }
+                                    .listStyle(PlainListStyle())
+                                    .frame(minHeight: 150 * CGFloat(screenTime.limitsSet.count))
                                 }
                             }
-                            .listStyle(PlainListStyle())
-                            .frame(minHeight: 150 * CGFloat(screenTime.limitsSet.count))
                         }
                     }
-                
+                }
             }
             .navigationDestination(isPresented: $showEditScren) {
                 BoundaryEditorView()
-                    .onDisappear() {
+                    .onDisappear {
                         screenTime.setGroupDisplays()
                     }
             }
-            .frame(maxHeight: .infinity)
             
             buttonContent
+                .padding(.bottom, 90)
         }
     }
     
@@ -70,9 +113,9 @@ struct BoundaryViewerView: View {
         VStack {
             EditBoundariesButton(showEditScreen: $showEditScren)
         }
-        .padding(.bottom, 20)
     }
 }
+
 
 private struct LimitRow: View {
     let limit: ScreenTimeActivityEvent
@@ -161,7 +204,9 @@ private struct DayPin: View {
 }
 
 private struct EditBoundariesButton: View {
+    
     @Binding var showEditScreen: Bool
+    @EnvironmentObject var screenTime: ScreenTimeService
     
     var body: some View {
         Button(action: {
@@ -177,7 +222,7 @@ private struct EditBoundariesButton: View {
                         .stroke(Color.black, lineWidth: 1)
                 )
                 .overlay(
-                    Text("edit boundaries")
+                    Text(screenTime.limitsSet.isEmpty ? "add new boundary" : "edit boundaries")
                         .foregroundColor(.black)
                 )
         }

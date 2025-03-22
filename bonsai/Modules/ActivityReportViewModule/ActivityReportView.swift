@@ -16,7 +16,7 @@ struct ActivityReportView: View {
 
     
     @StateObject var viewModel: ActivityReportViewModel = ActivityReportViewModel()
-    @ObservedObject private var screenTime = ScreenTimeService()
+    @EnvironmentObject var screenTime: ScreenTimeService
     @State private var context: DeviceActivityReport.Context = .init(rawValue: "pie Chart")
     @State private var context2: DeviceActivityReport.Context = .init(rawValue: "Total Activity")
     
@@ -156,19 +156,20 @@ struct ActivityReportView: View {
                         }
                         .padding(.bottom, 30)
                     
-                        NavigationLink(destination: BoundaryExtensionRequestView()) {
-                            Text("override all boundaries")
-                                .font(.system(size: 15))
-                                .foregroundColor(.black)
-                                .padding(.vertical, 10)
-                                .padding(.horizontal, 80)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 20)
-                                        .stroke(Color.black, lineWidth: 1)
-                                )
-                        }
+                        Button(action: {
+                                screenTime.clearAllRestrictions()
+                            }) {
+                                Text("override all boundaries")
+                                    .font(.system(size: 15))
+                                    .foregroundColor(.black)
+                                    .padding(.vertical, 10)
+                                    .padding(.horizontal, 80)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 20)
+                                            .stroke(Color.black, lineWidth: 1)
+                                    )
+                            }
                         .padding(.bottom, 50)
-                        
                     
                     
                 }

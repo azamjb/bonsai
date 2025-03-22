@@ -10,7 +10,7 @@ import SwiftUI
 
 struct BoundaryEditorView: View {
     @ObservedObject private var viewModel = BoundaryEditorViewModel()
-    @ObservedObject private var screenTime = ScreenTimeService()
+    @EnvironmentObject var screenTime: ScreenTimeService
     
     @Environment(\.presentationMode) var presentationMode
     
@@ -38,7 +38,23 @@ struct BoundaryEditorView: View {
                 isPresented: $showViewScreen
             )
         }
+        .navigationBarBackButtonHidden(true)
+        .toolbarBackground(.hidden, for: .navigationBar)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: {
+                    presentationMode.wrappedValue.dismiss()
+                }) {
+                    HStack {
+                        Image(systemName: "chevron.left") // Custom back arrow icon
+                            .font(.system(size: 16))
+                            .foregroundColor(.black)
+                    }
+                }
+            }
+        }
     }
+    
     
     // MARK: - Extracted Views
     
@@ -84,11 +100,15 @@ struct BoundaryEditorView: View {
         
         return List {
             ForEach(uniqueLimits) { limit in
-                limitRowView(for: limit)
+                if (!limit.invisibleLimit) { // only display it if its not an invisible limit
+                    limitRowView(for: limit)
+                }
             }
             
             ForEach(modifiedLimits) { limit in
-                limitRowView(for: limit)
+                if (!limit.invisibleLimit) { // only display it if its not an invisible limit
+                    limitRowView(for: limit)
+                }
             }
         }
         .listStyle(PlainListStyle())

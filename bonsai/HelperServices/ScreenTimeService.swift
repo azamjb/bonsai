@@ -126,9 +126,7 @@ public class ScreenTimeService: ObservableObject {
         filteredEvents.forEach { data in
             let activityEvent = try! JSONDecoder().decode(ScreenTimeActivityEvent.self, from: data.value)
             
-            if(!activityEvent.invisibleLimit) {
-                events.append(activityEvent)
-            }
+            events.append(activityEvent)
         }
         
         return events
@@ -236,7 +234,7 @@ public class ScreenTimeService: ObservableObject {
         }
     }
     
-    public func validateExtensionCode(inputPin: String, correctPin: String, group: ScreenTimeActivityEvent) {
+    public func validateExtensionCode(inputPin: String, correctPin: String, group: ScreenTimeActivityEvent) { // not in use
         if inputPin == correctPin {
             extendLimitForGroup(group: group)
             pinError = nil
@@ -245,7 +243,7 @@ public class ScreenTimeService: ObservableObject {
         }
     }
 
-    private func extendLimitForGroup(group: ScreenTimeActivityEvent) {
+    public func extendLimitForGroup(group: ScreenTimeActivityEvent) {
         // These 3 variables get reassigned with the tokens to extend for removal. Muatating these set doesn't properly update them in real-time with the change detection. Need to reassign.
         var shieldedApps = settingsStore.shield.applications ?? []
         var shieldedWebDomainTokens = settingsStore.shield.webDomains ?? []

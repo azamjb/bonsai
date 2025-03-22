@@ -15,6 +15,8 @@ import BackgroundTasks
 @main
 struct bonsaiApp: App {
     
+    @StateObject private var screenTime = ScreenTimeService()
+    
     init() {
         AppShieldSchedulerService.shared.setupDailyUnshield()
 
@@ -30,6 +32,7 @@ struct bonsaiApp: App {
     var body: some Scene {
         WindowGroup {
             RootView()
+                .environmentObject(screenTime)
             //ContentView()
         }
     }

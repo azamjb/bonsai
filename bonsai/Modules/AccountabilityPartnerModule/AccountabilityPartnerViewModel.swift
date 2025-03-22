@@ -30,6 +30,7 @@ import ManagedSettings
     @Published public var isRemovingAccountabilityPartner: Bool = false
     
     
+    
 
     private let userDefaultsKey = "SelectedActivity"
     private let appGroupID = "group.com.bonsai" 
@@ -116,18 +117,16 @@ import ManagedSettings
         isSendingTimeRequest = false
     }
     
-    public func validateVerificationCode( Pin: String) {
+    public func validateVerificationCode( Pin: String) -> Bool { // validate if the code entered by the user is correct or incorrect
         
-        if Pin == code {
-            isValidated = true
-            verificationMessage = "Verification Successful!"
-            print("success")
-            UserDefaults.standard.set(phoneNumber, forKey: LocalStorageKeys.AccountabilityPartnerNumber) // store number when verified - accounability partner is set
-            userCode = ""
+        
+        print("code: " + (UserDefaults.standard.string(forKey: LocalStorageKeys.timeExtensionRequestCode) ?? ""))
+        print("pin: " + Pin)
+        if Pin == (UserDefaults.standard.string(forKey: LocalStorageKeys.timeExtensionRequestCode) ?? "") {
+            return true;
+
         } else {
-            print("failure")
-            isValidated = false
-            verificationMessage = "Invalid Code. Please try again."
+            return false;
         }
     }
 

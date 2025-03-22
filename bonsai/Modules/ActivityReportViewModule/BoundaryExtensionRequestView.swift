@@ -6,8 +6,11 @@ struct BoundaryExtensionRequestView: View {
     
     @StateObject private var viewModel = AccountabilityPartnerViewModel()
     @StateObject var UserViewModel: ProfileViewModel = ProfileViewModel()
+    @State private var isRememberMeChecked = false
     
-    @ObservedObject private var screenTime = ScreenTimeService()
+    @EnvironmentObject var screenTime: ScreenTimeService
+    
+    @State public var checkedItems: [ScreenTimeActivityEvent : Bool] = [:] // dictionary to track which of the limits have been 'checked' to be extended
     
     @State private var requestNote: String = ""
     @State private var pin: String = ""
@@ -39,10 +42,38 @@ struct BoundaryExtensionRequestView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.bottom, 6)
                             
-                            Text("You haven't hit any boundaries today.")
-                                .font(.system(size: 15))
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .foregroundColor(.gray)
+                            
+                            if !screenTime.limitsReached.isEmpty {
+                                
+                                VStack(alignment: .leading) {
+                                    
+                                    ForEach(screenTime.limitsReached, id: \.id) { limit in
+                                        let isCheckedBinding = Binding<Bool>(
+                                            get: {
+                                                checkedItems[limit] ?? false
+                                            },
+                                            set: { newValue in
+                                                // Update the dictionary
+                                                checkedItems[limit] = newValue
+                                            }
+                                        )
+                                                            
+                                        CheckboxView(
+                                            isChecked: isCheckedBinding,
+                                            label: limit.givenName
+                                        )
+                                    }
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                }
+                            }
+                            
+                            else {
+                                Text("You haven't hit any boundaries today.")
+                                    .font(.system(size: 15))
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .foregroundColor(.gray)
+                            }
+                            
                         }
                         
                         VStack(spacing: 16) {
@@ -58,6 +89,7 @@ struct BoundaryExtensionRequestView: View {
                                 print(UserViewModel.userProfile.accountabilityPartner?.phoneNumber)
                                 await viewModel.sendTimeRequest(phoneNumber: UserViewModel.userProfile.accountabilityPartner?.phoneNumber ?? "",
                                                                 userName: UserViewModel.userProfile.name, accountabilityPartnerName: UserViewModel.userProfile.accountabilityPartner?.name ?? "", note: requestNote)
+                                requestNote = "" // reset note
                             }
                         }) {
                             Text("send code to partner")
@@ -108,7 +140,28 @@ struct BoundaryExtensionRequestView: View {
                          
                         Button(action: {
                             Task {
-                                await viewModel.validateVerificationCode(Pin: pin)
+                                
+                                let validated = await viewModel.validateVerificationCode(Pin: pin) // see if the code entered by the user is valid
+                                
+                                if (validated) {
+                                    
+                                    for (event, isChecked) in checkedItems {
+                                                   
+                                        
+                                        if (isChecked) { // if limit is checked to be extended
+                                            screenTime.extendLimitForGroup(group: event) // extend time for that group
+                                            screenTime.setGroupDisplays()
+                                        }
+                                        
+                                    }
+                                    pin = ""
+                                    UserDefaults.standard.removeObject(forKey: LocalStorageKeys.timeExtensionRequestCode)
+
+                                }
+                                else {
+                                    print("invalid code")
+                                }
+                                    
                             }
                         }) {
                             Text("enter code")
@@ -133,8 +186,30 @@ struct BoundaryExtensionRequestView: View {
                 
             }
             .onAppear() {
+                
                 UserViewModel.fetchUserProfile()
+                screenTime.setGroupDisplays()
+                for limit in screenTime.limitsReached { // adding all limits to the dictionary, initially unchecked
+                        if checkedItems[limit] == nil {
+                            checkedItems[limit] = false
+                        }
+                    }
             }
+            .onChange(of: screenTime.limitsReached) { newLimits in
+                
+                print("CHANGE DETECTED")
+                for limit in newLimits {
+                    if checkedItems[limit] == nil {
+                        checkedItems[limit] = false
+                    }
+                }
+                let allKeys = Set(checkedItems.keys)
+                let newSet  = Set(newLimits)
+                for oldKey in allKeys.subtracting(newSet) {
+                    checkedItems.removeValue(forKey: oldKey)
+                }
+            }
+            
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: {
@@ -150,8 +225,10 @@ struct BoundaryExtensionRequestView: View {
             }
             .toolbarBackground(.hidden, for: .navigationBar)
             .navigationBarTitleDisplayMode(.inline)
+            
         }
         .navigationBarBackButtonHidden(true)
+        
     }
 }
 
@@ -184,12 +261,38 @@ struct PinEntryView: View {
             TextField("", text: $pin)
                 .keyboardType(.numberPad)
                 .textContentType(.oneTimeCode)
-                .frame(width: 0, height: 0) // ✅ Hide actual text field
+                .frame(width: 0, height: 0)
                 .opacity(0)
-                .focused($isPinFocused) // ✅ Bind focus state
+                .focused($isPinFocused)
         )
     }
 }
+
+
+struct CheckboxView: View {
+    @Binding var isChecked: Bool
+    let label: String
+
+    var body: some View {
+        HStack {
+            Image(systemName: isChecked ? "checkmark.square" : "square")
+                .font(.system(size: 20))
+                .onTapGesture {
+                    isChecked.toggle()
+                }
+            Text(label)
+                .font(.system(size: 15))
+                .onTapGesture {
+                    isChecked.toggle()
+                }
+        }
+        .contentShape(Rectangle())
+        .padding(.top, 5)
+    }
+}
+
+
+
 
 struct CustomTextFieldStyle2: ViewModifier {
     let placeholder: String

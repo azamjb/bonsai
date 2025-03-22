@@ -11,7 +11,7 @@ struct AccountabilityPartnerView: View {
     @StateObject var UserViewModel: ProfileViewModel = ProfileViewModel()
     
     @StateObject private var viewModel = AccountabilityPartnerViewModel()
-    
+   
     var body: some View {
         NavigationView {
             ScrollView {
@@ -113,20 +113,7 @@ struct AccountabilityPartnerView: View {
                                     .padding(.horizontal)
                             )
                         
-                        // Verify button
-                        Button(action: {
-                            UIApplication.shared.dismissKeyboard()
-                            viewModel.validateVerificationCode(Pin: viewModel.userCode)
-                        }) {
-                            Text("Verify")
-                                .font(.headline)
-                                .foregroundColor(.white)
-                                .padding()
-                                .frame(maxWidth: .infinity)
-                                .background(Color.blue)
-                                .cornerRadius(12)
-                        }
-                        .padding(.horizontal)
+                        
                         
                         // Verification feedback
                         if let message = viewModel.verificationMessage {
