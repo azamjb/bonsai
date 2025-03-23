@@ -26,7 +26,7 @@ public struct ScreenTimeActivityEvent: Codable, Identifiable, Hashable {
     var minutes: Int
     var weekdays: Set<Weekday>
     // An invisble limit is one that is set after they get an app unblocked from an accountability partner code. This bool tells us it isn't to be shown as a limit.
-    let invisibleLimit: Bool
+    var invisibleLimit: Bool
 }
 
 public enum Weekday: Int, CaseIterable, Codable {

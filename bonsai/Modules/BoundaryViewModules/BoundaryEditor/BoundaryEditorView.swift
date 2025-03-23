@@ -20,16 +20,17 @@ struct BoundaryEditorView: View {
     @State private var limitIdsToDelete: [UUID] = []
 
     var body: some View {
-        VStack {
-            ScrollView(.vertical) {
-                VStack {
-                    headerContent
-                    limitsContent
-                }
-                .frame(maxHeight: .infinity)
-            }
+        VStack(spacing: 0) {
+            headerContent
+                .padding(.bottom, 10)
+            
+            limitsContent
+                .layoutPriority(1)
+            
             buttonContent
+                .padding(.bottom, 100)
         }
+        .edgesIgnoringSafeArea(.bottom) // Allow content to extend to bottom edge
         .navigationDestination(isPresented: $showViewScreen) {
             BoundaryDetailsView(
                 selectedLimit: selectedLimit != nil ? $selectedLimit : .constant(nil),
@@ -46,7 +47,7 @@ struct BoundaryEditorView: View {
                     presentationMode.wrappedValue.dismiss()
                 }) {
                     HStack {
-                        Image(systemName: "chevron.left") // Custom back arrow icon
+                        Image(systemName: "chevron.left")
                             .font(.system(size: 16))
                             .foregroundColor(.black)
                     }
@@ -55,9 +56,7 @@ struct BoundaryEditorView: View {
         }
     }
     
-    
     // MARK: - Extracted Views
-    
     private var headerContent: some View {
         ZStack(alignment: .top) {
             // Transparent background that catches taps
@@ -66,21 +65,19 @@ struct BoundaryEditorView: View {
                 .onTapGesture {
                     UIApplication.shared.dismissKeyboard()
                 }
-                .ignoresSafeArea()
             
             VStack(spacing: 16) {
                 Text("BOUNDARY EDITOR")
                     .bold()
                     .font(.system(size: 30))
                     .multilineTextAlignment(.center)
-                    .frame(width: 331, alignment: .top)
                 
                 Text("\"It is not that we have a short time to live, but that we waste a lot of it.\" - Seneca")
                     .font(.system(size: 12))
                     .multilineTextAlignment(.center)
-                    .frame(width: 245, height: 43, alignment: .top)
+                    .padding(.horizontal, 30)
             }
-            .padding(.top, 8)
+            .padding(.top, 20)
         }
     }
     
@@ -88,54 +85,64 @@ struct BoundaryEditorView: View {
         Group {
             if !screenTime.limitsSet.isEmpty {
                 limitsListView
+            } else {
+                Spacer()
             }
         }
     }
     
     private var limitsListView: some View {
-        let uniqueLimits = screenTime.limitsSet.filter { limit in
-            !modifiedLimits.contains(where: { $0.id == limit.id })
-        }
-        let count = uniqueLimits.count + modifiedLimits.count
-        
-        return List {
-            ForEach(uniqueLimits) { limit in
-                if (!limit.invisibleLimit) { // only display it if its not an invisible limit
-                    limitRowView(for: limit)
-                }
-            }
-            
-            ForEach(modifiedLimits) { limit in
-                if (!limit.invisibleLimit) { // only display it if its not an invisible limit
-                    limitRowView(for: limit)
-                }
-            }
-        }
-        .listStyle(PlainListStyle())
-        .frame(minHeight: 175 * CGFloat(count))
-    }
-    
-    private func limitRowView(for limit: ScreenTimeActivityEvent) -> some View {
-        LimitRow(limit: limit)
-            .listRowSeparator(.hidden)
-            .swipeActions(edge: .trailing) {
-                DeleteLimitButton(limitIdsToDelete: $limitIdsToDelete, limitId: limit.id)
-            }
-            .tint(.red)
-            .swipeActions(edge: .leading) {
-                Button {
-                    self.selectedLimit = limit
-                    self.showViewScreen = true
-                } label: {
-                    Label("", systemImage: "pencil")
-                }
-            }
-            .tint(.blue)
-    }
+         let uniqueLimits = screenTime.limitsSet.filter { limit in
+             !modifiedLimits.contains(where: { $0.id == limit.id })
+         }
+         let count = uniqueLimits.count + modifiedLimits.count
+         
+         return List {
+             ForEach(uniqueLimits) { limit in
+                 limitRowView(for: limit)
+             }
+             
+             ForEach(modifiedLimits) { limit in
+                 limitRowView(for: limit)
+             }
+         }
+         .listStyle(PlainListStyle())
+         .frame(minHeight: 175 * CGFloat(count))
+     }
+     
+     private func limitRowView(for limit: ScreenTimeActivityEvent) -> some View {
+         LimitRow(limit: limit)
+             .listRowSeparator(.hidden)
+             .swipeActions(edge: .trailing) {
+                 DeleteLimitButton(limitIdsToDelete: $limitIdsToDelete, limitId: limit.id)
+             }
+             .tint(.red)
+             .swipeActions(edge: .leading) {
+                 Button {
+                     self.selectedLimit = limit
+                     self.showViewScreen = true
+                 } label: {
+                     Label("", systemImage: "pencil")
+                 }
+             }
+             .tint(.blue)
+     }
     
     private var buttonContent: some View {
-        VStack {
+        VStack(spacing: 15) {
+            // FOR TESTING
+            Button {
+                Task {
+                    screenTime.clearAllRestrictions()
+                }
+            } label: {
+                Text("clear all blocks and set limits (testing)")
+                    .font(.system(size: 20))
+                    .foregroundColor(.gray)
+            }
+            
             AddBoundaryButton(selectedLimit: $selectedLimit, showViewScreen: $showViewScreen)
+            
             SaveButton {
                 modifiedLimits.forEach { limit in
                     screenTime.startMonitoring(limit: limit)
@@ -147,23 +154,11 @@ struct BoundaryEditorView: View {
                 
                 presentationMode.wrappedValue.dismiss()
             }
-            
-            // FOR TESTING
-            Button {
-                Task {
-                    screenTime.clearAllRestrictions()
-                }
-            }
-            label: {
-                Text("clear all blocks and set limits (testing)")
-            }
         }
-        .padding(.bottom, 20)
     }
 }
 
 // MARK: - Supporting Views
-
 private struct DeleteLimitButton: View {
     @Binding var limitIdsToDelete: [UUID]
     var limitId: UUID

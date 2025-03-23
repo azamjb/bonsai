@@ -28,7 +28,6 @@ struct BoundaryDetailsView: View {
          modifiedLimits: Binding<[ScreenTimeActivityEvent]>,
          isPresented: Binding<Bool>
     ) {
-        print(selectedLimit)
         self._selectedLimit = selectedLimit
         self._allLimits = allLimits
         self._modifiedLimits = modifiedLimits
@@ -75,12 +74,9 @@ struct BoundaryDetailsView: View {
                         .ignoresSafeArea()
                     
                     VStack(spacing: 16) {
-                        Spacer()
-                        
                         Text("Boundary Details")
                             .font(.system(size: 30))
                             .multilineTextAlignment(.center)
-                            .frame(width: 331, alignment: .top)
                             .padding(.top, 20)
                         
                         List {
@@ -91,13 +87,16 @@ struct BoundaryDetailsView: View {
                                             .foregroundColor(.primary)
                                         Spacer()
                                         Text(limitToUse.givenName)
-                                            .foregroundColor(.gray)
+                                            .foregroundColor(.primary)
                                     }
                                     .padding(.horizontal, 5)
                                     .padding(.vertical)
+                                    .background(Color(UIColor.systemGray5))
                                 }
+                                
                             }
-                            
+                            .listRowBackground(Color(UIColor.systemGray5))
+
                             Section {
                                 NavigationLink(destination: DaysActiveEditor(limit: $limitToUse)) {
                                     HStack {
@@ -110,7 +109,8 @@ struct BoundaryDetailsView: View {
                                     .padding(.vertical)
                                 }
                             }
-                            
+                            .listRowBackground(Color(UIColor.systemGray5))
+
                             Section {
                                 NavigationLink(destination: TimeLimitEditor(limit: $limitToUse)) {
                                     HStack {
@@ -118,17 +118,28 @@ struct BoundaryDetailsView: View {
                                             .foregroundColor(.primary)
                                         Spacer()
                                         Text("\(limitToUse.hours) hrs, \(limitToUse.minutes) mins")
-                                            .foregroundColor(.gray)
+                                            .foregroundColor(Color.primary)
                                     }
                                     .padding(.horizontal, 5)
                                     .padding(.vertical)
+                                    .listRowBackground(Color.black)
                                 }
                             }
-                             
-                            Section {
-                                Button(action: {
-                                    isShowingFamilyActivityPicker = true
-                                }) {
+                            .listRowBackground(Color(UIColor.systemGray5))
+
+                        }
+                        .cornerRadius(CGFloat(15))
+                        .listStyle(PlainListStyle())
+                        .frame(height: 225)
+                        .padding()
+                        
+                        Spacer()
+                        
+                        HStack {
+                            Button(action: {
+                                isShowingFamilyActivityPicker = true
+                            }) {
+                                HStack {
                                     VStack(alignment: .leading, spacing: 10) {
                                         Text("SELECTED APPS")
                                             .foregroundColor(.primary)
@@ -138,7 +149,7 @@ struct BoundaryDetailsView: View {
                                             && activitySelection.webDomainTokens.isEmpty
                                         {
                                             Text("No apps selected")
-                                                .foregroundColor(.gray)
+                                                .foregroundColor(Color.secondary)
                                                 .padding(.vertical, 5)
                                         } else {
                                             SelectedAppDisplay(
@@ -148,50 +159,54 @@ struct BoundaryDetailsView: View {
                                             )
                                         }
                                     }
-                                    .padding(.horizontal, 5)
+                                    
+                                    Spacer()
+                                    
+                                    Image(systemName: "chevron.right")
+                                        .foregroundStyle(Color.primary)
                                 }
                             }
                         }
-                        .listStyle(PlainListStyle())
-                        .frame(height: 380)
+                        .padding(.horizontal, 45)
                         
-                        Spacer()
+                        Spacer(minLength: 120)
 
-                        SaveButton() {
-                            limitToUse.appTokens = activitySelection.applicationTokens
-                            limitToUse.categoryTokens = activitySelection.categoryTokens
-                            limitToUse.webDomainTokens = activitySelection.webDomainTokens
-                            
-                            if !isNewLimit {
-                                if let index = allLimits.firstIndex(where: { $0.id == limitToUse.id }) {
-                                    allLimits[index] = limitToUse
+                        VStack {
+                            SaveButton() {
+                                limitToUse.appTokens = activitySelection.applicationTokens
+                                limitToUse.categoryTokens = activitySelection.categoryTokens
+                                limitToUse.webDomainTokens = activitySelection.webDomainTokens
+                                
+                                if !isNewLimit {
+                                    if let index = allLimits.firstIndex(where: { $0.id == limitToUse.id }) {
+                                        allLimits[index] = limitToUse
+                                    }
+                                } else {
+                                    if allLimits.contains(where: { $0.id == limitToUse.id }) {
+                                        limitToUse.id = UUID() // Create a new UUID if there's a conflict
+                                    }
+                                    allLimits.append(limitToUse)
                                 }
-                            } else {
-                                if allLimits.contains(where: { $0.id == limitToUse.id }) {
-                                    limitToUse.id = UUID() // Create a new UUID if there's a conflict
+                                
+                                if !modifiedLimits.contains(where: { $0.id == limitToUse.id }) {
+                                    modifiedLimits.append(limitToUse)
+                                } else {
+                                    if let index = modifiedLimits.firstIndex(where: { $0.id == limitToUse.id }) {
+                                        modifiedLimits[index] = limitToUse
+                                    }
                                 }
-                                allLimits.append(limitToUse)
+                                
+                                isPresented = false
                             }
-                            
-                            if !modifiedLimits.contains(where: { $0.id == limitToUse.id }) {
-                                modifiedLimits.append(limitToUse)
-                            } else {
-                                if let index = modifiedLimits.firstIndex(where: { $0.id == limitToUse.id }) {
-                                    modifiedLimits[index] = limitToUse
+                            CancelButton() {
+                                if !isNewLimit {
+                                    limitToUse = deepCopiedExistingLimit!
                                 }
+                                
+                                isPresented = false
                             }
-                            
-                            isPresented = false
-                        }
-                        CancelButton() {
-                            if !isNewLimit {
-                                limitToUse = deepCopiedExistingLimit!
-                            }
-                            
-                            isPresented = false
                         }
                     }
-                    .padding()
                 }
             }
             .familyActivityPicker(isPresented: $isShowingFamilyActivityPicker, selection: $activitySelection)
@@ -264,13 +279,13 @@ private struct DaysView: View {
             ForEach(Weekday.allCases, id: \.self) { day in
                 ZStack {
                     Circle()
-                        .fill(days.contains(day) ? Color.gray : Color.gray.opacity(0.3))
-                        .frame(width: 18, height: 24)
+                        .fill(days.contains(day) ? Color.gray : .clear)
+                        .frame(width: 20, height: 24)
                     
                     Text(day.label)
-                        .font(.caption)
+                        .font(.system(size: 15))
                         .fontWeight(.medium)
-                        .foregroundColor(days.contains(day) ? .white : .gray)
+                        .foregroundColor(days.contains(day) ? Color.primary : Color.secondary)
                 }
             }
         }
@@ -531,25 +546,23 @@ private struct SelectedAppDisplay: View {
     @Binding var webDomainTokens: Set<WebDomainToken>
 
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: -5) {
-                ForEach(Array(appTokens), id: \.self) { token in
-                    Label(token)
-                        .labelStyle(.iconOnly)
-                        .scaleEffect(1.7)
-                }
+        HStack(spacing: -5) {
+            ForEach(Array(appTokens), id: \.self) { token in
+                Label(token)
+                    .labelStyle(.iconOnly)
+                    .scaleEffect(1.7)
+            }
 
-                ForEach(Array(webDomainTokens), id: \.self) { token in
-                    Label(token)
-                        .labelStyle(.iconOnly)
-                        .scaleEffect(1.7)
-                }
+            ForEach(Array(webDomainTokens), id: \.self) { token in
+                Label(token)
+                    .labelStyle(.iconOnly)
+                    .scaleEffect(1.7)
+            }
 
-                ForEach(Array(categoryTokens), id: \.self) { token in
-                    Label(token)
-                        .labelStyle(.iconOnly)
-                        .scaleEffect(1.2) // For some reason category tokens are slightly larger
-                }
+            ForEach(Array(categoryTokens), id: \.self) { token in
+                Label(token)
+                    .labelStyle(.iconOnly)
+                    .scaleEffect(1.2) // For some reason category tokens are slightly larger
             }
         }
     }

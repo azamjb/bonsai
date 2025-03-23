@@ -58,40 +58,38 @@ struct BoundaryViewerView: View {
                         .padding(.horizontal, 30)
                     }
                 } else {
-                    ScrollView {
-                        ZStack() {
-                            Color.clear
-                                .contentShape(Rectangle())
-                                .onTapGesture {
-                                    UIApplication.shared.dismissKeyboard()
-                                }
-                                .ignoresSafeArea()
+                    ZStack() {
+                        Color.clear
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                UIApplication.shared.dismissKeyboard()
+                            }
+                            .ignoresSafeArea()
+                        
+                        VStack(spacing: 16) {
+                            Text("BOUNDARIES")
+                                .bold()
+                                .font(.system(size: 30))
+                                .multilineTextAlignment(.center)
+                                .padding(.top, 40)
+                                
                             
-                            VStack(spacing: 16) {
-                                Text("BOUNDARIES")
-                                    .bold()
-                                    .font(.system(size: 30))
-                                    .multilineTextAlignment(.center)
-                                    .padding(.top, 40)
-                                    
-                                
-                                Text("\"It is not that we have a short time to live, but that we waste a lot of it.\" - Seneca")
-                                    .font(.system(size: 12))
-                                    .multilineTextAlignment(.center)
-                                    .padding(.horizontal, 30)
-                                
-                                if !screenTime.limitsSet.isEmpty {
-                                    List {
-                                        ForEach(screenTime.limitsSet) { limit in
-                                            if !limit.invisibleLimit {
-                                                LimitRow(limit: limit)
-                                                    .listRowSeparator(.hidden)
-                                            }
+                            Text("\"It is not that we have a short time to live, but that we waste a lot of it.\" - Seneca")
+                                .font(.system(size: 12))
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal, 30)
+                            
+                            if !screenTime.limitsSet.isEmpty {
+                                List {
+                                    ForEach(screenTime.limitsSet) { limit in
+                                        if !limit.invisibleLimit {
+                                            LimitRow(limit: limit)
+                                                .listRowSeparator(.hidden)
                                         }
                                     }
-                                    .listStyle(PlainListStyle())
-                                    .frame(minHeight: 150 * CGFloat(screenTime.limitsSet.count))
                                 }
+                                .listStyle(PlainListStyle())
+                                .frame(minHeight: 175 * CGFloat(screenTime.limitsSet.count))
                             }
                         }
                     }
@@ -104,8 +102,10 @@ struct BoundaryViewerView: View {
                     }
             }
             
+            Spacer()
+            
             buttonContent
-                .padding(.bottom, 90)
+                .padding(.bottom, 30)
         }
     }
     
