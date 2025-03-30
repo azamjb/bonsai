@@ -12,6 +12,11 @@
 		242A1E9C2D2726B600D5CD5E /* shieldActionExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 242A1E932D2726B600D5CD5E /* shieldActionExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		242A1FC52D274E8200D5CD5E /* iPhoneNumberField in Frameworks */ = {isa = PBXBuildFile; productRef = 242A1FC42D274E8200D5CD5E /* iPhoneNumberField */; };
 		249650312D345D0D0091B4F4 /* DigitEntryView in Frameworks */ = {isa = PBXBuildFile; productRef = 249650302D345D0D0091B4F4 /* DigitEntryView */; };
+		24B0B38C2D917946000BBE68 /* GlobalStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24B0B38B2D917946000BBE68 /* GlobalStructs.swift */; };
+		24B0B38D2D91797B000BBE68 /* GlobalStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24B0B38B2D917946000BBE68 /* GlobalStructs.swift */; };
+		24B0B38E2D91797B000BBE68 /* GlobalStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24B0B38B2D917946000BBE68 /* GlobalStructs.swift */; };
+		24B0B38F2D91797B000BBE68 /* GlobalStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24B0B38B2D917946000BBE68 /* GlobalStructs.swift */; };
+		24B0B3902D91797B000BBE68 /* GlobalStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24B0B38B2D917946000BBE68 /* GlobalStructs.swift */; };
 		B71551412CF96667000AFACB /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71551012CF957FF000AFACB /* DeviceActivity.framework */; };
 		B71551492CF96667000AFACB /* deviceactivitymonitor.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B71551402CF96667000AFACB /* deviceactivitymonitor.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B715517C2CFABBF4000AFACB /* deviceactivityreport.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = B71551702CFABBF4000AFACB /* deviceactivityreport.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -95,6 +100,7 @@
 
 /* Begin PBXFileReference section */
 		242A1E932D2726B600D5CD5E /* shieldActionExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = shieldActionExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		24B0B38B2D917946000BBE68 /* GlobalStructs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalStructs.swift; sourceTree = "<group>"; };
 		B71550B72CF9519F000AFACB /* bonsai.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = bonsai.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B71550C72CF951A0000AFACB /* bonsaiTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bonsaiTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B71550D12CF951A0000AFACB /* bonsaiUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bonsaiUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -299,6 +305,7 @@
 				242A1E952D2726B600D5CD5E /* shieldActionExtension */,
 				B71551002CF957FF000AFACB /* Frameworks */,
 				B71550B82CF9519F000AFACB /* Products */,
+				24B0B38B2D917946000BBE68 /* GlobalStructs.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -616,6 +623,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				24B0B3902D91797B000BBE68 /* GlobalStructs.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -623,6 +631,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				24B0B38C2D917946000BBE68 /* GlobalStructs.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -644,6 +653,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				24B0B38D2D91797B000BBE68 /* GlobalStructs.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -651,6 +661,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				24B0B38E2D91797B000BBE68 /* GlobalStructs.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -658,6 +669,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				24B0B38F2D91797B000BBE68 /* GlobalStructs.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

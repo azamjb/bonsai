@@ -2,7 +2,7 @@ import DeviceActivity
 import SwiftUI
 
 extension DeviceActivityReport.Context {
-    static let totalActivity = Self("Total Activity")
+    static let totalActivity = Self("total_activity")
 }
 
 struct TotalActivityReport: DeviceActivityReportScene {

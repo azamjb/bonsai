@@ -36,7 +36,7 @@ struct ProfileCreation2View: View {
                                     )
                                     .offset(x: isShaking ? -10 : 0) // Shake effect
                                     .animation(isShaking ? .default.repeatCount(3, autoreverses: true) : .default, value: isShaking)
-                                    .onChange(of: phoneNumber) { newValue in
+                                    .onChange(of: phoneNumber) { _, newValue in
                                         phoneNumber = formatPhoneNumber(newValue)
                                     }
                                 

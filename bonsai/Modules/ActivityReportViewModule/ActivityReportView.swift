@@ -13,13 +13,13 @@ struct ActivityReportView: View {
     @Binding var tabSelection: Int
 
     let center = AuthorizationCenter.shared
-
     
     @StateObject var viewModel: ActivityReportViewModel = ActivityReportViewModel()
-    @EnvironmentObject var screenTime: ScreenTimeService
-    @State private var context: DeviceActivityReport.Context = .init(rawValue: "pie Chart")
-    @State private var context2: DeviceActivityReport.Context = .init(rawValue: "Total Activity")
-    
+    @StateObject var screenTime: ScreenTimeService = ScreenTimeService()
+    @State private var totalActivityContext: DeviceActivityReport.Context = .init(rawValue: "total_activity")
+    @State private var pillbarContext: DeviceActivityReport.Context = .init(rawValue: "pill_bar")
+    @State private var appReportContext: DeviceActivityReport.Context = .init(rawValue: "app_report")
+
     @State private var monCount: Int = 0
     @State private var tueCount: Int = 0
     @State private var wedCount: Int = 0
@@ -51,7 +51,6 @@ struct ActivityReportView: View {
                     }
                     
                     HStack {
-                        
                         VStack(alignment: .leading) {
                             
                             Text("TOTAL")
@@ -61,9 +60,7 @@ struct ActivityReportView: View {
                             Text("SCREEN TIME")
                                 .foregroundColor(.gray)
                                 .font(.system(size: 16))
-                            
                         }
-                        
                         
                         Spacer()
                         Text(viewModel.currentMonth)
@@ -74,10 +71,8 @@ struct ActivityReportView: View {
                     }
                     .padding(.horizontal, 30)
                     
-                    
-                    
                     Group {
-                        DeviceActivityReport(.init(rawValue: "Total Activity"), filter: filter)
+                        DeviceActivityReport(totalActivityContext, filter: filter)
                             .frame(height: 100)
                     }
                     
@@ -90,36 +85,32 @@ struct ActivityReportView: View {
                             .padding(.top, 10)
                     }
                     
-                    
+                    // MARK: - Boundaries pill bars
                     VStack(alignment: .leading) {
-                        
                         Text("BOUNDARIES")
                             .padding(.horizontal, 18)
+                            .padding(.bottom, 15)
                         
-                        
-                        DeviceActivityReport(.init(rawValue: "pill Bar"), filter: filter)
-                            .frame(height: 500) // NEED TO MAKE THIS DYNAMIC
-                        
-                        
+                        DeviceActivityReport(pillbarContext, filter: filter)
+                            .frame(height: CGFloat(screenTime.limitsSet.count) * 90)
+                            .padding(.horizontal, 18)
+
                         Text("BOUNDARY EXTENSIONS")
                             .padding(.horizontal, 18)
                             .padding(.top, 10)
                             .font(.system(size: 10))
-                            
                     }
-                    
                         
-                        HStack(spacing: 1) {
-                            
-                            extensionCountView(color: "0x1E2368", day: "MON", count: monCount)
-                            extensionCountView(color: "0x454380", day: "TUE", count: tueCount)
-                            extensionCountView(color: "0x7D4077", day: "WED", count: wedCount)
-                            extensionCountView(color: "0x9D3B6A", day: "THU", count: thuCount)
-                            extensionCountView(color: "0xDB6552", day: "FRI", count: friCount)
-                            extensionCountView(color: "0xE56829", day: "SAT", count: satCount)
-                            extensionCountView(color: "0xC95102", day: "SUN", count: sunCount)
-                        }
-                        .padding(.bottom, 30)
+                    HStack(spacing: 1) {
+                        extensionCountView(color: "0x1E2368", day: "MON", count: monCount)
+                        extensionCountView(color: "0x454380", day: "TUE", count: tueCount)
+                        extensionCountView(color: "0x7D4077", day: "WED", count: wedCount)
+                        extensionCountView(color: "0x9D3B6A", day: "THU", count: thuCount)
+                        extensionCountView(color: "0xDB6552", day: "FRI", count: friCount)
+                        extensionCountView(color: "0xE56829", day: "SAT", count: satCount)
+                        extensionCountView(color: "0xC95102", day: "SUN", count: sunCount)
+                    }
+                    .padding(.bottom, 30)
                     
                     VStack(alignment: .leading) {
                         
@@ -131,6 +122,10 @@ struct ActivityReportView: View {
                         Text("ANALYTICS")
                             .padding(.bottom, 20)
                         
+                        DeviceActivityReport(appReportContext, filter: filter)
+                            .padding(.horizontal, 18)
+                            .frame(height: 40)
+
                         Divider()
                         .frame(height: 1)
                         .background(Color.black)
@@ -142,36 +137,33 @@ struct ActivityReportView: View {
                     }
                     .padding(.horizontal, 18)
                    
-                        
-                        NavigationLink(destination: BoundaryExtensionRequestView()) {
-                            Text("request boundary extension")
+                    NavigationLink(destination: BoundaryExtensionRequestView()) {
+                        Text("request boundary extension")
+                            .font(.system(size: 15))
+                            .foregroundColor(.black)
+                            .padding(.vertical, 10)
+                            .padding(.horizontal, 60)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 20)
+                                    .stroke(Color.black, lineWidth: 1)
+                            )
+                    }
+                    .padding(.bottom, 30)
+                
+                    Button(action: {
+                            screenTime.clearShieldedApps()
+                        }) {
+                            Text("override all boundaries")
                                 .font(.system(size: 15))
                                 .foregroundColor(.black)
                                 .padding(.vertical, 10)
-                                .padding(.horizontal, 60)
+                                .padding(.horizontal, 80)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 20)
                                         .stroke(Color.black, lineWidth: 1)
                                 )
                         }
-                        .padding(.bottom, 30)
-                    
-                        Button(action: {
-                                screenTime.clearAllRestrictions()
-                            }) {
-                                Text("override all boundaries")
-                                    .font(.system(size: 15))
-                                    .foregroundColor(.black)
-                                    .padding(.vertical, 10)
-                                    .padding(.horizontal, 80)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 20)
-                                            .stroke(Color.black, lineWidth: 1)
-                                    )
-                            }
-                        .padding(.bottom, 50)
-                    
-                    
+                    .padding(.bottom, 50)
                 }
                 .padding(.horizontal, 18)
             }
@@ -191,7 +183,6 @@ struct ActivityReportView: View {
 
     
     private func extensionCountView(color: String, day: String, count: Int) -> some View {
-       
         ZStack {
             
             Rectangle()

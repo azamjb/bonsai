@@ -195,7 +195,7 @@ struct BoundaryExtensionRequestView: View {
                         }
                     }
             }
-            .onChange(of: screenTime.limitsReached) { newLimits in
+            .onChange(of: screenTime.limitsReached) { _, newLimits in
                 
                 print("CHANGE DETECTED")
                 for limit in newLimits {

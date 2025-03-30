@@ -18,6 +18,10 @@ struct BoundaryEditorView: View {
     @State private var showViewScreen: Bool = false
     @State private var modifiedLimits: [ScreenTimeActivityEvent] = []
     @State private var limitIdsToDelete: [UUID] = []
+    
+    @State private var showingCancelConfirmation: Bool = false
+    @State private var showingDeleteConfirmation: Bool = false
+    @State private var showingEditConfirmation: Bool = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -30,7 +34,7 @@ struct BoundaryEditorView: View {
             buttonContent
                 .padding(.bottom, 100)
         }
-        .edgesIgnoringSafeArea(.bottom) // Allow content to extend to bottom edge
+        .edgesIgnoringSafeArea(.bottom)
         .navigationDestination(isPresented: $showViewScreen) {
             BoundaryDetailsView(
                 selectedLimit: selectedLimit != nil ? $selectedLimit : .constant(nil),
@@ -44,15 +48,71 @@ struct BoundaryEditorView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button(action: {
-                    presentationMode.wrappedValue.dismiss()
+                    if !modifiedLimits.isEmpty || !limitIdsToDelete.isEmpty {
+                        showingCancelConfirmation = true
+                    } else {
+                        presentationMode.wrappedValue.dismiss()
+                    }
                 }) {
                     HStack {
                         Image(systemName: "chevron.left")
-                            .font(.system(size: 16))
-                            .foregroundColor(.black)
+                        Text("return")
                     }
+                    .foregroundColor(Color.primary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 20)
                 }
             }
+        }
+        .alert("Unsaved changes will be lost", isPresented: $showingCancelConfirmation) {
+            Button("discard changes", role: .cancel) {
+                presentationMode.wrappedValue.dismiss()
+            }.backgroundStyle(Color(UIColor.systemRed))
+            
+            Button("keep editing") {
+                showingCancelConfirmation = false
+            }
+        } message: {
+            Text("Are you sure you want to exit?")
+        }
+        .alert("Are you sure you want to save?", isPresented: $showingEditConfirmation) {
+            Button("save", role: .cancel) {
+                if !limitIdsToDelete.isEmpty {
+                    showingEditConfirmation = false
+                    showingDeleteConfirmation = true
+                } else {
+                    modifiedLimits.forEach { limit in
+                        screenTime.startMonitoring(limit: limit)
+                    }
+                    
+                    presentationMode.wrappedValue.dismiss()
+                }
+            }.backgroundStyle(Color(UIColor.systemRed))
+            
+            Button("keep editing") {
+                showingEditConfirmation = false
+            }
+        } message: {
+            Text("Once saved, you'll be able to change your balance sheet 2x a week. ")
+        }
+        .alert("Are you sure you want to delete a boundary?", isPresented: $showingDeleteConfirmation) {
+            Button("delete", role: .cancel) {
+                limitIdsToDelete.forEach { id in
+                    screenTime.deleteLimit(limitId: id)
+                }
+                
+                modifiedLimits.filter({ limit in !limitIdsToDelete.contains(where: { $0 == limit.id }) }).forEach { limit in
+                    screenTime.startMonitoring(limit: limit)
+                }
+                
+                presentationMode.wrappedValue.dismiss()
+            }.backgroundStyle(Color(UIColor.systemRed))
+            
+            Button("cancel") {
+                showingDeleteConfirmation = false
+            }
+        } message: {
+            Text("Once deleted, a boundary cannot be recovered.")
         }
     }
     
@@ -93,8 +153,9 @@ struct BoundaryEditorView: View {
     
     private var limitsListView: some View {
          let uniqueLimits = screenTime.limitsSet.filter { limit in
-             !modifiedLimits.contains(where: { $0.id == limit.id })
+             !modifiedLimits.contains(where: { $0.id == limit.id }) && !limitIdsToDelete.contains(limit.id)
          }
+        
          let count = uniqueLimits.count + modifiedLimits.count
          
          return List {
@@ -144,15 +205,7 @@ struct BoundaryEditorView: View {
             AddBoundaryButton(selectedLimit: $selectedLimit, showViewScreen: $showViewScreen)
             
             SaveButton {
-                modifiedLimits.forEach { limit in
-                    screenTime.startMonitoring(limit: limit)
-                }
-                
-                limitIdsToDelete.forEach { id in
-                    screenTime.deleteLimit(limitId: id)
-                }
-                
-                presentationMode.wrappedValue.dismiss()
+                showingEditConfirmation = true
             }
         }
     }
@@ -283,7 +336,7 @@ private struct LimitRow: View {
     private var limitDetailsView: some View {
         HStack {
             if (limit.givenName.isEmpty) {
-                Text("Unnamed Limit")
+                Text("Unnamed Boundary")
                     .font(.system(size: 18))
             } else {
                 Text(limit.givenName)
