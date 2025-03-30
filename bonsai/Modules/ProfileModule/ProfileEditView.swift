@@ -136,8 +136,8 @@ struct ProfileEditView: View {
                     }
                     
                     Button("Save") {
-                        viewModel.saveBasicInfo(name: editedName, phoneNumber: editedPhone)
-                        viewModel.saveHobbies(hobbies: editedHobbies)
+                        viewModel.saveBasicInfo(name: editedName, phoneNumber: editedPhone, hobbies: editedHobbies)
+//                        viewModel.saveHobbies(hobbies: editedHobbies)
                         
                         // Update original values to match edited values
                         originalName = editedName
