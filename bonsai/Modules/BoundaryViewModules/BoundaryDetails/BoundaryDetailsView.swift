@@ -1,4 +1,4 @@
-
+//
 //  BoundaryDetailsView.swift
 //  bonsai
 //
@@ -22,6 +22,10 @@ struct BoundaryDetailsView: View {
     @State private var deepCopiedExistingLimit: ScreenTimeActivityEvent?
     @State private var isShowingFamilyActivityPicker: Bool = false
     @State private var activitySelection: FamilyActivitySelection = FamilyActivitySelection()
+    @StateObject private var screenTime: ScreenTimeService = ScreenTimeService()
+   
+    @State private var errorMessage: String? = nil
+    @State private var submitAttempted: Bool = false
 
     init(selectedLimit: Binding<ScreenTimeActivityEvent?>,
          allLimits: Binding<[ScreenTimeActivityEvent]>,
@@ -35,7 +39,7 @@ struct BoundaryDetailsView: View {
         
         let defaultLimit = ScreenTimeActivityEvent(
             id: UUID(),
-            givenName: "Unnamed Limit",
+            givenName: "Unnamed Boundary",
             appTokens: [],
             categoryTokens: [],
             webDomainTokens: [],
@@ -64,115 +68,131 @@ struct BoundaryDetailsView: View {
     
     var body: some View {
         VStack {
-            ScrollView(.vertical) {
-                ZStack(alignment: .top) {
-                    Color.clear
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            UIApplication.shared.dismissKeyboard()
+            Color.clear
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    UIApplication.shared.dismissKeyboard()
+                }
+                .ignoresSafeArea()
+            
+            VStack(spacing: 16) {
+                Text("Boundary Details")
+                    .font(.system(size: 30))
+                    .multilineTextAlignment(.center)
+                    .padding(.top, 80)
+                
+                List {
+                    Section {
+                        NavigationLink(destination: BoundaryLabelEditor(limit: $limitToUse)) {
+                            HStack {
+                                Text("BOUNDARY LABEL")
+                                    .foregroundColor(.primary)
+                                Spacer()
+                                Text(limitToUse.givenName.shorted(to: 10))
+                                    .foregroundColor(.primary)
+                                    .lineLimit(1)
+                            }
+                            .padding(.horizontal, 5)
+                            .padding(.vertical)
+                            .background(Color(UIColor.systemGray5))
                         }
-                        .ignoresSafeArea()
-                    
-                    VStack(spacing: 16) {
-                        Text("Boundary Details")
-                            .font(.system(size: 30))
-                            .multilineTextAlignment(.center)
-                            .padding(.top, 20)
                         
-                        List {
-                            Section {
-                                NavigationLink(destination: BoundaryLabelEditor(limit: $limitToUse)) {
-                                    HStack {
-                                        Text("BOUNDARY LABEL")
-                                            .foregroundColor(.primary)
-                                        Spacer()
-                                        Text(limitToUse.givenName)
-                                            .foregroundColor(.primary)
-                                    }
-                                    .padding(.horizontal, 5)
-                                    .padding(.vertical)
-                                    .background(Color(UIColor.systemGray5))
-                                }
-                                
-                            }
-                            .listRowBackground(Color(UIColor.systemGray5))
+                    }
+                    .listRowBackground(Color(UIColor.systemGray5))
 
-                            Section {
-                                NavigationLink(destination: DaysActiveEditor(limit: $limitToUse)) {
-                                    HStack {
-                                        Text("DAYS ACTIVE")
-                                            .foregroundColor(.primary)
-                                        Spacer()
-                                        DaysView(days: limitToUse.weekdays)
-                                    }
-                                    .padding(.horizontal, 5)
-                                    .padding(.vertical)
-                                }
+                    Section {
+                        NavigationLink(destination: DaysActiveEditor(limit: $limitToUse)) {
+                            HStack {
+                                Text("DAYS ACTIVE")
+                                    .foregroundColor(.primary)
+                                Spacer()
+                                DaysView(days: limitToUse.weekdays)
                             }
-                            .listRowBackground(Color(UIColor.systemGray5))
-
-                            Section {
-                                NavigationLink(destination: TimeLimitEditor(limit: $limitToUse)) {
-                                    HStack {
-                                        Text("DAILY LIMIT")
-                                            .foregroundColor(.primary)
-                                        Spacer()
-                                        Text("\(limitToUse.hours) hrs, \(limitToUse.minutes) mins")
-                                            .foregroundColor(Color.primary)
-                                    }
-                                    .padding(.horizontal, 5)
-                                    .padding(.vertical)
-                                    .listRowBackground(Color.black)
-                                }
-                            }
-                            .listRowBackground(Color(UIColor.systemGray5))
-
+                            .padding(.horizontal, 5)
+                            .padding(.vertical)
                         }
-                        .cornerRadius(CGFloat(15))
-                        .listStyle(PlainListStyle())
-                        .frame(height: 225)
-                        .padding()
-                        
-                        Spacer()
-                        
+                    }
+                    .listRowBackground(Color(UIColor.systemGray5))
+
+                    Section {
+                        NavigationLink(destination: TimeLimitEditor(limit: $limitToUse)) {
+                            HStack {
+                                Text("DAILY LIMIT")
+                                    .foregroundColor(.primary)
+                                Spacer()
+                                Text("\(limitToUse.hours) hrs, \(limitToUse.minutes) mins")
+                                    .foregroundColor(Color.primary)
+                            }
+                            .padding(.horizontal, 5)
+                            .padding(.vertical)
+                            .listRowBackground(Color.black)
+                        }
+                    }
+                    .listRowBackground(Color(UIColor.systemGray5))
+
+                }
+                .cornerRadius(CGFloat(15))
+                .listStyle(PlainListStyle())
+                .frame(height: 225)
+                .padding()
+                
+                Spacer()
+                
+                HStack {
+                    Button(action: {
+                        isShowingFamilyActivityPicker = true
+                    }) {
                         HStack {
-                            Button(action: {
-                                isShowingFamilyActivityPicker = true
-                            }) {
-                                HStack {
-                                    VStack(alignment: .leading, spacing: 10) {
-                                        Text("SELECTED APPS")
-                                            .foregroundColor(.primary)
-                                        
-                                        if activitySelection.applicationTokens.isEmpty
-                                            && activitySelection.categoryTokens.isEmpty
-                                            && activitySelection.webDomainTokens.isEmpty
-                                        {
-                                            Text("No apps selected")
-                                                .foregroundColor(Color.secondary)
-                                                .padding(.vertical, 5)
-                                        } else {
-                                            SelectedAppDisplay(
-                                                appTokens: $activitySelection.applicationTokens,
-                                                categoryTokens: $activitySelection.categoryTokens,
-                                                webDomainTokens: $activitySelection.webDomainTokens
-                                            )
-                                        }
-                                    }
-                                    
-                                    Spacer()
-                                    
-                                    Image(systemName: "chevron.right")
-                                        .foregroundStyle(Color.primary)
+                            VStack(alignment: .leading, spacing: 10) {
+                                Text("SELECTED APPS")
+                                    .foregroundColor(.primary)
+                                
+                                if activitySelection.applicationTokens.isEmpty
+                                    && activitySelection.categoryTokens.isEmpty
+                                    && activitySelection.webDomainTokens.isEmpty
+                                {
+                                    Text("No apps selected")
+                                        .foregroundColor(Color.secondary)
+                                        .padding(.vertical, 5)
+                                } else {
+                                    SelectedAppDisplay(
+                                        appTokens: $activitySelection.applicationTokens,
+                                        categoryTokens: $activitySelection.categoryTokens,
+                                        webDomainTokens: $activitySelection.webDomainTokens
+                                    )
                                 }
                             }
+                            
+                            Spacer()
+                            
+                            Image(systemName: "chevron.right")
+                                .foregroundStyle(Color.primary)
                         }
-                        .padding(.horizontal, 45)
-                        
-                        Spacer(minLength: 120)
+                    }
+                }
+                .padding(.horizontal, 45)
 
-                        VStack {
-                            SaveButton() {
+                Spacer()
+
+                VStack {
+                    VStack {
+                        if let msg = errorMessage {
+                            Text(msg)
+                                .foregroundStyle(Color(UIColor.systemRed))
+                                .padding(.horizontal)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                    .frame(height: 40)
+                    .padding(.horizontal, 45)
+                    
+                    VStack {
+                        SaveButton() {
+                            submitAttempted = true
+                            
+                            validateBoundary()
+                            
+                            if errorMessage == nil {
                                 limitToUse.appTokens = activitySelection.applicationTokens
                                 limitToUse.categoryTokens = activitySelection.categoryTokens
                                 limitToUse.webDomainTokens = activitySelection.webDomainTokens
@@ -198,21 +218,51 @@ struct BoundaryDetailsView: View {
                                 
                                 isPresented = false
                             }
-                            CancelButton() {
-                                if !isNewLimit {
-                                    limitToUse = deepCopiedExistingLimit!
-                                }
-                                
-                                isPresented = false
+                        }
+                        CancelButton() {
+                            if !isNewLimit {
+                                limitToUse = deepCopiedExistingLimit!
                             }
+                            
+                            isPresented = false
                         }
                     }
+                    .padding(.top, 15)
+                    .padding(.bottom, 40)
                 }
             }
-            .familyActivityPicker(isPresented: $isShowingFamilyActivityPicker, selection: $activitySelection)
-            .navigationBarBackButtonHidden(true)
+        }
+        .familyActivityPicker(isPresented: $isShowingFamilyActivityPicker, selection: $activitySelection)
+        .onChange(of: activitySelection) { _, newSelection in
+            if submitAttempted {
+                validateBoundary()
+            }
+        }
+        .navigationBarBackButtonHidden(true)
+    }
+
+    private func validateBoundary() {
+        if activitySelection.applicationTokens.isEmpty && activitySelection.categoryTokens.isEmpty && activitySelection.webDomainTokens.isEmpty {
+            errorMessage = "Please make at least one selection from app picker."
+        } else if selectedTokensAreUnique() {
+            errorMessage = "At least one app/category selected already exists in another boundary."
+        } else if limitToUse.weekdays.isEmpty {
+            errorMessage = "Please select at least one weekday."
+        } else {
+            errorMessage = nil
         }
     }
+    
+    private func selectedTokensAreUnique() -> Bool {
+        return screenTime.limitsSet.filter({ limit in limit.id != limitToUse.id }).contains(where: { limit in
+            let hasMatchingAppTokens = !$activitySelection.applicationTokens.wrappedValue.isDisjoint(with: limit.appTokens)
+            let hasMatchingCategoryTokens = !$activitySelection.categoryTokens.wrappedValue.isDisjoint(with: Set(limit.categoryTokens))
+            let hasMatchingWebDomainTokens = !$activitySelection.webDomainTokens.wrappedValue.isDisjoint(with: Set(limit.webDomainTokens))
+            
+            return hasMatchingAppTokens || hasMatchingCategoryTokens || hasMatchingWebDomainTokens
+        })
+    }
+    
 }
 
 private struct SaveButton: View {
@@ -296,7 +346,8 @@ private struct DaysView: View {
 private struct BoundaryLabelEditor: View {
     @Binding var limit: ScreenTimeActivityEvent
     @Environment(\.presentationMode) var presentationMode
-    
+    @FocusState private var isFocused: Bool
+
     var body: some View {
         VStack(spacing: 0) {
             headerView()
@@ -316,6 +367,10 @@ private struct BoundaryLabelEditor: View {
                 .padding(.top, 20)
             
             Button(action: {
+                if limit.givenName.isEmpty {
+                    limit.givenName = "Unnamed Boundary"
+                }
+                
                 presentationMode.wrappedValue.dismiss()
             }) {
                 HStack {
@@ -337,13 +392,24 @@ private struct BoundaryLabelEditor: View {
                 .padding(.horizontal, 20)
                 .padding(.top, 18)
                 .padding(.bottom, 15)
-                .background(Color(UIColor.systemGray5))
             
-            TextField("", text: $limit.givenName)
-                .padding(.horizontal, 20)
-                .padding(.vertical, 15)
-                .foregroundStyle(Color.secondary)
-                .background(Color(UIColor.systemGray5))
+            HStack {
+                TextField("", text: $limit.givenName)
+                    .focused($isFocused)
+                    .foregroundStyle(Color.primary)
+                    .padding(.vertical, 15)
+                
+                Button(action: {
+                    limit.givenName = ""
+                    isFocused = true
+                }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(Color.secondary)
+                        .padding(.trailing, 8)
+                }
+            }
+            .padding(.horizontal, 20)
+            .background(Color(UIColor.systemGray5))
         }
         .background(Color(UIColor.systemGray5))
         .cornerRadius(10)

@@ -61,7 +61,6 @@ struct RootView: View {
                     ContentView()
                 } else {
                     InspireView()
-
                 }
             }
         }

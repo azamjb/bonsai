@@ -9,17 +9,29 @@ import SwiftUI
 import DeviceActivity
 import FamilyControls
 
+enum AnalyticsDisplaysType: Int {
+    case daily = 1, weekly = 2, monthly = 3
+    
+    var fullName: String {
+        switch self {
+        case .daily:
+            return "DAILY"
+        case .weekly:
+            return "WEEKLY"
+        case .monthly:
+            return "MONTHLY"
+        }
+    }
+}
+
 struct ActivityReportView: View {
     @Binding var tabSelection: Int
 
     let center = AuthorizationCenter.shared
-
     
     @StateObject var viewModel: ActivityReportViewModel = ActivityReportViewModel()
     @EnvironmentObject var screenTime: ScreenTimeService
-    @State private var context: DeviceActivityReport.Context = .init(rawValue: "pie Chart")
-    @State private var context2: DeviceActivityReport.Context = .init(rawValue: "Total Activity")
-    
+
     @State private var monCount: Int = 0
     @State private var tueCount: Int = 0
     @State private var wedCount: Int = 0
@@ -28,150 +40,203 @@ struct ActivityReportView: View {
     @State private var satCount: Int = 0
     @State private var sunCount: Int = 0
     
-    @State private var filter = DeviceActivityFilter(
-        segment: .daily(
-            during: Calendar.current.dateInterval(of: .day, for: .now)!
-        ),
+    var now = Date()
+    
+    @State private var dayFilter = DeviceActivityFilter(
+        segment: .daily(during: Calendar.current.dateInterval(of: .day, for: .now)!),
         users: .all,
         devices: .init([.iPhone, .iPad])
     )
+    
+    @State private var weekFilter = DeviceActivityFilter(
+        segment: .weekly(during: DateInterval(
+            start: Calendar.current.date(byAdding: .day, value: -7, to: Date())!,
+            end: Date()
+        )),
+        users: .all,
+        devices: .init([.iPhone, .iPad])
+    )
+    
+    @State private var monthFilter = DeviceActivityFilter(
+        segment: .weekly(during: DateInterval(
+            start: Calendar.current.date(byAdding: .day, value: -30, to: Date())!,
+            end: Date()
+        )),
+        users: .all,
+        devices: .init([.iPhone, .iPad])
+    )
+
+    @State private var analyticsRange: AnalyticsDisplaysType = .daily
 
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack {
-                    
-                    HStack {
-                        Spacer()
-                        Text("...")
-                            .font(.system(size: 24))
-                            .fontWeight(.bold)
-                            .padding(.bottom, 5)
-                            .padding(.top, 12)
-                    }
-                    
-                    HStack {
-                        
-                        VStack(alignment: .leading) {
-                            
-                            Text("TOTAL")
-                                .foregroundColor(.gray)
-                                .font(.system(size: 16))
-                            
-                            Text("SCREEN TIME")
-                                .foregroundColor(.gray)
-                                .font(.system(size: 16))
-                            
-                        }
-                        
-                        
-                        Spacer()
-                        Text(viewModel.currentMonth)
-                            .fontWeight(.bold)
-                            .multilineTextAlignment(.center)
-                            .font(.system(size: 20))
-                            
-                    }
-                    .padding(.horizontal, 30)
-                    
-                    
-                    
                     Group {
-                        DeviceActivityReport(.init(rawValue: "Total Activity"), filter: filter)
-                            .frame(height: 100)
+                        HStack {
+                            VStack(alignment: .leading) {
+                                Text("TOTAL")
+                                    .foregroundColor(.secondary)
+                                    .font(.system(size: 10))
+                                
+                                Text("SCREEN TIME")
+                                    .foregroundColor(.secondary)
+                                    .font(.system(size: 10))
+                            }
+                            
+                            Spacer()
+                            
+                            Text(mediumDateFormat(date: Date()))
+                                .multilineTextAlignment(.center)
+                                .foregroundStyle(.secondary)
+                                .font(.system(size: 11))
+                        }
+                        .padding(.horizontal, 75)
+                        
+                        DeviceActivityReport(.init(rawValue: "total_activity"), filter: dayFilter)
+                            .frame(height: 50)
                     }
+                    .padding(.top, 30)
                     
                     HStack {
-                        Image("Fishes")
+                        Image("koibois")
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 145)
-                            .padding(.bottom, 25)
-                            .padding(.top, 10)
+                            .frame(width: 350)
                     }
-                    
-                    
+                    .padding(.bottom, 25)
+                    .padding(.top, 25)
+
                     VStack(alignment: .leading) {
-                        
                         Text("BOUNDARIES")
                             .padding(.horizontal, 18)
+                            .padding(.bottom, 20)
                         
-                        
-                        DeviceActivityReport(.init(rawValue: "pill Bar"), filter: filter)
-                            .frame(height: 500) // NEED TO MAKE THIS DYNAMIC
-                        
+                        DeviceActivityReport(.init(rawValue: "pill_bar"), filter: dayFilter)
+                            .frame(height: CGFloat(screenTime.limitsSet.count) * 90)
+                            .padding(.horizontal, 18)
+
                         
                         Text("BOUNDARY EXTENSIONS")
                             .padding(.horizontal, 18)
                             .padding(.top, 10)
                             .font(.system(size: 10))
-                            
                     }
-                    
                         
-                        HStack(spacing: 1) {
-                            
-                            extensionCountView(color: "0x1E2368", day: "MON", count: monCount)
-                            extensionCountView(color: "0x454380", day: "TUE", count: tueCount)
-                            extensionCountView(color: "0x7D4077", day: "WED", count: wedCount)
-                            extensionCountView(color: "0x9D3B6A", day: "THU", count: thuCount)
-                            extensionCountView(color: "0xDB6552", day: "FRI", count: friCount)
-                            extensionCountView(color: "0xE56829", day: "SAT", count: satCount)
-                            extensionCountView(color: "0xC95102", day: "SUN", count: sunCount)
-                        }
-                        .padding(.bottom, 30)
+                    HStack(spacing: 1) {
+                        extensionCountView(color: "0x1E2368", day: "MON", count: monCount)
+                        extensionCountView(color: "0x454380", day: "TUE", count: tueCount)
+                        extensionCountView(color: "0x7D4077", day: "WED", count: wedCount)
+                        extensionCountView(color: "0x9D3B6A", day: "THU", count: thuCount)
+                        extensionCountView(color: "0xDB6552", day: "FRI", count: friCount)
+                        extensionCountView(color: "0xE56829", day: "SAT", count: satCount)
+                        extensionCountView(color: "0xC95102", day: "SUN", count: sunCount)
+                    }
+                    .padding(.bottom, 30)
                     
                     VStack(alignment: .leading) {
                         
                         Divider()
                             .frame(height: 1)
-                            .background(Color.black)
+                            .background(Color.primary)
                             .padding(.bottom, 20)
                         
-                        Text("ANALYTICS")
-                            .padding(.bottom, 20)
-                        
-                        Divider()
-                        .frame(height: 1)
-                        .background(Color.black)
-                        .padding(.bottom, 20)
-                        
-                        Text("EXTEND BOUNDARIES")
-                            .padding(.bottom, 30)
+                        VStack(alignment: .leading) {
+                            HStack {
+                                Text("ANALYTICS")
+                                    .padding(.bottom, 5)
+                                
+                                Spacer()
+                                
+                                Menu {
+                                    Button {
+                                        analyticsRange = .daily
+                                    } label: {
+                                        Text("DAILY")
+                                            .foregroundStyle(Color.primary)
+                                    }
+                                    Button {
+                                        analyticsRange = .weekly
+                                    } label: {
+                                        Text("WEEKLY")
+                                            .foregroundStyle(Color.primary)
+                                    }
+                                    // TODO - Fix monthly
+                                    
+                                    Button {
+                                        analyticsRange = .monthly
+                                    } label: {
+                                        Text("MONTHLY")
+                                            .foregroundStyle(Color.primary)
+                                    }
+                                } label: {
+                                    Label(analyticsRange.fullName, systemImage: "chevron.down")
+                                        .foregroundStyle(Color.primary)
+                                }
+                            }
+                            
+                            Text("Top 4 apps and daily usage")
+                                .font(.caption)
+                                .foregroundStyle(Color.secondary)
+                            
+                            Text(mediumDateFormat(date: Date.now))
+                                .font(.caption)
+                                .foregroundStyle(Color.secondary)
+
+                            ZStack {
+                                // The reason im showing/hiding with conditional opactity is cuz the conditional would make it need to reaggregate the data, which sometimes left the area blank for some time (it's async)
+                                DeviceActivityReport(.init(rawValue: "top_apps_daily_report"), filter: dayFilter)
+                                    .opacity(analyticsRange == .daily ? 1 : 0)
+                                
+                                DeviceActivityReport(.init(rawValue: "top_apps_weekly_report"), filter: weekFilter)
+                                        .opacity(analyticsRange == .weekly ? 1 : 0)
+
+                                DeviceActivityReport(.init(rawValue: "top_apps_monthly_report"), filter: monthFilter)
+                                        .opacity(analyticsRange == .monthly ? 1 : 0)
+                            }
+                            .frame(height: 120)
+                        }
                         
                     }
                     .padding(.horizontal, 18)
-                   
-                        
-                        NavigationLink(destination: BoundaryExtensionRequestView()) {
-                            Text("request boundary extension")
+
+                    
+                    Divider()
+                        .frame(height: 1)
+                        .background(Color.primary)
+                        .padding(.bottom, 20)
+                    
+                    Text("EXTEND BOUNDARIES")
+                        .padding(.bottom, 30)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                    NavigationLink(destination: BoundaryExtensionRequestView()) {
+                        Text("request boundary extension")
+                            .font(.system(size: 15))
+                            .foregroundColor(.primary)
+                            .padding(.vertical, 10)
+                            .padding(.horizontal, 60)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 20)
+                                    .stroke(Color.primary, lineWidth: 1)
+                            )
+                    }
+                    .padding(.bottom, 30)
+                
+                    Button(action: {
+                            screenTime.clearShieldedApps()
+                        }) {
+                            Text("override all boundaries")
                                 .font(.system(size: 15))
-                                .foregroundColor(.black)
+                                .foregroundColor(.primary)
                                 .padding(.vertical, 10)
-                                .padding(.horizontal, 60)
+                                .padding(.horizontal, 80)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 20)
-                                        .stroke(Color.black, lineWidth: 1)
+                                        .stroke(Color.primary, lineWidth: 1)
                                 )
                         }
-                        .padding(.bottom, 30)
-                    
-                        Button(action: {
-                                screenTime.clearAllRestrictions()
-                            }) {
-                                Text("override all boundaries")
-                                    .font(.system(size: 15))
-                                    .foregroundColor(.black)
-                                    .padding(.vertical, 10)
-                                    .padding(.horizontal, 80)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 20)
-                                            .stroke(Color.black, lineWidth: 1)
-                                    )
-                            }
-                        .padding(.bottom, 50)
-                    
-                    
+                    .padding(.bottom, 50)
                 }
                 .padding(.horizontal, 18)
             }
@@ -184,11 +249,8 @@ struct ActivityReportView: View {
                     }
                 }
             }
-            
         }
     }
-    
-
     
     private func extensionCountView(color: String, day: String, count: Int) -> some View {
        
@@ -214,4 +276,9 @@ struct ActivityReportView: View {
         }
         
     }
+}
+
+#Preview {
+    ActivityReportView(tabSelection: .constant(0))
+        .environmentObject(ScreenTimeService())
 }

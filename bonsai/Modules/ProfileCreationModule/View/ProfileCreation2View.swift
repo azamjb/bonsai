@@ -44,7 +44,7 @@ struct ProfileCreation2View: View {
                                     .font(.system(size: 18))
                                     .foregroundColor(.white)
                                     .padding(12)
-                                    .background(Color.black)
+                                    .background(Color.primary)
                                     .clipShape(Circle())
                                 
                                 Button(action: {
@@ -92,7 +92,7 @@ struct ProfileCreation2View: View {
                         HStack {
                             Image(systemName: "chevron.left") // Custom back arrow icon
                                 .font(.system(size: 16))
-                                .foregroundColor(.black)
+                                .foregroundColor(.primary)
                         }
                     }
                 }

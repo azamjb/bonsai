@@ -39,7 +39,7 @@ struct ProfileEditView: View {
                             
                         Rectangle()
                             .frame(height: 1)
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                 }
                 .padding(.bottom, 30)
                
@@ -57,7 +57,7 @@ struct ProfileEditView: View {
                             
                         Rectangle()
                             .frame(height: 1)
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                 }
                 .padding(.bottom, 40)
                 
@@ -66,12 +66,12 @@ struct ProfileEditView: View {
                     // ADD EDIT USER LOGIC
                 }
                 .font(.system(size: 15))
-                .foregroundColor(.black)
+                .foregroundColor(.primary)
                 .padding(.vertical, 10)
                 .padding(.horizontal, 50)
                 .overlay(
                     RoundedRectangle(cornerRadius: 20)
-                        .stroke(Color.black, lineWidth: 1)
+                        .stroke(Color.primary, lineWidth: 1)
                 )
                 
                 

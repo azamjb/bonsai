@@ -59,12 +59,12 @@ struct ProfileCreationFinalView: View {
                     NavigationLink(destination: ContentView()) {
                         Text("Begin Journey")
                             .font(.system(size: 15))
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                             .padding(.vertical, 10)
                             .padding(.horizontal, 120)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 20)
-                                    .stroke(Color.black, lineWidth: 1)
+                                    .stroke(Color.primary, lineWidth: 1)
                             )
                             .simultaneousGesture(TapGesture().onEnded {
                                 
@@ -89,7 +89,7 @@ struct ProfileCreationFinalView: View {
                             HStack {
                                 Image(systemName: "chevron.left")
                                     .font(.system(size: 16))
-                                    .foregroundColor(.black)
+                                    .foregroundColor(.primary)
                             }
                         }
                     }

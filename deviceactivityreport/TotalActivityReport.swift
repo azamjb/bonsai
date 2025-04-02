@@ -2,12 +2,12 @@ import DeviceActivity
 import SwiftUI
 
 extension DeviceActivityReport.Context {
-    static let totalActivity = Self("Total Activity")
+    static let totalActivity = Self("total_activity")
 }
 
 struct TotalActivityReport: DeviceActivityReportScene {
     let context: DeviceActivityReport.Context = .totalActivity
-    let content: (String) -> TotalActivityView  // 🔹 Expecting a String instead of AttributedString
+    let content: (String) -> TotalActivityView 
 
     func makeConfiguration(representing data: DeviceActivityResults<DeviceActivityData>) async -> String {
         let formatter = DateComponentsFormatter()

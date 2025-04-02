@@ -34,12 +34,15 @@ struct BoundaryViewerView: View {
                                 .bold()
                                 .font(.system(size: 30))
                                 .multilineTextAlignment(.center)
-                                .padding(.bottom, 45)
+                                .padding(.top, 40)
+                            
+                            Spacer()
                             
                             Text("New here? No worries! Let's set your first boundary. 🚀")
                                 .font(.system(size: 16))
                                 .multilineTextAlignment(.center)
-                                .padding(.bottom, 32)
+                                .padding(.top, 20)
+                                .padding(.bottom, 50)
                             
                             (
                                 Text("Tap ")
@@ -48,12 +51,17 @@ struct BoundaryViewerView: View {
                             )
                             .font(.system(size: 16))
                             .multilineTextAlignment(.center)
-                            .padding(.bottom, 32)
-                            
+                            .padding(.bottom, 30)
+
                             Text("Hit save and start tracking!")
                                 .font(.system(size: 16))
                                 .multilineTextAlignment(.center)
-                                .padding(.bottom, 32)
+                            
+                            Spacer()
+                            
+                            
+                            buttonContent
+                                .padding(.bottom, 250)
                         }
                         .padding(.horizontal, 30)
                     }
@@ -93,6 +101,11 @@ struct BoundaryViewerView: View {
                             }
                         }
                     }
+                    
+                    Spacer()
+                    
+                    buttonContent
+                        .padding(.bottom, 30)
                 }
             }
             .navigationDestination(isPresented: $showEditScren) {
@@ -101,11 +114,6 @@ struct BoundaryViewerView: View {
                         screenTime.setGroupDisplays()
                     }
             }
-            
-            Spacer()
-            
-            buttonContent
-                .padding(.bottom, 30)
         }
     }
     
@@ -193,13 +201,9 @@ private struct DayPin: View {
         Text(day.label)
             .font(.system(size: 12))
             .frame(width: 15, height: 15)
-            .background(Color(red: 0.85, green: 0.85, blue: 0.85))
+            .background(Color.secondary)
             .cornerRadius(100)
-            .overlay(
-                RoundedRectangle(cornerRadius: 100)
-                    .stroke(Color(red: 0.85, green: 0.85, blue: 0.85))
-            )
-            .opacity(limit.weekdays.contains(day) ? 1 : 0.4)
+            .opacity(limit.weekdays.contains(day) ? 0.8 : 0.2)
     }
 }
 
@@ -215,15 +219,14 @@ private struct EditBoundariesButton: View {
             Rectangle()
                 .foregroundColor(.clear)
                 .frame(width: 299, height: 51)
-                .background(Color.white)
                 .cornerRadius(30)
                 .overlay(
                     RoundedRectangle(cornerRadius: 30)
-                        .stroke(Color.black, lineWidth: 1)
+                        .stroke(Color.primary, lineWidth: 1)
                 )
                 .overlay(
                     Text(screenTime.limitsSet.isEmpty ? "add new boundary" : "edit boundaries")
-                        .foregroundColor(.black)
+                        .foregroundColor(.primary)
                 )
         }
     }
@@ -235,6 +238,7 @@ struct BoundaryViewerView_Previews: PreviewProvider {
         
         return NavigationView {
             BoundaryViewerView(tabSelection: selectedTab)
+                .environmentObject(ScreenTimeService())
         }
     }
 }

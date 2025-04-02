@@ -39,7 +39,7 @@ struct ProfileCreation1View: View {
                                     .font(.system(size: 18))
                                     .foregroundColor(.white)
                                     .padding(12)
-                                    .background(Color.black)
+                                    .background(Color.primary)
                                     .clipShape(Circle())
 
                                 Button(action: {
@@ -85,7 +85,7 @@ struct ProfileCreation1View: View {
                         HStack {
                             Image(systemName: "chevron.left")
                                 .font(.system(size: 16))
-                                .foregroundColor(.black)
+                                .foregroundColor(.primary)
                         }
                     }
                 }
@@ -112,7 +112,7 @@ struct CustomTextFieldStyle: ViewModifier {
     func body(content: Content) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(placeholder)
-                .foregroundColor(.black)
+                .foregroundColor(.primary)
                 .font(.body)
                 .padding(.leading, 10)
             content
@@ -120,7 +120,7 @@ struct CustomTextFieldStyle: ViewModifier {
                 .padding(.horizontal, 12)
                 .background(Color.gray.opacity(0.2))
                 .cornerRadius(20)
-                .foregroundColor(.black)
+                .foregroundColor(.primary)
         }
     }
 }

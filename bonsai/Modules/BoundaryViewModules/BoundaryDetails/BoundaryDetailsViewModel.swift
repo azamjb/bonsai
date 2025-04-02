@@ -14,8 +14,4 @@ import StoreKit
 
 @MainActor
 class BoundaryDetailsViewModel: ObservableObject {
-    // For testing conditionals in view. Can't print stuff directly.
-    public func printHere() {
-        print("here")
-    }
 }

@@ -82,7 +82,7 @@ struct PastUsageInspireView: View {
                     HStack {
                         Image(systemName: "chevron.left") // Custom back arrow icon
                             .font(.system(size: 16))
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                             
                     }
                 }

@@ -21,8 +21,6 @@ struct BoundaryExtensionRequestView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color.white.ignoresSafeArea()
-
                 ScrollView {
                     VStack(alignment: .leading) {
                         Spacer()
@@ -30,9 +28,11 @@ struct BoundaryExtensionRequestView: View {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Request")
                                 .font(.title2)
-                            
+                                .foregroundStyle(.primary)
+
                             Text("Boundary Extension")
                                 .font(.title2)
+                                .foregroundStyle(.primary)
                         }
                         .padding(.bottom, 40)
                         
@@ -41,12 +41,10 @@ struct BoundaryExtensionRequestView: View {
                                 .font(.system(size: 15))
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.bottom, 6)
-                            
-                            
+                                .foregroundStyle(.primary)
+
                             if !screenTime.limitsReached.isEmpty {
-                                
                                 VStack(alignment: .leading) {
-                                    
                                     ForEach(screenTime.limitsReached, id: \.id) { limit in
                                         let isCheckedBinding = Binding<Bool>(
                                             get: {
@@ -71,7 +69,7 @@ struct BoundaryExtensionRequestView: View {
                                 Text("You haven't hit any boundaries today.")
                                     .font(.system(size: 15))
                                     .frame(maxWidth: .infinity, alignment: .leading)
-                                    .foregroundColor(.gray)
+                                    .foregroundColor(.secondary)
                             }
                             
                         }
@@ -81,12 +79,12 @@ struct BoundaryExtensionRequestView: View {
                                 .modifier(CustomTextFieldStyle2(placeholder: ""))
                                 .frame(minHeight: 50)
                                 .focused($isFieldFocused)
+                                .foregroundColor(.secondary)
                         }
                         .padding(.bottom, 30)
                         
                         Button(action: {
                             Task {
-                                print(UserViewModel.userProfile.accountabilityPartner?.phoneNumber)
                                 await viewModel.sendTimeRequest(phoneNumber: UserViewModel.userProfile.accountabilityPartner?.phoneNumber ?? "",
                                                                 userName: UserViewModel.userProfile.name, accountabilityPartnerName: UserViewModel.userProfile.accountabilityPartner?.name ?? "", note: requestNote)
                                 requestNote = "" // reset note
@@ -94,20 +92,20 @@ struct BoundaryExtensionRequestView: View {
                         }) {
                             Text("send code to partner")
                                 .font(.system(size: 15))
-                                .foregroundColor(.black)
+                                .foregroundColor(.primary)
                                 .padding(.vertical, 15)
                                 .padding(.horizontal, 80)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 20)
-                                        .stroke(Color.black, lineWidth: 1)
+                                        .stroke(Color.primary, lineWidth: 1)
                                 )
                         }
                         .padding(.bottom, 30)
                         
                         Divider()
                             .frame(height: 1)
-                            .background(Color.black)
+                            .background(Color.primary)
                             .padding(.top, 10)
                             .padding(.bottom, 10)
                         
@@ -116,16 +114,17 @@ struct BoundaryExtensionRequestView: View {
                                 .font(.system(size: 15))
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.bottom, 6)
+                                .foregroundStyle(.primary)
                             
                             Text("You haven't sent your partner any codes yet.")
                                 .font(.system(size: 15))
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .foregroundColor(.gray)
+                                .foregroundColor(.secondary)
                         }
                         
                         Divider()
                             .frame(height: 1)
-                            .background(Color.black)
+                            .background(Color.primary)
                             .padding(.top, 90)
                             .padding(.bottom, 10)
                         
@@ -140,19 +139,14 @@ struct BoundaryExtensionRequestView: View {
                          
                         Button(action: {
                             Task {
-                                
-                                let validated = await viewModel.validateVerificationCode(Pin: pin) // see if the code entered by the user is valid
+                                let validated = viewModel.validateVerificationCode(Pin: pin) // see if the code entered by the user is valid
                                 
                                 if (validated) {
-                                    
                                     for (event, isChecked) in checkedItems {
-                                                   
-                                        
                                         if (isChecked) { // if limit is checked to be extended
                                             screenTime.extendLimitForGroup(group: event) // extend time for that group
                                             screenTime.setGroupDisplays()
                                         }
-                                        
                                     }
                                     pin = ""
                                     UserDefaults.standard.removeObject(forKey: LocalStorageKeys.timeExtensionRequestCode)
@@ -161,18 +155,17 @@ struct BoundaryExtensionRequestView: View {
                                 else {
                                     print("invalid code")
                                 }
-                                    
                             }
                         }) {
                             Text("enter code")
                                 .font(.system(size: 15))
-                                .foregroundColor(.black)
+                                .foregroundColor(.primary)
                                 .padding(.vertical, 15)
                                 .padding(.horizontal, 80)
                                 .frame(maxWidth: .infinity, alignment: .center)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 20)
-                                        .stroke(Color.black, lineWidth: 1)
+                                        .stroke(Color.primary, lineWidth: 1)
                                 )
                         }
                         .padding(.bottom, 20)
@@ -195,9 +188,7 @@ struct BoundaryExtensionRequestView: View {
                         }
                     }
             }
-            .onChange(of: screenTime.limitsReached) { newLimits in
-                
-                print("CHANGE DETECTED")
+            .onChange(of: screenTime.limitsReached) { _, newLimits in
                 for limit in newLimits {
                     if checkedItems[limit] == nil {
                         checkedItems[limit] = false
@@ -218,7 +209,10 @@ struct BoundaryExtensionRequestView: View {
                         HStack {
                             Image(systemName: "chevron.left")
                                 .font(.system(size: 16))
-                                .foregroundColor(.black)
+                                .foregroundColor(.primary)
+                            
+                            Text("return")
+                                .foregroundColor(.primary)
                         }
                     }
                 }
@@ -244,11 +238,11 @@ struct PinEntryView: View {
                 ZStack {
                     Text(pin.count > index ? String(pin[pin.index(pin.startIndex, offsetBy: index)]) : "")
                         .font(.title)
-                        .foregroundColor(.black)
+                        .foregroundColor(.primary)
                     
                     Rectangle()
                         .frame(width: 30, height: 2)
-                        .foregroundColor(.black)
+                        .foregroundColor(.primary)
                         .offset(y: 20)
                 }
             }
@@ -300,7 +294,7 @@ struct CustomTextFieldStyle2: ViewModifier {
     func body(content: Content) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(placeholder)
-                .foregroundColor(.gray)
+                .foregroundColor(.secondary)
                 .font(.system(size: 15))
             
             content
@@ -308,7 +302,7 @@ struct CustomTextFieldStyle2: ViewModifier {
                 .frame(height: 120) // Keep it a large text box
                 .background(Color.gray.opacity(0.2))
                 .cornerRadius(8)
-                .foregroundColor(.black)
+                .foregroundColor(.primary)
         }
     }
 }

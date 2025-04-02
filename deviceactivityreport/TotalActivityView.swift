@@ -11,19 +11,11 @@ struct TotalActivityView: View {
     let totalActivity: String  
 
     var body: some View {
-        
-        
         HStack {
-            
             VStack(alignment: .leading) {
-
                 formatTotalActivityText(totalActivity)
-                    .padding()
             }
-            
-            
         }
-        
     }
 
     func formatTotalActivityText(_ text: String) -> some View {
@@ -33,14 +25,16 @@ struct TotalActivityView: View {
             ForEach(components, id: \.self) { component in
                 if let numberPart = component.first(where: { $0.isNumber }) {
                     let unitPart = component.drop { $0.isNumber }
-
-                    Text(String(numberPart))
-                        .font(.system(size: 60, weight: .bold))
-                        .foregroundColor(.black)
-
-                    Text(unitPart)
-                        .font(.system(size: 30, weight: .regular))
-                        .foregroundColor(.gray)
+                    
+                    HStack(alignment: .lastTextBaseline) {
+                        Text(String(numberPart))
+                            .font(.system(size: 60, weight: .bold))
+                            .foregroundColor(.primary)
+                        
+                        Text(String(unitPart))
+                            .font(.system(size: 30, weight: .regular))
+                            .foregroundColor(.primary)
+                    }
                 }
             }
         }

@@ -191,7 +191,7 @@ struct WhatMattersMostView: View {
                     .font(.system(size: 18))
                     .foregroundColor(.white)
                     .padding(12)
-                    .background(Color.black)
+                    .background(Color.primary)
                     .clipShape(Circle())
 
                 NavigationLink(destination: PastUsageInspireView(screenTime: screenTime, hobbies: hobbies)) {
@@ -219,7 +219,7 @@ struct WhatMattersMostView: View {
                     HStack {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 16))
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                     }
                 }
             }
@@ -240,7 +240,7 @@ struct WhatMattersMostView: View {
                 .fontWeight(.bold)
                 .overlay(
                     RoundedRectangle(cornerRadius: 20)
-                        .stroke(screenTime == title ? Color.black : Color.clear, lineWidth: 1)
+                        .stroke(screenTime == title ? Color.primary : Color.clear, lineWidth: 1)
                 )
         }
         .padding(.bottom, 20)
@@ -253,7 +253,7 @@ struct WhatMattersMostView: View {
                 .frame(width: 140, height: 50)
                 .overlay( // ✅ Adds border only if selected
                     RoundedRectangle(cornerRadius: 25)
-                        .stroke(isSelected ? Color.black : Color.clear, lineWidth: 1)
+                        .stroke(isSelected ? Color.primary : Color.clear, lineWidth: 1)
                 )
             
             Text(hobby)

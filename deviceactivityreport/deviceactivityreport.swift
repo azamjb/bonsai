@@ -22,7 +22,11 @@ struct deviceactivityreport: DeviceActivityReportExtension {
         }
         
         PieChartReport()
+        
         PillBarReport()
-        // Add more reports here...
+        
+        TopAppsDailyReport()
+        TopAppsWeeklyReport()
+        TopAppsMonthlyReport()
     }
 }

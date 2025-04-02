@@ -25,7 +25,7 @@ struct ProfileCreation4View: View {
                         Text("Accountability Partner")
                             .font(.title)
                             .fontWeight(.bold)
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                         
                         NavigationLink(destination: WhatIsAccountabilityPartnerView()) {
                             Text("What's an accountability partner?")
@@ -56,12 +56,12 @@ struct ProfileCreation4View: View {
                     NavigationLink(destination: ProfileCreationFinalView()) {
                         Text("Save")
                             .font(.system(size: 15))
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                             .padding(.vertical, 10)
                             .padding(.horizontal, 120)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 20)
-                                    .stroke(Color.black, lineWidth: 1)
+                                    .stroke(Color.primary, lineWidth: 1)
                             )
                     }
                     .simultaneousGesture(TapGesture().onEnded {
@@ -96,7 +96,7 @@ struct ProfileCreation4View: View {
                             HStack {
                                 Image(systemName: "chevron.left")
                                     .font(.system(size: 16))
-                                    .foregroundColor(.black)
+                                    .foregroundColor(.primary)
                             }
                         }
                     }

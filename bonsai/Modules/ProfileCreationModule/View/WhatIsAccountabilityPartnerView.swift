@@ -26,7 +26,7 @@ struct WhatIsAccountabilityPartnerView: View {
                     
                     Text("Accountability Partner")
                         .font(.title)
-                        .foregroundColor(.black)
+                        .foregroundColor(.primary)
                     
                   
                     Spacer()
@@ -75,12 +75,12 @@ struct WhatIsAccountabilityPartnerView: View {
                     NavigationLink(destination: ProfileCreation4View()) {
                         Text("set up partner")
                             .font(.system(size: 15))
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                             .padding(.vertical, 10)
                             .padding(.horizontal, 100)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 20)
-                                    .stroke(Color.black, lineWidth: 1)
+                                    .stroke(Color.primary, lineWidth: 1)
                             )
                     }
                     
@@ -100,7 +100,7 @@ struct WhatIsAccountabilityPartnerView: View {
                     HStack {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 16))
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                     }
                 }
             }

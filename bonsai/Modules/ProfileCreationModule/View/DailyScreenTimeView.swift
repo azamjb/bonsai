@@ -27,7 +27,7 @@ struct DailyScreenTimeView: View {
                     .font(.system(size: 18))
                     .foregroundColor(.white)
                     .padding(12)
-                    .background(Color.black)
+                    .background(Color.primary)
                     .clipShape(Circle())
 
                 NavigationLink(destination: WhatMattersMostView(screenTime: screenTime)) {
@@ -47,7 +47,7 @@ struct DailyScreenTimeView: View {
                     HStack {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 16))
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                     }
                 }
             }
@@ -69,7 +69,7 @@ struct DailyScreenTimeView: View {
                 .fontWeight(.bold)
                 .overlay(
                     RoundedRectangle(cornerRadius: 20)
-                        .stroke(screenTime == title ? Color.black : Color.clear, lineWidth: 1)
+                        .stroke(screenTime == title ? Color.primary : Color.clear, lineWidth: 1)
                 )
         }
         .padding(.bottom, 20)

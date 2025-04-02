@@ -20,16 +20,6 @@ struct ProfileView: View {
                     
                     
                     Group{
-                        
-                        HStack {
-                            Spacer()
-                            Text("...")
-                                .font(.system(size: 24))
-                                .fontWeight(.bold)
-                                .padding(.bottom, 5)
-                                .padding(.top, 12)
-                        }
-                        
                         HStack {
                             Text(viewModel.userProfile.name)
                                 .fontWeight(.bold)
@@ -106,12 +96,12 @@ struct ProfileView: View {
                         HStack {
                             Text("edit profile")
                                 .font(.system(size: 15))
-                                .foregroundColor(.black)
+                                .foregroundColor(.primary)
                                 .padding(.vertical, 5)
                                 .padding(.horizontal, 20)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 20)
-                                        .stroke(Color.black, lineWidth: 1)
+                                        .stroke(Color.primary, lineWidth: 1)
                                 )
                         }
                     }
@@ -121,7 +111,7 @@ struct ProfileView: View {
                     
                     Divider()
                         .frame(height: 1) // Line thickness
-                        .background(Color.black) // Line color
+                        .background(Color.primary) // Line color
                         .padding(.horizontal, 15)
                     
                     Text("BALANCE STATS")
@@ -188,7 +178,7 @@ struct ProfileView: View {
                     
                     Divider()
                         .frame(height: 1)
-                        .background(Color.black)
+                        .background(Color.primary)
                         .padding(.horizontal, 15)
                         .padding(.top, 20)
                     
@@ -216,12 +206,12 @@ struct ProfileView: View {
                         HStack {
                             Text("remove partner")
                                 .font(.system(size: 15))
-                                .foregroundColor(.black)
+                                .foregroundColor(.primary)
                                 .padding(.vertical, 5)
                                 .padding(.horizontal, 20)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 20)
-                                        .stroke(Color.black, lineWidth: 1)
+                                        .stroke(Color.primary, lineWidth: 1)
                                 )
                         }
                         
@@ -244,7 +234,7 @@ struct ProfileView: View {
                         
                         Text("BONSAI")
                             .font(.system(size: 25))
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                             .padding(.top, 30)
                     }
                     .padding(.horizontal, 18)

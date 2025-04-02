@@ -23,7 +23,7 @@ struct InspireView: View {
                         .foregroundColor(.white)
                         .padding()
                         .frame(maxWidth: .infinity)
-                        .background(Color.black)
+                        .background(Color.primary)
                         .cornerRadius(12)
                 }
             }
