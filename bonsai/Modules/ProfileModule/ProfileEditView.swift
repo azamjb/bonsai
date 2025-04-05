@@ -132,8 +132,13 @@ struct ProfileEditView: View {
                     }
 
                     Button("Save") {
-                        viewModel.saveBasicInfo(name: editedName, phoneNumber: editedPhone)
-                        viewModel.saveHobbies(hobbies: editedHobbies)
+                        Task {
+                            await viewModel.saveProfileFields(
+                                name: editedName,
+                                phoneNumber: editedPhone,
+                                hobbies: editedHobbies,
+                                termsAccepted: nil)
+                        }
 
                         // Update original values to match edited values
                         originalName = editedName
@@ -178,9 +183,9 @@ struct ProfileEditView: View {
         viewModel.fetchUserProfile()
 
         // Set both original and edited values
-        originalName = viewModel.userProfile.name
-        originalPhone = viewModel.userProfile.phoneNumber
-        originalHobbies = viewModel.userProfile.hobbies
+        originalName = viewModel.userProfile.name ?? ""
+        originalPhone = viewModel.userProfile.phoneNumber ?? ""
+        originalHobbies = viewModel.userProfile.hobbies ?? []
 
         editedName = originalName
         editedPhone = originalPhone
