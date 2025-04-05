@@ -7,6 +7,7 @@
 
 # User and temporary files
 *.xcuserdata
+xcuserdata/
 *.xcuserstate
 *.xcbkptlist
 *.swp
