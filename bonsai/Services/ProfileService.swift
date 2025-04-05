@@ -47,7 +47,7 @@ class ProfileService: ProfileServiceProtocol {
         }
         return accountabilityPartner
     }
-    
+
     func fetchProfileField(key: ProfileKey) -> Any? {
         var profileField: Any?
         
@@ -70,7 +70,7 @@ class ProfileService: ProfileServiceProtocol {
         }
         return profileField
     }
-    
+
     func saveProfileFields(
         name: String? = nil,
         phoneNumber: String? = nil,
@@ -78,19 +78,19 @@ class ProfileService: ProfileServiceProtocol {
         termsAccepted: Bool? = nil
     ) async {
         var profileHasChanged: Bool = false
-        
+
         if let name = name {
             UserDefaults.standard.set(name, forKey: ProfileKey.name.rawValue)
             userProfile.name = name
             profileHasChanged = true
         }
-        
+
         if let phoneNumber = phoneNumber {
             UserDefaults.standard.set(phoneNumber, forKey: ProfileKey.phoneNumber.rawValue)
             userProfile.phoneNumber = phoneNumber
             profileHasChanged = true
         }
-        
+
         if let hobbies = hobbies {
             UserDefaults.standard.set(hobbies, forKey: ProfileKey.hobbies.rawValue)
             userProfile.hobbies = hobbies
@@ -102,7 +102,7 @@ class ProfileService: ProfileServiceProtocol {
             userProfile.termsAccepted = termsAccepted
             profileHasChanged = true
         }
-        
+
         if (profileHasChanged) {
             // UNCOMMENT THIS LINE TO TEST THE BACKEND API - CURRENTLY DISABLED
             // await sendProfileToApi()
@@ -118,7 +118,7 @@ class ProfileService: ProfileServiceProtocol {
         
         let idString = UserDefaults.standard.string(forKey: ProfileKey.id.rawValue)
         let request = AddAccountabilityPartner(AccountabilityPartnerName: name, AccountabilityPartnerPhoneNumber: phoneNumber, Id: idString ?? "")
-        
+
         do {
             try await accountApi.addAccountabilityPartner(request: request)
             print("Successfully added accountability partner")
@@ -149,6 +149,6 @@ class ProfileService: ProfileServiceProtocol {
             print("Failed to add user: \(error)")
         }
     }
-        
-        
+
+
 }
