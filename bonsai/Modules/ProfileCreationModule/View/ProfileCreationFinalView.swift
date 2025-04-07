@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ProfileCreationFinalView: View {
     @ObservedObject var viewModel: ProfileCreationViewModel = ProfileCreationViewModel()
-    @Environment(\.presentationMode) var presentationMode 
+ 
     @State private var hobbies: [String] = []
     @State private var accountabilityPartnerName: String = ""
     @State private var accountabilityPartnerPhone: String = ""
@@ -81,19 +81,7 @@ struct ProfileCreationFinalView: View {
                 .padding()
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                 .navigationBarBackButtonHidden(true)
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button(action: {
-                            presentationMode.wrappedValue.dismiss()
-                        }) {
-                            HStack {
-                                Image(systemName: "chevron.left")
-                                    .font(.system(size: 16))
-                                    .foregroundColor(.primary)
-                            }
-                        }
-                    }
-                }
+                .customBackToolbar()
         }
         .onAppear() {
             viewModel.fetchUserProfile()

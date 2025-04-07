@@ -2,7 +2,7 @@ import SwiftUI
 
 struct DailyScreenTimeView: View {
     @ObservedObject var viewModel: ProfileCreationViewModel = ProfileCreationViewModel()
-    @Environment(\.presentationMode) var presentationMode 
+
     
     let name: String
     let phoneNumber: String
@@ -38,21 +38,7 @@ struct DailyScreenTimeView: View {
                 Spacer()
             }
         }
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: {
-                    presentationMode.wrappedValue.dismiss()
-                }) {
-                    HStack {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 16))
-                            .foregroundColor(.primary)
-                    }
-                }
-            }
-        }
-        
+        .customBackToolbar()
     }
     
     

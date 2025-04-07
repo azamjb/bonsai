@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ProfileCreation1View: View {
-    @Environment(\.presentationMode) var presentationMode
+
     @StateObject var viewModel: ProfileCreationViewModel = ProfileCreationViewModel()
     @State private var name: String = ""
     @FocusState private var isFieldFocused: Bool
@@ -76,20 +76,7 @@ struct ProfileCreation1View: View {
             .onTapGesture {
                 hideKeyboard()
             }
-            .navigationBarBackButtonHidden(true)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: {
-                        presentationMode.wrappedValue.dismiss()
-                    }) {
-                        HStack {
-                            Image(systemName: "chevron.left")
-                                .font(.system(size: 16))
-                                .foregroundColor(.primary)
-                        }
-                    }
-                }
-            }
+            .customBackToolbar()
             .navigationDestination(isPresented: $isNavigating) {
                 ProfileCreation2View(name: name)
             }

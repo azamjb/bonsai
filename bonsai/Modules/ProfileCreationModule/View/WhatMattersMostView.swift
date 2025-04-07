@@ -10,8 +10,6 @@ import SwiftUI
 struct WhatMattersMostView: View {
     
     @ObservedObject var viewModel: ProfileCreationViewModel = ProfileCreationViewModel()
-    @Environment(\.presentationMode) var presentationMode 
-    
     
     @State var hobbies: [String] = []
     @State var screenTime: String
@@ -210,20 +208,7 @@ struct WhatMattersMostView: View {
         .onAppear {
             viewModel.fetchUserProfile()
         }
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: {
-                    presentationMode.wrappedValue.dismiss()
-                }) {
-                    HStack {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 16))
-                            .foregroundColor(.primary)
-                    }
-                }
-            }
-        }
+        .customBackToolbar()
         
     }
     

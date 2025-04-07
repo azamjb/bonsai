@@ -76,6 +76,7 @@ struct ProfileEditView: View {
                 
                 
             }
+            .customBackToolbar()
             .padding(.horizontal,35)
             .onAppear() {
                 viewModel.fetchUserProfile()

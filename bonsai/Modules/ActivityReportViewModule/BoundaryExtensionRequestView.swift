@@ -2,7 +2,6 @@ import SwiftUI
 
 struct BoundaryExtensionRequestView: View {
     
-    @Environment(\.presentationMode) var presentationMode
     
     @StateObject private var viewModel = AccountabilityPartnerViewModel()
     @StateObject var UserViewModel: ProfileViewModel = ProfileViewModel()
@@ -172,7 +171,7 @@ struct BoundaryExtensionRequestView: View {
                     }
                     .padding(.horizontal, 40)
                 }
-                .navigationBarBackButtonHidden(true)
+          
                 .onTapGesture {
                     hideKeyboard()
                 }
@@ -201,27 +200,10 @@ struct BoundaryExtensionRequestView: View {
                 }
             }
             
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: {
-                        presentationMode.wrappedValue.dismiss()
-                    }) {
-                        HStack {
-                            Image(systemName: "chevron.left")
-                                .font(.system(size: 16))
-                                .foregroundColor(.primary)
-                            
-                            Text("return")
-                                .foregroundColor(.primary)
-                        }
-                    }
-                }
-            }
-            .toolbarBackground(.hidden, for: .navigationBar)
-            .navigationBarTitleDisplayMode(.inline)
             
         }
-        .navigationBarBackButtonHidden(true)
+        .customBackToolbar()
+       
         
     }
 }
@@ -295,10 +277,11 @@ struct CustomTextFieldStyle2: ViewModifier {
         VStack(alignment: .leading, spacing: 4) {
             Text(placeholder)
                 .foregroundColor(.secondary)
-                .font(.system(size: 15))
+                .font(.system(size: 13))
             
             content
-                .padding()
+                .padding(.vertical, 10)
+                .padding(.horizontal, 12)
                 .frame(height: 120) // Keep it a large text box
                 .background(Color.gray.opacity(0.2))
                 .cornerRadius(8)

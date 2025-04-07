@@ -8,6 +8,14 @@ struct LoginRequest : Encodable {
     let email, password: String
 }
 
+struct FeedbackRequest : Encodable {
+    let Email, Message, Subject: String
+}
+
+struct FeedbackResponse : Decodable {
+    let Id: String
+}
+
 struct LoginResponse : Decodable {
     let bearer, userId: String
 }

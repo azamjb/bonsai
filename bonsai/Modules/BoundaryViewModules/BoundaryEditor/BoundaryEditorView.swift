@@ -34,6 +34,7 @@ struct BoundaryEditorView: View {
             buttonContent
                 .padding(.bottom, 100)
         }
+        
         .edgesIgnoringSafeArea(.bottom)
         .navigationDestination(isPresented: $showViewScreen) {
             BoundaryDetailsView(
@@ -43,27 +44,8 @@ struct BoundaryEditorView: View {
                 isPresented: $showViewScreen
             )
         }
-        .navigationBarBackButtonHidden(true)
-        .toolbarBackground(.hidden, for: .navigationBar)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: {
-                    if !modifiedLimits.isEmpty || !limitIdsToDelete.isEmpty {
-                        showingCancelConfirmation = true
-                    } else {
-                        presentationMode.wrappedValue.dismiss()
-                    }
-                }) {
-                    HStack {
-                        Image(systemName: "chevron.left")
-                        Text("return")
-                    }
-                    .foregroundColor(Color.primary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, 20)
-                }
-            }
-        }
+        .customBackToolbar()
+        
         .alert("Unsaved changes will be lost", isPresented: $showingCancelConfirmation) {
             Button("discard changes", role: .cancel) {
                 presentationMode.wrappedValue.dismiss()

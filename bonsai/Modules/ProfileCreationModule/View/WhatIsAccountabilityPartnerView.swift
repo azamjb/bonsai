@@ -9,7 +9,6 @@ import SwiftUI
 
 struct WhatIsAccountabilityPartnerView: View {
     
-    @Environment(\.presentationMode) var presentationMode 
     @State private var hobbies: [String] = []
     @State private var accountabilityPartnerName: String = ""
     @State private var accountabilityPartnerPhone: String = ""
@@ -92,19 +91,7 @@ struct WhatIsAccountabilityPartnerView: View {
         }
         .padding(.horizontal, 20)
         .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: {
-                    presentationMode.wrappedValue.dismiss()
-                }) {
-                    HStack {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 16))
-                            .foregroundColor(.primary)
-                    }
-                }
-            }
-        }
+        .customBackToolbar()
     }
     
 }

@@ -2,7 +2,7 @@ import SwiftUI
 
 struct ProfileCreation4View: View {
     
-    @Environment(\.presentationMode) var presentationMode 
+
     @ObservedObject var viewModel: ProfileCreationViewModel = ProfileCreationViewModel()
     @State private var hobbies: [String] = []
     @State private var accountabilityPartnerName: String = ""
@@ -87,20 +87,7 @@ struct ProfileCreation4View: View {
                 }
                 .padding()
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-                .navigationBarBackButtonHidden(true)
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button(action: {
-                            presentationMode.wrappedValue.dismiss()
-                        }) {
-                            HStack {
-                                Image(systemName: "chevron.left")
-                                    .font(.system(size: 16))
-                                    .foregroundColor(.primary)
-                            }
-                        }
-                    }
-                }
+                .customBackToolbar()
             }
             .onTapGesture {
                 hideKeyboard()

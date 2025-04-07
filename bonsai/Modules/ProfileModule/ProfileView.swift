@@ -17,7 +17,20 @@ struct ProfileView: View {
             ScrollView {
                 VStack {
                     
-                    
+                    NavigationLink(destination: SettingsView()) {
+                        
+                        HStack {
+                            
+                            Spacer()
+                            
+                            Image(systemName: "slider.horizontal.3")
+                                .font(.system(size: 25))
+                                .foregroundColor(.primary)
+                                .padding(.vertical, 5)
+                                
+                        }
+                        .padding(.horizontal, 18)
+                    }
                     
                     Group{
                         HStack {
@@ -247,7 +260,9 @@ struct ProfileView: View {
                     viewModel.fetchUserProfile()
                 }
             }
+          
         }
+        
     }
 }
 

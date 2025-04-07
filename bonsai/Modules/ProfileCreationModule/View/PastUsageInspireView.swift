@@ -6,7 +6,7 @@ struct PastUsageInspireView: View {
     
     @State var screenTime: String
     @State var hobbies: [String]
-    @Environment(\.presentationMode) var presentationMode
+
     
     let center = AuthorizationCenter.shared
     
@@ -73,21 +73,7 @@ struct PastUsageInspireView: View {
         .onAppear {
             showTextSequentially()
         }
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: {
-                    presentationMode.wrappedValue.dismiss() // Custom back action
-                }) {
-                    HStack {
-                        Image(systemName: "chevron.left") // Custom back arrow icon
-                            .font(.system(size: 16))
-                            .foregroundColor(.primary)
-                            
-                    }
-                }
-            }
-        }
+        .customBackToolbar()
     }
     
     func showTextSequentially() {

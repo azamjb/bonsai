@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ProfileCreation2View: View {
-    @Environment(\.presentationMode) var presentationMode 
+
     @StateObject var viewModel: ProfileCreationViewModel = ProfileCreationViewModel()
     @State var name: String
     @State var phoneNumber: String = ""
@@ -83,20 +83,7 @@ struct ProfileCreation2View: View {
                 hideKeyboard()
                 isFieldFocused = false
             }
-            .navigationBarBackButtonHidden(true) // Hides the default back button
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: {
-                        presentationMode.wrappedValue.dismiss()
-                    }) {
-                        HStack {
-                            Image(systemName: "chevron.left") // Custom back arrow icon
-                                .font(.system(size: 16))
-                                .foregroundColor(.primary)
-                        }
-                    }
-                }
-            }
+            .customBackToolbar()
             .navigationDestination(isPresented: $isNavigating) {
                 DailyScreenTimeView(name: name, phoneNumber: phoneNumber)
             }

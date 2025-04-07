@@ -24,7 +24,13 @@ class AccountApi : BaseApi {
             }
         }
 
-    
+    func sendFeedback(request: FeedbackRequest) async throws {
+        let (responseData, httpResponse) = try await self.makePOSTRequest(url: getBaseUrl(endpoint: "feedback/addFeedback"), bodyObject: request)
+        
+        if let error = checkForErrorFromResponse(responseData: responseData!, httpResponse: httpResponse) {
+            throw error
+        } 
+    }
     
     func login(request: LoginRequest) async throws -> LoginResponse {
         let (responseData, httpResponse) = try await self.makePOSTRequest(url: getBaseUrl(endpoint: "login"), bodyObject: request)

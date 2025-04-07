@@ -23,7 +23,7 @@ struct ContentView: View {
             
             BoundaryViewerView(tabSelection: $tabSelection)
                 .tabItem {
-                    Label("Boundaries", systemImage: "gearshape")
+                    Label("Boundaries", systemImage: "shield.lefthalf.filled")
                 }
                 .tag(2)
 
