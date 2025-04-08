@@ -42,4 +42,16 @@ class ProfileViewModel: ObservableObject {
         }
     
     let phoneNumberFormatter = PhoneNumberFormatter()
+    
+    func saveBasicInfo(name: String, phoneNumber: String) {
+        profileService.saveBasicInfo(name: name, phoneNumber: phoneNumber)
+        fetchUserProfile()
+    }
+    
+    func saveHobbies(hobbies: [String]) {
+        profileService.saveHobbies(hobbies)
+        fetchUserProfile()
+    }
 }
+
+
