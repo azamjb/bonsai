@@ -14,9 +14,7 @@ class ProfileCreationViewModel: ObservableObject {
     @Published var accountabilityPartner = AccountabilityPartner()
     private let profileService: ProfileServiceProtocol = ProfileService()
     
-    func saveBasicInfo(name: String, phoneNumber: String) async {
-        
-        await profileService.saveBasicInfo(name: name, phoneNumber: phoneNumber)
+
     func saveProfileFields(name: String?, phoneNumber: String?, hobbies: [String]?, termsAccepted: Bool?) async {
         await profileService.saveProfileFields(name: name, phoneNumber: phoneNumber, hobbies: hobbies, termsAccepted: termsAccepted)
         fetchUserProfile()

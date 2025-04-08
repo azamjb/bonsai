@@ -29,10 +29,15 @@ class PhoneNumberFormatter: Formatter {
 
 class ProfileViewModel: ObservableObject {
     @Published var userProfile = UserProfile()
+    @Published var accountabilityPartner = AccountabilityPartner()
     private let profileService = ProfileService()
     
     func fetchUserProfile() {
         userProfile = profileService.fetchUserProfile()
+    }
+    
+    func fetchAccountabilityPartner() {
+        accountabilityPartner = profileService.fetchAccountabilityPartner()
     }
     
     var currentMonth: String {
@@ -43,15 +48,10 @@ class ProfileViewModel: ObservableObject {
     
     let phoneNumberFormatter = PhoneNumberFormatter()
     
-    func saveBasicInfo(name: String, phoneNumber: String, hobbies: [String]) {
-        profileService.saveBasicInfo(name: name, phoneNumber: phoneNumber, hobbies: hobbies)
+    func saveProfileFields(name: String?, phoneNumber: String?, hobbies: [String]?, termsAccepted: Bool?) async {
+        await profileService.saveProfileFields(name: name, phoneNumber: phoneNumber, hobbies: hobbies, termsAccepted: termsAccepted)
         fetchUserProfile()
     }
-    
-//    func saveHobbies(hobbies: [String]) {
-//        profileService.saveHobbies(hobbies)
-//        fetchUserProfile()
-//    }
 }
 
 

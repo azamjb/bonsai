@@ -34,8 +34,9 @@ struct ProfileView: View {
 
                     Group{
                         HStack {
-                            Text(viewModel.userProfile.name)
+                            Text(viewModel.userProfile.name ?? "unable to find name")
                                 .fontWeight(.bold)
+                                .foregroundColor(.primary)
                                 .multilineTextAlignment(.leading)
                                 .font(.system(size: 28))
 
@@ -71,7 +72,7 @@ struct ProfileView: View {
 
                             Spacer()
 
-                            Text(viewModel.userProfile.hobbies.first ?? "")
+                            Text(viewModel.userProfile.hobbies?.first ?? "")
                                 .font(.system(size: 14))
                         }
 
@@ -79,7 +80,7 @@ struct ProfileView: View {
                             Spacer()
                             VStack(alignment: .trailing) {
 
-                                ForEach(viewModel.userProfile.hobbies.dropFirst(), id: \.self) { hobby in
+                                ForEach(viewModel.userProfile.hobbies?.dropFirst() ?? [], id: \.self) { hobby in
                                     Text(hobby)
                                         .font(.system(size: 14))
                                 }
@@ -98,14 +99,11 @@ struct ProfileView: View {
                         }
                         .padding(.top, 20)
                         .padding(.bottom, 20)
-
-
-
                     }
                     .padding(.horizontal, 18)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
-                    NavigationLink(destination: ProfileEditView()) {
+                    NavigationLink(destination: ProfileEditView(viewModel: viewModel)) {
                         HStack {
                             Text("edit profile")
                                 .font(.system(size: 15))
@@ -120,7 +118,6 @@ struct ProfileView: View {
                     }
                     .padding(.bottom, 20)
                     .padding(.top, 10)
-
 
                     Divider()
                         .frame(height: 1) // Line thickness
@@ -204,10 +201,10 @@ struct ProfileView: View {
                             .padding(.top, 3)
                             .font(.system(size: 15))
 
-                        Text(viewModel.userProfile.accountabilityPartner?.name ?? "")
+                        Text(viewModel.accountabilityPartner.name ?? "can't fetch name")
                             .fontWeight(.bold)
                         Spacer()
-                        Text(viewModel.phoneNumberFormatter.string(for: viewModel.userProfile.accountabilityPartner?.phoneNumber) ?? "")
+                        Text(viewModel.phoneNumberFormatter.string(for: viewModel.accountabilityPartner.phoneNumber) ?? "")
                             .font(.system(size: 14))
 
 
@@ -256,8 +253,9 @@ struct ProfileView: View {
 
                 }
                 .padding()
-                .onAppear() {
+                .task {
                     viewModel.fetchUserProfile()
+                    viewModel.fetchAccountabilityPartner()
                 }
             }
         }

@@ -198,7 +198,7 @@ struct WhatMattersMostView: View {
                 .padding(.leading, 200)
                 .simultaneousGesture(TapGesture().onEnded {
                     Task {
-                        await viewModel.saveHobbies(hobbies: hobbies) // save hobbies here
+                        await viewModel.saveProfileFields(name: nil, phoneNumber: nil, hobbies: hobbies, termsAccepted: nil)
                     }
                 })
                 
