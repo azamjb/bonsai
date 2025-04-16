@@ -59,7 +59,8 @@ struct ProfileCreation2View: View {
                                         isNavigating = true
                                         
                                         Task {
-                                            await viewModel.saveBasicInfo(name: name, phoneNumber: phoneNumber) // save name and phone number
+                                            // only save name and phone number, this won't overwrite the other stuff
+                                            await viewModel.saveProfileFields(name: name, phoneNumber: phoneNumber, hobbies: nil, termsAccepted: nil)
                                         }
                                     }
                                 }) {

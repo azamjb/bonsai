@@ -55,8 +55,10 @@ struct AccountabilityPartnerView: View {
                         Button(action: {
                             UIApplication.shared.dismissKeyboard()
                             Task {
-                                await viewModel.sendInvite(phoneNumber: UserViewModel.userProfile.accountabilityPartner?.phoneNumber ?? "",
-                                                           userName: UserViewModel.userProfile.name, accountabilityPartnerName: UserViewModel.userProfile.accountabilityPartner?.name ?? "")
+                                await viewModel.sendInvite(
+                                    phoneNumber: UserViewModel.accountabilityPartner.phoneNumber ?? "",
+                                    userName: UserViewModel.userProfile.name ?? "",
+                                    accountabilityPartnerName: UserViewModel.accountabilityPartner.name ?? "")
                             }
                         }) {
                             if viewModel.isSendingInvite {
@@ -130,8 +132,11 @@ struct AccountabilityPartnerView: View {
                         Button(action: {
                             UIApplication.shared.dismissKeyboard()
                             Task {
-                                await viewModel.sendTimeRequest(phoneNumber: UserViewModel.userProfile.accountabilityPartner?.phoneNumber ?? "",
-                                                                userName: UserViewModel.userProfile.name, accountabilityPartnerName: UserViewModel.userProfile.accountabilityPartner?.name ?? "", note: "")
+                                await viewModel.sendTimeRequest(
+                                    phoneNumber: UserViewModel.accountabilityPartner.phoneNumber ?? "",
+                                    userName: UserViewModel.userProfile.name ?? "",
+                                    accountabilityPartnerName: UserViewModel.accountabilityPartner.name ?? "",
+                                    note: "")
                             }
                         })
                         {
@@ -157,8 +162,10 @@ struct AccountabilityPartnerView: View {
                         Button(action: {
                             
                             Task {
-                                await viewModel.removeAccountabilityPartner(phoneNumber: UserViewModel.userProfile.accountabilityPartner?.phoneNumber ?? "",
-                                                                            userName: UserViewModel.userProfile.name, accountabilityPartnerName: UserViewModel.userProfile.accountabilityPartner?.name ?? "")
+                                await viewModel.removeAccountabilityPartner(
+                                    phoneNumber: UserViewModel.accountabilityPartner.phoneNumber ?? "",
+                                    userName: UserViewModel.userProfile.name ?? "",
+                                    accountabilityPartnerName: UserViewModel.accountabilityPartner.name ?? "")
                             }
                             
                         }) {
