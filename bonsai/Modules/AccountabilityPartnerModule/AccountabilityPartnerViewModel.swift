@@ -97,6 +97,7 @@ import ManagedSettings
         isSendingTimeRequest = true
         code = generateRandomCode()
         
+        print(phoneNumber, userName, accountabilityPartnerName, note)
         do {
             try await smsApi.timeRequest(
                 request: SMSRequest(
@@ -118,13 +119,10 @@ import ManagedSettings
     }
     
     public func validateVerificationCode( Pin: String) -> Bool { // validate if the code entered by the user is correct or incorrect
-        
-        
         print("code: " + (UserDefaults.standard.string(forKey: LocalStorageKeys.timeExtensionRequestCode) ?? ""))
         print("pin: " + Pin)
         if Pin == (UserDefaults.standard.string(forKey: LocalStorageKeys.timeExtensionRequestCode) ?? "") {
             return true;
-
         } else {
             return false;
         }

@@ -15,12 +15,13 @@ struct BoundaryViewerView: View {
     @EnvironmentObject var screenTime: ScreenTimeService
     @Environment(\.presentationMode) var presentationMode
     
-    @State private var showEditScren: Bool = false
+    @State private var showEditScreen: Bool = false
+    @State private var showCannotEditAlert: Bool = false
 
     var body: some View {
         NavigationStack {
             Group {
-                if screenTime.limitsSet.isEmpty {
+                if screenTime.boundariesSet.isEmpty {
                     ZStack {
                         Color.clear
                             .contentShape(Rectangle())
@@ -47,7 +48,7 @@ struct BoundaryViewerView: View {
                             (
                                 Text("Tap ")
                                 + Text("\"add new boundary\"").bold()
-                                + Text(" to begin making your custom app limits and schedules. You're in control – create as many as you want to shape your ideal balance.")
+                                + Text(" to begin making your custom app boundaries and schedules. You're in control – create as many as you want to shape your ideal balance.")
                             )
                             .font(.system(size: 16))
                             .multilineTextAlignment(.center)
@@ -87,17 +88,17 @@ struct BoundaryViewerView: View {
                                 .multilineTextAlignment(.center)
                                 .padding(.horizontal, 30)
                             
-                            if !screenTime.limitsSet.isEmpty {
+                            if !screenTime.boundariesSet.isEmpty {
                                 List {
-                                    ForEach(screenTime.limitsSet) { limit in
-                                        if !limit.invisibleLimit {
-                                            LimitRow(limit: limit)
+                                    ForEach(screenTime.boundariesSet) { boundary in
+                                        if !boundary.invisibleBoundary {
+                                            BoundaryRow(boundary: boundary)
                                                 .listRowSeparator(.hidden)
                                         }
                                     }
                                 }
                                 .listStyle(PlainListStyle())
-                                .frame(minHeight: 175 * CGFloat(screenTime.limitsSet.count))
+                                .frame(minHeight: 175 * CGFloat(screenTime.boundariesSet.count))
                             }
                         }
                     }
@@ -108,35 +109,49 @@ struct BoundaryViewerView: View {
                         .padding(.bottom, 30)
                 }
             }
-            .navigationDestination(isPresented: $showEditScren) {
+            .navigationDestination(isPresented: $showEditScreen) {
                 BoundaryEditorView()
                     .onDisappear {
                         screenTime.setGroupDisplays()
                     }
             }
         }
+        .alert(isPresented: $showCannotEditAlert) {
+            Alert(
+                title: Text("Out of Boundary edits"),
+                message: Text("You've already used your 2 boundary extensions for the week.")
+                               
+            )
+        }
     }
     
     private var buttonContent: some View {
         VStack {
-            EditBoundariesButton(showEditScreen: $showEditScren)
+            BonsaiButtonRegular(buttonText: screenTime.boundariesSet.isEmpty ? "add new boundary" : "edit boundaries") {
+                if screenTime.getLeftoverWeeklySaves() > 0 {
+                    showEditScreen = true
+                } else {
+                    //showCannotEditAlert = true
+                    showEditScreen = true // Get rid of this an uncomment the above line to test the max boundary week thing
+                }
+            }
         }
     }
 }
 
 
-private struct LimitRow: View {
-    let limit: ScreenTimeActivityEvent
+private struct BoundaryRow: View {
+    let boundary: Boundary
     
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
-                Text(limit.givenName)
+                Text(boundary.givenName)
                     .font(.system(size: 24, weight: .medium))
                 
                 HStack {
                     ForEach(Array(Weekday.allCases), id: \.self) { day in
-                        DayPin(day: day, limit: limit)
+                        DayPin(day: day, boundary: boundary)
                     }
                 }
             }
@@ -146,7 +161,7 @@ private struct LimitRow: View {
             VStack(alignment: .trailing) {
                 HStack {
                     VStack {
-                        Text(String(limit.hours))
+                        Text(String(boundary.hours))
                             .font(.system(size: 46))
                         
                         Text("H")
@@ -155,7 +170,7 @@ private struct LimitRow: View {
                     .padding(.trailing, 12)
                     
                     VStack {
-                        Text(String(limit.minutes))
+                        Text(String(boundary.minutes))
                             .font(.system(size: 46))
                         Text("MINS")
                             .font(.system(size: 16))
@@ -167,19 +182,19 @@ private struct LimitRow: View {
         .padding(.horizontal, 35)
         
         HStack(spacing: -5) {
-            ForEach(Array(limit.appTokens), id: \.self) { token in
+            ForEach(Array(boundary.appTokens), id: \.self) { token in
                 Label(token)
                     .labelStyle(.iconOnly)
                     .scaleEffect(1.7)
             }
 
-            ForEach(Array(limit.webDomainTokens), id: \.self) { token in
+            ForEach(Array(boundary.webDomainTokens), id: \.self) { token in
                 Label(token)
                     .labelStyle(.iconOnly)
                     .scaleEffect(1.7)
             }
 
-            ForEach(Array(limit.categoryTokens), id: \.self) { token in
+            ForEach(Array(boundary.categoryTokens), id: \.self) { token in
                 Label(token)
                     .labelStyle(.iconOnly)
                     .scaleEffect(1.2) // For some reason category tokens are slightly larger
@@ -195,7 +210,7 @@ private struct LimitRow: View {
 
 private struct DayPin: View {
     let day: Weekday
-    let limit: ScreenTimeActivityEvent
+    let boundary: Boundary
     
     var body: some View {
         Text(day.label)
@@ -203,32 +218,7 @@ private struct DayPin: View {
             .frame(width: 15, height: 15)
             .background(Color.secondary)
             .cornerRadius(100)
-            .opacity(limit.weekdays.contains(day) ? 0.8 : 0.2)
-    }
-}
-
-private struct EditBoundariesButton: View {
-    
-    @Binding var showEditScreen: Bool
-    @EnvironmentObject var screenTime: ScreenTimeService
-    
-    var body: some View {
-        Button(action: {
-            showEditScreen = true
-        }) {
-            Rectangle()
-                .foregroundColor(.clear)
-                .frame(width: 299, height: 51)
-                .cornerRadius(30)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 30)
-                        .stroke(Color.primary, lineWidth: 1)
-                )
-                .overlay(
-                    Text(screenTime.limitsSet.isEmpty ? "add new boundary" : "edit boundaries")
-                        .foregroundColor(.primary)
-                )
-        }
+            .opacity(boundary.weekdays.contains(day) ? 0.8 : 0.2)
     }
 }
 

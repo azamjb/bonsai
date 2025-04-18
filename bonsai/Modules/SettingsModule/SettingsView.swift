@@ -30,11 +30,11 @@ struct SettingsView: View {
                         
                         Text("Feedback Form")
                             .font(.system(size: 16))
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                         
                         Rectangle()
                             .frame(height: 1)
-                            .foregroundColor(.gray)
+                            .foregroundColor(.secondary)
                     }
                     .padding(.bottom, 55)
                 }
@@ -44,11 +44,11 @@ struct SettingsView: View {
                         
                         Text("Privacy Policy")
                             .font(.system(size: 16))
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                         
                         Rectangle()
                             .frame(height: 1)
-                            .foregroundColor(.gray)
+                            .foregroundColor(.secondary)
                     }
                     .padding(.bottom, 55)
                 }
@@ -58,11 +58,11 @@ struct SettingsView: View {
                         
                         Text("Terms and Conditions")
                             .font(.system(size: 16))
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                         
                         Rectangle()
                             .frame(height: 1)
-                            .foregroundColor(.gray)
+                            .foregroundColor(.secondary)
                     }
                     .padding(.bottom, 55)
                 }
@@ -72,11 +72,11 @@ struct SettingsView: View {
                         
                         Text("Frequently asked Questions")
                             .font(.system(size: 16))
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                         
                         Rectangle()
                             .frame(height: 1)
-                            .foregroundColor(.gray)
+                            .foregroundColor(.secondary)
                     }
                     .padding(.bottom, 55)
                 }

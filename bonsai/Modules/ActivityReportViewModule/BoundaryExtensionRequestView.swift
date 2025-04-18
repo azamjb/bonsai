@@ -9,13 +9,12 @@ struct BoundaryExtensionRequestView: View {
     
     @EnvironmentObject var screenTime: ScreenTimeService
     
-    @State public var checkedItems: [ScreenTimeActivityEvent : Bool] = [:] // dictionary to track which of the limits have been 'checked' to be extended
+    @State public var checkedItems: [Boundary : Bool] = [:] // dictionary to track which of the boundaries have been 'checked' to be extended
     
     @State private var requestNote: String = ""
     @State private var pin: String = ""
     @FocusState private var isFieldFocused: Bool
     @AppStorage("isProfileCreated") private var isProfileCreated = false
-    
     
     var body: some View {
         NavigationStack {
@@ -42,22 +41,22 @@ struct BoundaryExtensionRequestView: View {
                                 .padding(.bottom, 6)
                                 .foregroundStyle(.primary)
 
-                            if !screenTime.limitsReached.isEmpty {
+                            if !screenTime.boundariesReached.isEmpty {
                                 VStack(alignment: .leading) {
-                                    ForEach(screenTime.limitsReached, id: \.id) { limit in
+                                    ForEach(screenTime.boundariesReached, id: \.id) { boundary in
                                         let isCheckedBinding = Binding<Bool>(
                                             get: {
-                                                checkedItems[limit] ?? false
+                                                checkedItems[boundary] ?? false
                                             },
                                             set: { newValue in
                                                 // Update the dictionary
-                                                checkedItems[limit] = newValue
+                                                checkedItems[boundary] = newValue
                                             }
                                         )
                                                             
                                         CheckboxView(
                                             isChecked: isCheckedBinding,
-                                            label: limit.givenName
+                                            label: boundary.givenName
                                         )
                                     }
                                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -70,7 +69,6 @@ struct BoundaryExtensionRequestView: View {
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .foregroundColor(.secondary)
                             }
-                            
                         }
                         
                         VStack(spacing: 16) {
@@ -138,22 +136,22 @@ struct BoundaryExtensionRequestView: View {
                          
                         Button(action: {
                             Task {
-                                let validated = viewModel.validateVerificationCode(Pin: pin) // see if the code entered by the user is valid
-                                
-                                if (validated) {
-                                    for (event, isChecked) in checkedItems {
-                                        if (isChecked) { // if limit is checked to be extended
-                                            screenTime.extendLimitForGroup(group: event) // extend time for that group
-                                            screenTime.setGroupDisplays()
-                                        }
+//                                let validated = viewModel.validateVerificationCode(Pin: pin) // see if the code entered by the user is valid
+//                                
+//                                if (validated) {
+                                    for (boundary, isChecked) in checkedItems {
+//                                        if (isChecked) { // if boundary is checked to be extended
+                                            screenTime.extendBlockedBoundary(boundary: boundary) // extend time for that boundary
+//                                            screenTime.setGroupDisplays()
+//                                        }
                                     }
-                                    pin = ""
-                                    UserDefaults.standard.removeObject(forKey: LocalStorageKeys.timeExtensionRequestCode)
-
-                                }
-                                else {
-                                    print("invalid code")
-                                }
+//                                    pin = ""
+//                                    UserDefaults.standard.removeObject(forKey: LocalStorageKeys.timeExtensionRequestCode)
+//
+//                                }
+//                                else {
+//                                    print("invalid code")
+//                                }
                             }
                         }) {
                             Text("enter code")
@@ -181,20 +179,20 @@ struct BoundaryExtensionRequestView: View {
                 
                 UserViewModel.fetchUserProfile()
                 screenTime.setGroupDisplays()
-                for limit in screenTime.limitsReached { // adding all limits to the dictionary, initially unchecked
-                        if checkedItems[limit] == nil {
-                            checkedItems[limit] = false
+                for boundary in screenTime.boundariesReached { // adding all boundaries to the dictionary, initially unchecked
+                        if checkedItems[boundary] == nil {
+                            checkedItems[boundary] = false
                         }
                     }
             }
-            .onChange(of: screenTime.limitsReached) { _, newLimits in
-                for limit in newLimits {
-                    if checkedItems[limit] == nil {
-                        checkedItems[limit] = false
+            .onChange(of: screenTime.boundariesReached) { _, newBoundaries in
+                for boundary in newBoundaries {
+                    if checkedItems[boundary] == nil {
+                        checkedItems[boundary] = false
                     }
                 }
                 let allKeys = Set(checkedItems.keys)
-                let newSet  = Set(newLimits)
+                let newSet  = Set(newBoundaries)
                 for oldKey in allKeys.subtracting(newSet) {
                     checkedItems.removeValue(forKey: oldKey)
                 }

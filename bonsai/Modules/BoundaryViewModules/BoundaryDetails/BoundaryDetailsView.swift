@@ -10,16 +10,16 @@ import FamilyControls
 import ManagedSettings
 
 struct BoundaryDetailsView: View {
-    @Binding var selectedLimit: ScreenTimeActivityEvent?
-    @Binding var allLimits: [ScreenTimeActivityEvent]
-    @Binding var modifiedLimits: [ScreenTimeActivityEvent]
+    @Binding var selectedBoundary: Boundary?
+    @Binding var allBoundaries: [Boundary]
+    @Binding var modifiedBoundaries: [Boundary]
     @Binding var isPresented: Bool
     
     @Environment(\.presentationMode) var presentationMode
     
-    @State private var limitToUse: ScreenTimeActivityEvent
-    @State private var isNewLimit: Bool
-    @State private var deepCopiedExistingLimit: ScreenTimeActivityEvent?
+    @State private var boundaryToUse: Boundary
+    @State private var isNewBoundary: Bool
+    @State private var deepCopiedExistingBoundary: Boundary?
     @State private var isShowingFamilyActivityPicker: Bool = false
     @State private var activitySelection: FamilyActivitySelection = FamilyActivitySelection()
     @StateObject private var screenTime: ScreenTimeService = ScreenTimeService()
@@ -27,17 +27,17 @@ struct BoundaryDetailsView: View {
     @State private var errorMessage: String? = nil
     @State private var submitAttempted: Bool = false
 
-    init(selectedLimit: Binding<ScreenTimeActivityEvent?>,
-         allLimits: Binding<[ScreenTimeActivityEvent]>,
-         modifiedLimits: Binding<[ScreenTimeActivityEvent]>,
+    init(selectedBoundary: Binding<Boundary?>,
+         allBoundaries: Binding<[Boundary]>,
+         modifiedBoundaries: Binding<[Boundary]>,
          isPresented: Binding<Bool>
     ) {
-        self._selectedLimit = selectedLimit
-        self._allLimits = allLimits
-        self._modifiedLimits = modifiedLimits
+        self._selectedBoundary = selectedBoundary
+        self._allBoundaries = allBoundaries
+        self._modifiedBoundaries = modifiedBoundaries
         self._isPresented = isPresented
         
-        let defaultLimit = ScreenTimeActivityEvent(
+        let defaultBoundary = Boundary(
             id: UUID(),
             givenName: "Unnamed Boundary",
             appTokens: [],
@@ -46,23 +46,23 @@ struct BoundaryDetailsView: View {
             hours: 0,
             minutes: 15,
             weekdays: [],
-            invisibleLimit: false)
+            invisibleBoundary: false)
         
-        if let currentLimit = selectedLimit.wrappedValue {
-            self._limitToUse = State(initialValue: currentLimit)
-            deepCopiedExistingLimit = DeepCopier.Copy(currentLimit)
+        if let currentBoundary = selectedBoundary.wrappedValue {
+            self._boundaryToUse = State(initialValue: currentBoundary)
+            deepCopiedExistingBoundary = DeepCopier.Copy(currentBoundary)
 
-            isNewLimit = false
+            isNewBoundary = false
             
             var tempSelection = FamilyActivitySelection()
-            tempSelection.applicationTokens = currentLimit.appTokens
-            tempSelection.categoryTokens = currentLimit.categoryTokens
-            tempSelection.webDomainTokens = currentLimit.webDomainTokens
+            tempSelection.applicationTokens = currentBoundary.appTokens
+            tempSelection.categoryTokens = currentBoundary.categoryTokens
+            tempSelection.webDomainTokens = currentBoundary.webDomainTokens
             self._activitySelection = State(initialValue: tempSelection)
         } else {
-            self._limitToUse = State(initialValue: defaultLimit)
+            self._boundaryToUse = State(initialValue: defaultBoundary)
             
-            isNewLimit = true
+            isNewBoundary = true
         }
     }
     
@@ -83,12 +83,12 @@ struct BoundaryDetailsView: View {
                 
                 List {
                     Section {
-                        NavigationLink(destination: BoundaryLabelEditor(limit: $limitToUse)) {
+                        NavigationLink(destination: BoundaryLabelEditor(boundary: $boundaryToUse)) {
                             HStack {
                                 Text("BOUNDARY LABEL")
                                     .foregroundColor(.primary)
                                 Spacer()
-                                Text(limitToUse.givenName.shorted(to: 10))
+                                Text(boundaryToUse.givenName.shorted(to: 10))
                                     .foregroundColor(.primary)
                                     .lineLimit(1)
                             }
@@ -101,12 +101,12 @@ struct BoundaryDetailsView: View {
                     .listRowBackground(Color(UIColor.systemGray5))
 
                     Section {
-                        NavigationLink(destination: DaysActiveEditor(limit: $limitToUse)) {
+                        NavigationLink(destination: DaysActiveEditor(boundary: $boundaryToUse)) {
                             HStack {
                                 Text("DAYS ACTIVE")
                                     .foregroundColor(.primary)
                                 Spacer()
-                                DaysView(days: limitToUse.weekdays)
+                                DaysView(days: boundaryToUse.weekdays)
                             }
                             .padding(.horizontal, 5)
                             .padding(.vertical)
@@ -115,12 +115,12 @@ struct BoundaryDetailsView: View {
                     .listRowBackground(Color(UIColor.systemGray5))
 
                     Section {
-                        NavigationLink(destination: TimeLimitEditor(limit: $limitToUse)) {
+                        NavigationLink(destination: TimeBoundaryEditor(boundary: $boundaryToUse)) {
                             HStack {
                                 Text("DAILY LIMIT")
                                     .foregroundColor(.primary)
                                 Spacer()
-                                Text("\(limitToUse.hours) hrs, \(limitToUse.minutes) mins")
+                                Text("\(boundaryToUse.hours) hrs, \(boundaryToUse.minutes) mins")
                                     .foregroundColor(Color.primary)
                             }
                             .padding(.horizontal, 5)
@@ -187,41 +187,42 @@ struct BoundaryDetailsView: View {
                     .padding(.horizontal, 45)
                     
                     VStack {
-                        SaveButton() {
+                        BonsaiButtonRegular(buttonText: "save") {
                             submitAttempted = true
                             
                             validateBoundary()
                             
                             if errorMessage == nil {
-                                limitToUse.appTokens = activitySelection.applicationTokens
-                                limitToUse.categoryTokens = activitySelection.categoryTokens
-                                limitToUse.webDomainTokens = activitySelection.webDomainTokens
+                                boundaryToUse.appTokens = activitySelection.applicationTokens
+                                boundaryToUse.categoryTokens = activitySelection.categoryTokens
+                                boundaryToUse.webDomainTokens = activitySelection.webDomainTokens
                                 
-                                if !isNewLimit {
-                                    if let index = allLimits.firstIndex(where: { $0.id == limitToUse.id }) {
-                                        allLimits[index] = limitToUse
+                                if !isNewBoundary {
+                                    if let index = allBoundaries.firstIndex(where: { $0.id == boundaryToUse.id }) {
+                                        allBoundaries[index] = boundaryToUse
                                     }
                                 } else {
-                                    if allLimits.contains(where: { $0.id == limitToUse.id }) {
-                                        limitToUse.id = UUID() // Create a new UUID if there's a conflict
+                                    if allBoundaries.contains(where: { $0.id == boundaryToUse.id }) {
+                                        boundaryToUse.id = UUID() // Create a new UUID if there's a conflict
                                     }
-                                    allLimits.append(limitToUse)
+                                    allBoundaries.append(boundaryToUse)
                                 }
                                 
-                                if !modifiedLimits.contains(where: { $0.id == limitToUse.id }) {
-                                    modifiedLimits.append(limitToUse)
+                                if !modifiedBoundaries.contains(where: { $0.id == boundaryToUse.id }) {
+                                    modifiedBoundaries.append(boundaryToUse)
                                 } else {
-                                    if let index = modifiedLimits.firstIndex(where: { $0.id == limitToUse.id }) {
-                                        modifiedLimits[index] = limitToUse
+                                    if let index = modifiedBoundaries.firstIndex(where: { $0.id == boundaryToUse.id }) {
+                                        modifiedBoundaries[index] = boundaryToUse
                                     }
                                 }
                                 
                                 isPresented = false
                             }
                         }
-                        CancelButton() {
-                            if !isNewLimit {
-                                limitToUse = deepCopiedExistingLimit!
+                        
+                        BonsaiButtonRegular(buttonText: "cancel") {
+                            if !isNewBoundary {
+                                boundaryToUse = deepCopiedExistingBoundary!
                             }
                             
                             isPresented = false
@@ -245,8 +246,8 @@ struct BoundaryDetailsView: View {
         if activitySelection.applicationTokens.isEmpty && activitySelection.categoryTokens.isEmpty && activitySelection.webDomainTokens.isEmpty {
             errorMessage = "Please make at least one selection from app picker."
         } else if selectedTokensAreUnique() {
-            errorMessage = "At least one app/category selected already exists in another boundary."
-        } else if limitToUse.weekdays.isEmpty {
+            errorMessage = "At least one selection already exists in another boundary."
+        } else if boundaryToUse.weekdays.isEmpty {
             errorMessage = "Please select at least one weekday."
         } else {
             errorMessage = nil
@@ -254,71 +255,15 @@ struct BoundaryDetailsView: View {
     }
     
     private func selectedTokensAreUnique() -> Bool {
-        return screenTime.limitsSet.filter({ limit in limit.id != limitToUse.id }).contains(where: { limit in
-            let hasMatchingAppTokens = !$activitySelection.applicationTokens.wrappedValue.isDisjoint(with: limit.appTokens)
-            let hasMatchingCategoryTokens = !$activitySelection.categoryTokens.wrappedValue.isDisjoint(with: Set(limit.categoryTokens))
-            let hasMatchingWebDomainTokens = !$activitySelection.webDomainTokens.wrappedValue.isDisjoint(with: Set(limit.webDomainTokens))
+        return screenTime.boundariesSet.filter({ boundary in boundary.id != boundaryToUse.id }).contains(where: { boundary in
+            let hasMatchingAppTokens = !$activitySelection.applicationTokens.wrappedValue.isDisjoint(with: boundary.appTokens)
+            let hasMatchingCategoryTokens = !$activitySelection.categoryTokens.wrappedValue.isDisjoint(with: Set(boundary.categoryTokens))
+            let hasMatchingWebDomainTokens = !$activitySelection.webDomainTokens.wrappedValue.isDisjoint(with: Set(boundary.webDomainTokens))
             
             return hasMatchingAppTokens || hasMatchingCategoryTokens || hasMatchingWebDomainTokens
         })
     }
     
-}
-
-private struct SaveButton: View {
-    var onSave: () -> Void
-    
-    init(onSave: @escaping () -> Void) {
-        self.onSave = onSave
-    }
-    
-    var body: some View {
-        Button(action: {
-            onSave()
-        }) {
-            Rectangle()
-                .foregroundColor(.clear)
-                .frame(width: 299, height: 51)
-                .background(Color.white)
-                .cornerRadius(30)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 30)
-                        .stroke(Color.black, lineWidth: 1)
-                )
-                .overlay(
-                    Text("save")
-                        .foregroundColor(.black)
-                )
-        }
-    }
-}
-
-private struct CancelButton: View {
-    var onCancel: () -> Void
-    
-    init(onCancel: @escaping () -> Void) {
-        self.onCancel = onCancel
-    }
-    
-    var body: some View {
-        Button(action: {
-            onCancel()
-        }) {
-            Rectangle()
-                .foregroundColor(.clear)
-                .frame(width: 299, height: 51)
-                .background(Color.white)
-                .cornerRadius(30)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 30)
-                        .stroke(Color.black, lineWidth: 1)
-                )
-                .overlay(
-                    Text("cancel")
-                        .foregroundColor(.black)
-                )
-        }
-    }
 }
 
 private struct DaysView: View {
@@ -344,7 +289,7 @@ private struct DaysView: View {
 
 // MARK: - Boundary Label Editor
 private struct BoundaryLabelEditor: View {
-    @Binding var limit: ScreenTimeActivityEvent
+    @Binding var boundary: Boundary
     @Environment(\.presentationMode) var presentationMode
     @FocusState private var isFocused: Bool
 
@@ -367,8 +312,8 @@ private struct BoundaryLabelEditor: View {
                 .padding(.top, 20)
             
             Button(action: {
-                if limit.givenName.isEmpty {
-                    limit.givenName = "Unnamed Boundary"
+                if boundary.givenName.isEmpty {
+                    boundary.givenName = "Unnamed Boundary"
                 }
                 
                 presentationMode.wrappedValue.dismiss()
@@ -394,13 +339,13 @@ private struct BoundaryLabelEditor: View {
                 .padding(.bottom, 15)
             
             HStack {
-                TextField("", text: $limit.givenName)
+                TextField("", text: $boundary.givenName)
                     .focused($isFocused)
                     .foregroundStyle(Color.primary)
                     .padding(.vertical, 15)
                 
                 Button(action: {
-                    limit.givenName = ""
+                    boundary.givenName = ""
                     isFocused = true
                 }) {
                     Image(systemName: "xmark.circle.fill")
@@ -419,7 +364,7 @@ private struct BoundaryLabelEditor: View {
 
 // MARK: - Days Active Editor
 private struct DaysActiveEditor: View {
-    @Binding var limit: ScreenTimeActivityEvent
+    @Binding var boundary: Boundary
     @Environment(\.presentationMode) var presentationMode
     var onSave: (() -> Void)? = nil
     
@@ -494,7 +439,7 @@ private struct DaysActiveEditor: View {
                     .stroke(Color.gray, lineWidth: 1)
                     .background(
                         Circle()
-                            .fill(limit.weekdays.contains(day) ? Color.secondary : Color.clear)
+                            .fill(boundary.weekdays.contains(day) ? Color.secondary : Color.clear)
                     )
                     .frame(width: 24, height: 24)
                 
@@ -512,10 +457,10 @@ private struct DaysActiveEditor: View {
     }
     
     private func toggleWeekday(_ day: Weekday) {
-        if limit.weekdays.contains(day) {
-            limit.weekdays.remove(day)
+        if boundary.weekdays.contains(day) {
+            boundary.weekdays.remove(day)
         } else {
-            limit.weekdays.insert(day)
+            boundary.weekdays.insert(day)
         }
         
         if let onSave = onSave {
@@ -524,15 +469,15 @@ private struct DaysActiveEditor: View {
     }
 }
 
-// MARK: - Time Limit Editor
-private struct TimeLimitEditor: View {
-    @Binding var limit: ScreenTimeActivityEvent
+// MARK: - Time Boundary Editor
+private struct TimeBoundaryEditor: View {
+    @Binding var boundary: Boundary
     @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         VStack(spacing: 0) {
             headerView()
-            limitSelectorView()
+            boundarySelectorView()
             
             Spacer()
         }
@@ -562,7 +507,7 @@ private struct TimeLimitEditor: View {
         .padding(.bottom, 20)
     }
     
-    private func limitSelectorView() -> some View {
+    private func boundarySelectorView() -> some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("DAILY LIMIT")
                 .foregroundColor(.primary)
@@ -586,13 +531,13 @@ private struct TimeLimitEditor: View {
             .padding(.top, 10)
             
             HStack {
-                Picker("", selection: $limit.hours){
+                Picker("", selection: $boundary.hours){
                     ForEach(0..<8, id: \.self) { i in
                         Text("\(i) hours").tag(i)
                     }
                 }.pickerStyle(WheelPickerStyle())
                 
-                Picker("", selection: $limit.minutes){
+                Picker("", selection: $boundary.minutes){
                     ForEach(0..<60, id: \.self) { i in
                         Text("\(i) min").tag(i)
                     }
@@ -637,7 +582,7 @@ private struct SelectedAppDisplay: View {
 struct BoundaryDetailsView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            BoundaryDetailsView(selectedLimit: .constant(nil), allLimits: .constant([]), modifiedLimits: .constant([]), isPresented: .constant(true))
+            BoundaryDetailsView(selectedBoundary: .constant(nil), allBoundaries: .constant([]), modifiedBoundaries: .constant([]), isPresented: .constant(true))
         }
     }
 }

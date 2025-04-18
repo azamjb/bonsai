@@ -14,13 +14,12 @@ import _DeviceActivity_SwiftUI
 
 class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     private let appGroupID = "group.com.bonsai"
-    
-    let store = ManagedSettingsStore()
-
     private var sharedDefaults: UserDefaults? {
         UserDefaults(suiteName: appGroupID)
     }
     
+    let store = ManagedSettingsStore()
+
     override func intervalDidStart(for activity: DeviceActivityName) {
         super.intervalDidStart(for: activity)
     }
@@ -32,18 +31,20 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     override func eventDidReachThreshold(_ event: DeviceActivityEvent.Name, activity: DeviceActivityName) {
         super.eventDidReachThreshold(event, activity: activity)
         
-        let data = sharedDefaults!.data(forKey: GroupDisplayType.limit.rawValue + activity.rawValue)
-        
-        do {
-            let activityEvent = try JSONDecoder().decode(ScreenTimeActivityEvent.self, from: data!)
+        if let data = sharedDefaults!.data(forKey: BOUNDARIES_STRING) {
+            var boundaries = try! JSONDecoder().decode([Boundary].self, from: data)
             
-            activityEvent.appTokens.forEach { token in handleThresholdReached(appToken: token) }
-            activityEvent.categoryTokens.forEach { token in handleThresholdReached(categoryToken: token) }
-            activityEvent.webDomainTokens.forEach { token in handleThresholdReached(webDomainToken: token) }
+            var boundary = boundaries.first(where: { $0.id == UUID(uuidString: activity.rawValue) })!
+            boundary.isBlocked = true
             
-            sharedDefaults?.set(data, forKey: GroupDisplayType.block.rawValue + activityEvent.id.uuidString)
-        } catch {
-            print("Failed to decode limit event")
+            boundary.appTokens.forEach { token in handleThresholdReached(appToken: token) }
+            boundary.categoryTokens.forEach { token in handleThresholdReached(categoryToken: token) }
+            boundary.webDomainTokens.forEach { token in handleThresholdReached(webDomainToken: token) }
+            
+            boundaries.removeAll(where: { $0.id == boundary.id })
+            boundaries.append(boundary)
+            
+            sharedDefaults?.set(try! JSONEncoder().encode(boundaries), forKey: BOUNDARIES_STRING)
         }
     }
     
