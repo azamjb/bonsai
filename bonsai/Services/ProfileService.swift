@@ -104,8 +104,7 @@ class ProfileService: ProfileServiceProtocol {
         }
 
         if (profileHasChanged) {
-            // UNCOMMENT THIS LINE TO TEST THE BACKEND API - CURRENTLY DISABLED
-            // await sendProfileToApi()
+            await sendProfileToApi()
         }
     }
     
