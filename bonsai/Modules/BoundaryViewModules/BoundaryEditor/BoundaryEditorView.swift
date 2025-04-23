@@ -14,10 +14,10 @@ struct BoundaryEditorView: View {
     
     @Environment(\.presentationMode) var presentationMode
     
-    @State private var selectedLimit: ScreenTimeActivityEvent? = nil
+    @State private var selectedBoundary: Boundary? = nil
     @State private var showViewScreen: Bool = false
-    @State private var modifiedLimits: [ScreenTimeActivityEvent] = []
-    @State private var limitIdsToDelete: [UUID] = []
+    @State private var modifiedBoundaries: [Boundary] = []
+    @State private var boundaryIdsToDelete: [UUID] = []
     
     @State private var showingCancelConfirmation: Bool = false
     @State private var showingDeleteConfirmation: Bool = false
@@ -28,7 +28,7 @@ struct BoundaryEditorView: View {
             headerContent
                 .padding(.bottom, 10)
             
-            limitsContent
+            boundariesContent
                 .layoutPriority(1)
             
             buttonContent
@@ -38,9 +38,9 @@ struct BoundaryEditorView: View {
         .edgesIgnoringSafeArea(.bottom)
         .navigationDestination(isPresented: $showViewScreen) {
             BoundaryDetailsView(
-                selectedLimit: selectedLimit != nil ? $selectedLimit : .constant(nil),
-                allLimits: $screenTime.limitsSet,
-                modifiedLimits: $modifiedLimits,
+                selectedBoundary: selectedBoundary != nil ? $selectedBoundary : .constant(nil),
+                allBoundaries: $screenTime.boundariesSet,
+                modifiedBoundaries: $modifiedBoundaries,
                 isPresented: $showViewScreen
             )
         }
@@ -59,12 +59,12 @@ struct BoundaryEditorView: View {
         }
         .alert("Are you sure you want to save?", isPresented: $showingEditConfirmation) {
             Button("save", role: .cancel) {
-                if !limitIdsToDelete.isEmpty {
+                if !boundaryIdsToDelete.isEmpty {
                     showingEditConfirmation = false
                     showingDeleteConfirmation = true
                 } else {
-                    modifiedLimits.forEach { limit in
-                        screenTime.startMonitoring(limit: limit)
+                    modifiedBoundaries.forEach { boundary in
+                        screenTime.startMonitoring(boundary: boundary)
                     }
                     
                     presentationMode.wrappedValue.dismiss()
@@ -79,12 +79,12 @@ struct BoundaryEditorView: View {
         }
         .alert("Are you sure you want to delete a boundary?", isPresented: $showingDeleteConfirmation) {
             Button("delete", role: .cancel) {
-                limitIdsToDelete.forEach { id in
-                    screenTime.deleteLimit(limitId: id)
+                boundaryIdsToDelete.forEach { id in
+                    screenTime.deleteBoundary(boundaryId: id)
                 }
                 
-                modifiedLimits.filter({ limit in !limitIdsToDelete.contains(where: { $0 == limit.id }) }).forEach { limit in
-                    screenTime.startMonitoring(limit: limit)
+                modifiedBoundaries.filter({ boundary in !boundaryIdsToDelete.contains(where: { $0 == boundary.id }) }).forEach { boundary in
+                    screenTime.startMonitoring(boundary: boundary)
                 }
                 
                 presentationMode.wrappedValue.dismiss()
@@ -123,46 +123,43 @@ struct BoundaryEditorView: View {
         }
     }
     
-    private var limitsContent: some View {
+    private var boundariesContent: some View {
         Group {
-            if !screenTime.limitsSet.isEmpty {
-                limitsListView
+            if !screenTime.boundariesSet.isEmpty {
+                boundariesListView
             } else {
                 Spacer()
             }
         }
     }
     
-    private var limitsListView: some View {
-         let uniqueLimits = screenTime.limitsSet.filter { limit in
-             !modifiedLimits.contains(where: { $0.id == limit.id }) && !limitIdsToDelete.contains(limit.id)
+    private var boundariesListView: some View {
+         let uniqueBoundaries = screenTime.boundariesSet.filter { boundary in
+             !modifiedBoundaries.contains(where: { $0.id == boundary.id }) && !boundaryIdsToDelete.contains(boundary.id)
          }
         
-         let count = uniqueLimits.count + modifiedLimits.count
-         
          return List {
-             ForEach(uniqueLimits) { limit in
-                 limitRowView(for: limit)
+             ForEach(uniqueBoundaries) { boundary in
+                 boundaryRowView(for: boundary)
              }
              
-             ForEach(modifiedLimits) { limit in
-                 limitRowView(for: limit)
+             ForEach(modifiedBoundaries) { boundary in
+                 boundaryRowView(for: boundary)
              }
          }
          .listStyle(PlainListStyle())
-         .frame(minHeight: 175 * CGFloat(count))
      }
      
-     private func limitRowView(for limit: ScreenTimeActivityEvent) -> some View {
-         LimitRow(limit: limit)
+     private func boundaryRowView(for boundary: Boundary) -> some View {
+         BoundaryRow(boundary: boundary)
              .listRowSeparator(.hidden)
              .swipeActions(edge: .trailing) {
-                 DeleteLimitButton(limitIdsToDelete: $limitIdsToDelete, limitId: limit.id)
+                 DeleteBoundaryButton(boundaryIdsToDelete: $boundaryIdsToDelete, boundaryId: boundary.id)
              }
              .tint(.red)
              .swipeActions(edge: .leading) {
                  Button {
-                     self.selectedLimit = limit
+                     self.selectedBoundary = boundary
                      self.showViewScreen = true
                  } label: {
                      Label("", systemImage: "pencil")
@@ -173,20 +170,12 @@ struct BoundaryEditorView: View {
     
     private var buttonContent: some View {
         VStack(spacing: 15) {
-            // FOR TESTING
-//            Button {
-//                Task {
-//                    screenTime.clearAllRestrictions()
-//                }
-//            } label: {
-//                Text("clear all blocks and set limits (testing)")
-//                    .font(.system(size: 20))
-//                    .foregroundColor(.gray)
-//            }
+            BonsaiButtonRegular(buttonText: "add new boundary") {
+                selectedBoundary = nil
+                showViewScreen = true
+            }
             
-            AddBoundaryButton(selectedLimit: $selectedLimit, showViewScreen: $showViewScreen)
-            
-            SaveButton {
+            BonsaiButtonRegular(buttonText: "save") {
                 showingEditConfirmation = true
             }
         }
@@ -194,74 +183,22 @@ struct BoundaryEditorView: View {
 }
 
 // MARK: - Supporting Views
-private struct DeleteLimitButton: View {
-    @Binding var limitIdsToDelete: [UUID]
-    var limitId: UUID
+private struct DeleteBoundaryButton: View {
+    @Binding var boundaryIdsToDelete: [UUID]
+    var boundaryId: UUID
     
     var body: some View {
         Button(role: .destructive) {
-            limitIdsToDelete.append(limitId)
+            boundaryIdsToDelete.append(boundaryId)
         } label: {
             Label("", systemImage: "trash")
         }
     }
 }
 
-private struct AddBoundaryButton: View {
-    @Binding var selectedLimit: ScreenTimeActivityEvent?
-    @Binding var showViewScreen: Bool
-    
-    var body: some View {
-        Button(action: {
-            selectedLimit = nil
-            showViewScreen = true
-        }) {
-            Rectangle()
-                .foregroundColor(.clear)
-                .frame(width: 299, height: 51)
-                .cornerRadius(30)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 30)
-                        .stroke(Color.primary, lineWidth: 1)
-                )
-                .overlay(
-                    Text("add new boundary")
-                        .foregroundColor(.primary)
-                )
-        }
-    }
-}
-
-private struct SaveButton: View {
-    var onSave: () -> Void
-    
-    init(onSave: @escaping () -> Void) {
-        self.onSave = onSave
-    }
-    
-    var body: some View {
-        Button(action: {
-            onSave()
-        }) {
-            Rectangle()
-                .foregroundColor(.clear)
-                .frame(width: 299, height: 51)
-                .cornerRadius(30)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 30)
-                        .stroke(Color.primary, lineWidth: 1)
-                )
-                .overlay(
-                    Text("save")
-                        .foregroundColor(.primary)
-                )
-        }
-    }
-}
-
 private struct DayPin: View {
     let day: Weekday
-    let limit: ScreenTimeActivityEvent
+    let boundary: Boundary
     
     var body: some View {
         Text(day.label)
@@ -269,18 +206,18 @@ private struct DayPin: View {
             .frame(width: 19, height: 19)
             .background(Color.secondary)
             .cornerRadius(100)
-            .opacity(limit.weekdays.contains(day) ? 0.8 : 0.2)
+            .opacity(boundary.weekdays.contains(day) ? 0.8 : 0.2)
     }
 }
 
-private struct LimitRow: View {
-    let limit: ScreenTimeActivityEvent
+private struct BoundaryRow: View {
+    let boundary: Boundary
     
     var body: some View {
         VStack(spacing: 4) {
             headerView
             
-            limitDetailsView
+            boundaryDetailsView
             
             scheduleHeaderView
             
@@ -309,13 +246,13 @@ private struct LimitRow: View {
         .padding(.horizontal, 35)
     }
     
-    private var limitDetailsView: some View {
+    private var boundaryDetailsView: some View {
         HStack {
-            if (limit.givenName.isEmpty) {
+            if (boundary.givenName.isEmpty) {
                 Text("Unnamed Boundary")
                     .font(.system(size: 18))
             } else {
-                Text(limit.givenName)
+                Text(boundary.givenName)
                     .font(.system(size: 18))
             }
             
@@ -329,13 +266,13 @@ private struct LimitRow: View {
     
     private var timeView: some View {
         HStack {
-            Text(String(limit.hours))
+            Text(String(boundary.hours))
                 .font(.system(size: 18))
                 .fontWeight(.semibold)
             Text("hrs")
                 .font(.system(size: 12))
             
-            Text(String(limit.minutes))
+            Text(String(boundary.minutes))
                 .font(.system(size: 18))
                 .fontWeight(.semibold)
             Text("mins")
@@ -360,15 +297,24 @@ private struct LimitRow: View {
         HStack {
             Spacer()
             
-            DayPin(day: .monday, limit: limit)
-            DayPin(day: .tuesday, limit: limit)
-            DayPin(day: .wednesday, limit: limit)
-            DayPin(day: .thursday, limit: limit)
-            DayPin(day: .friday, limit: limit)
-            DayPin(day: .saturday, limit: limit)
-            DayPin(day: .sunday, limit: limit)
+            DayPin(day: .sunday, boundary: boundary)
+            DayPin(day: .monday, boundary: boundary)
+            DayPin(day: .tuesday, boundary: boundary)
+            DayPin(day: .wednesday, boundary: boundary)
+            DayPin(day: .thursday, boundary: boundary)
+            DayPin(day: .friday, boundary: boundary)
+            DayPin(day: .saturday, boundary: boundary)
         }
         .padding(.horizontal, 35)
         .padding(.bottom, 20)
+    }
+}
+
+struct BoundaryEditorView_Previews: PreviewProvider {
+    static var previews: some View {
+        NavigationView {
+            BoundaryEditorView()
+                .environmentObject(ScreenTimeService())
+        }
     }
 }

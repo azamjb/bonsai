@@ -31,14 +31,6 @@ struct ActivityReportView: View {
     
     @StateObject var viewModel: ActivityReportViewModel = ActivityReportViewModel()
     @EnvironmentObject var screenTime: ScreenTimeService
-
-    @State private var monCount: Int = 0
-    @State private var tueCount: Int = 0
-    @State private var wedCount: Int = 0
-    @State private var thuCount: Int = 0
-    @State private var friCount: Int = 0
-    @State private var satCount: Int = 0
-    @State private var sunCount: Int = 0
     
     var now = Date()
     
@@ -113,7 +105,7 @@ struct ActivityReportView: View {
                             .padding(.bottom, 20)
                         
                         DeviceActivityReport(.init(rawValue: "pill_bar"), filter: dayFilter)
-                            .frame(height: CGFloat(screenTime.limitsSet.count) * 90)
+                            .frame(height: CGFloat(screenTime.boundariesSet.count) * 90)
                             .padding(.horizontal, 18)
 
                         
@@ -122,17 +114,9 @@ struct ActivityReportView: View {
                             .padding(.top, 10)
                             .font(.system(size: 10))
                     }
-                        
-                    HStack(spacing: 1) {
-                        extensionCountView(color: "0x1E2368", day: "MON", count: monCount)
-                        extensionCountView(color: "0x454380", day: "TUE", count: tueCount)
-                        extensionCountView(color: "0x7D4077", day: "WED", count: wedCount)
-                        extensionCountView(color: "0x9D3B6A", day: "THU", count: thuCount)
-                        extensionCountView(color: "0xDB6552", day: "FRI", count: friCount)
-                        extensionCountView(color: "0xE56829", day: "SAT", count: satCount)
-                        extensionCountView(color: "0xC95102", day: "SUN", count: sunCount)
-                    }
-                    .padding(.bottom, 30)
+                    
+                    dailyBoundaryExtensionsView(model: screenTime.getDailyBoundaryExtensionsModel())
+                        .padding(.bottom, 30)
                     
                     VStack(alignment: .leading) {
                         
@@ -199,7 +183,6 @@ struct ActivityReportView: View {
                         
                     }
                     .padding(.horizontal, 18)
-
                     
                     Divider()
                         .frame(height: 1)
@@ -210,32 +193,12 @@ struct ActivityReportView: View {
                         .padding(.bottom, 30)
                         .frame(maxWidth: .infinity, alignment: .leading)
 
-                    NavigationLink(destination: BoundaryExtensionRequestView()) {
-                        Text("request boundary extension")
-                            .font(.system(size: 15))
-                            .foregroundColor(.primary)
-                            .padding(.vertical, 10)
-                            .padding(.horizontal, 60)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 20)
-                                    .stroke(Color.primary, lineWidth: 1)
-                            )
-                    }
-                    .padding(.bottom, 30)
+                    BonsaiNavLinkSmall(buttonText: "request boundary extension", destination: BoundaryExtensionRequestView())
+                        .padding(.bottom, 30)
                 
-                    Button(action: {
-                            screenTime.clearShieldedApps()
-                        }) {
-                            Text("override all boundaries")
-                                .font(.system(size: 15))
-                                .foregroundColor(.primary)
-                                .padding(.vertical, 10)
-                                .padding(.horizontal, 80)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 20)
-                                        .stroke(Color.primary, lineWidth: 1)
-                                )
-                        }
+                    BonsaiButtonSmall(buttonText: "override all boundaries") {
+                        screenTime.clearShieldedApps()
+                    }
                     .padding(.bottom, 50)
                 }
                 .padding(.horizontal, 18)
@@ -252,10 +215,20 @@ struct ActivityReportView: View {
         }
     }
     
+    private func dailyBoundaryExtensionsView(model: DailyBoundaryExtensionsModel) -> some View {
+        HStack(spacing: 1) {
+            extensionCountView(color: "0x1E2368", day: "MON", count: model.monday.count)
+            extensionCountView(color: "0x454380", day: "TUE", count: model.tuesday.count)
+            extensionCountView(color: "0x7D4077", day: "WED", count: model.wednesday.count)
+            extensionCountView(color: "0x9D3B6A", day: "THU", count: model.thursday.count)
+            extensionCountView(color: "0xDB6552", day: "FRI", count: model.friday.count)
+            extensionCountView(color: "0xE56829", day: "SAT", count: model.saturday.count)
+            extensionCountView(color: "0xC95102", day: "SUN", count: model.sunday.count)
+        }
+    }
+    
     private func extensionCountView(color: String, day: String, count: Int) -> some View {
-       
         ZStack {
-            
             Rectangle()
                 .frame(width: 45, height: 60)
                 .foregroundColor(Color(hex: color)) // Change color

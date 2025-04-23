@@ -6,7 +6,9 @@ struct BoundaryExtensionRequestView: View {
     @StateObject var UserViewModel: ProfileViewModel = ProfileViewModel()
     @State private var isRememberMeChecked = false
     @EnvironmentObject var screenTime: ScreenTimeService
-    @State public var checkedItems: [ScreenTimeActivityEvent : Bool] = [:]
+    
+    @State public var checkedItems: [Boundary : Bool] = [:] // dictionary to track which of the boundaries have been 'checked' to be extended
+    
     @State private var requestNote: String = ""
     @State private var pin: String = ""
     @FocusState private var isFieldFocused: Bool
@@ -34,8 +36,8 @@ struct BoundaryExtensionRequestView: View {
             .onAppear {
                 setupOnAppear()
             }
-            .onChange(of: screenTime.limitsReached) { _, newLimits in
-                updateCheckedItems(newLimits)
+            .onChange(of: screenTime.boundariesReached) { _, newboundaries in
+                updateCheckedItems(newboundaries)
             }
         }
         .customBackToolbar()
@@ -45,21 +47,21 @@ struct BoundaryExtensionRequestView: View {
     private func setupOnAppear() {
         UserViewModel.fetchUserProfile()
         screenTime.setGroupDisplays()
-        for limit in screenTime.limitsReached {
-            if checkedItems[limit] == nil {
-                checkedItems[limit] = false
+        for Boundary in screenTime.boundariesReached {
+            if checkedItems[Boundary] == nil {
+                checkedItems[Boundary] = false
             }
         }
     }
     
-    private func updateCheckedItems(_ newLimits: [ScreenTimeActivityEvent]) {
-        for limit in newLimits {
-            if checkedItems[limit] == nil {
-                checkedItems[limit] = false
+    private func updateCheckedItems(_ newboundaries: [Boundary]) {
+        for Boundary in newboundaries {
+            if checkedItems[Boundary] == nil {
+                checkedItems[Boundary] = false
             }
         }
         let allKeys = Set(checkedItems.keys)
-        let newSet = Set(newLimits)
+        let newSet = Set(newboundaries)
         for oldKey in allKeys.subtracting(newSet) {
             checkedItems.removeValue(forKey: oldKey)
         }
@@ -84,7 +86,7 @@ struct HeaderView: View {
 
 struct SelectAppsSection: View {
     @ObservedObject var screenTime: ScreenTimeService
-    @Binding var checkedItems: [ScreenTimeActivityEvent: Bool]
+    @Binding var checkedItems: [Boundary: Bool]
     
     var body: some View {
         VStack {
@@ -94,21 +96,21 @@ struct SelectAppsSection: View {
                 .padding(.bottom, 6)
                 .foregroundStyle(.primary)
             
-            if !screenTime.limitsReached.isEmpty {
+            if !screenTime.boundariesReached.isEmpty {
                 VStack(alignment: .leading) {
-                    ForEach(screenTime.limitsReached, id: \.id) { limit in
+                    ForEach(screenTime.boundariesReached, id: \.id) { Boundary in
                         let isCheckedBinding = Binding<Bool>(
                             get: {
-                                checkedItems[limit] ?? false
+                                checkedItems[Boundary] ?? false
                             },
                             set: { newValue in
-                                checkedItems[limit] = newValue
+                                checkedItems[Boundary] = newValue
                             }
                         )
                         
                         CheckboxView(
                             isChecked: isCheckedBinding,
-                            label: limit.givenName
+                            label: Boundary.givenName
                         )
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -198,7 +200,7 @@ struct SentRequestCodesSection: View {
 
 struct EnterCodeSection: View {
     @Binding var pin: String
-    let checkedItems: [ScreenTimeActivityEvent: Bool]
+    let checkedItems: [Boundary: Bool]
     @ObservedObject var viewModel: AccountabilityPartnerViewModel
     @ObservedObject var screenTime: ScreenTimeService
     
@@ -242,9 +244,9 @@ struct EnterCodeSection: View {
             let validated = viewModel.validateVerificationCode(Pin: pin)
             
             if validated {
-                for (event, isChecked) in checkedItems {
+                for (boundary, isChecked) in checkedItems {
                     if isChecked {
-                        screenTime.extendLimitForGroup(group: event)
+                        screenTime.extendBlockedBoundary(boundary: boundary)
                         screenTime.setGroupDisplays()
                     }
                 }

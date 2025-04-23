@@ -6,10 +6,16 @@
 //
 
 import Combine
+import Foundation
 
 
 class ProfileCreationViewModel: ObservableObject {
-    
+    private let appGroupID = "group.com.bonsai"
+
+    private var sharedDefaults: UserDefaults? {
+        UserDefaults(suiteName: appGroupID)
+    }
+
     @Published var userProfile = UserProfile()
     @Published var accountabilityPartner = AccountabilityPartner()
     private let profileService: ProfileServiceProtocol = ProfileService()
@@ -17,6 +23,10 @@ class ProfileCreationViewModel: ObservableObject {
 
     func saveProfileFields(name: String?, phoneNumber: String?, hobbies: [String]?, termsAccepted: Bool?) async {
         await profileService.saveProfileFields(name: name, phoneNumber: phoneNumber, hobbies: hobbies, termsAccepted: termsAccepted)
+        
+        initRemainingBoundaryEdits()
+        initDailyBoundaryExtensions()
+        
         fetchUserProfile()
     }
     
@@ -26,6 +36,15 @@ class ProfileCreationViewModel: ObservableObject {
         fetchAccountabilityPartner()
     }
     
+    func initRemainingBoundaryEdits() {
+        sharedDefaults?.set(2, forKey: REMAINING_BOUNDARY_EXTENSIONS_STRING)
+    }
+    
+    func initDailyBoundaryExtensions() {
+        sharedDefaults?.set(try! JSONEncoder().encode(DailyBoundaryExtensionsModel()), forKey: DAILY_BOUNDARY_EXTENSIONS_STRING)
+    }
+
+
     func fetchUserProfile() {
         userProfile = profileService.fetchUserProfile()
     }
@@ -33,7 +52,4 @@ class ProfileCreationViewModel: ObservableObject {
     func fetchAccountabilityPartner() {
         accountabilityPartner = profileService.fetchAccountabilityPartner()
     }
-    
-    
-    
 }

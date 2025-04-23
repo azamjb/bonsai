@@ -19,6 +19,7 @@ struct bonsaiApp: App {
     
     init() {
         AppShieldSchedulerService.shared.setupDailyUnshield()
+        WeeklySchedulerService.shared.setupWeeklySchedule()
 
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
             if granted {
@@ -42,7 +43,7 @@ struct bonsaiApp: App {
 // Here we can set a way to display splash screen then profile creation or skip straight to ContentView()
 struct RootView: View {
     @AppStorage("isProfileCreated") private var isProfileCreated = false
-    @State private var isSplashScreenActive:Bool = true
+    @State private var isSplashScreenActive: Bool = false
     
     var body: some View {
         Group {

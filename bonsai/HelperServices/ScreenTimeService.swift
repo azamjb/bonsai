@@ -14,16 +14,13 @@ import FamilyControls
 public class ScreenTimeService: ObservableObject {
     public var code: String = ""
     public var timeExtensionRequestCode: String? = nil
-    public var enteredPin: String = ""
     public var isSendingTimeRequest: Bool = false
     public var sentTimeRequest: Bool = false
     public var monitoringStarted: Bool = false
     public var purchaseSuccessful: Bool = false
-    public var timeLimitMinutes: Int? = nil
-    public let defaultLimitGroupName: String = "Limit Group"
     
-    @Published public var limitsSet: [ScreenTimeActivityEvent] = []
-    @Published public var limitsReached: [ScreenTimeActivityEvent] = []
+    @Published public var boundariesSet: [Boundary] = []
+    @Published public var boundariesReached: [Boundary] = []
     @Published public var pinError: String? = nil
     @Published public var timeRequestErrorMessage: String = ""
 
@@ -60,24 +57,17 @@ public class ScreenTimeService: ObservableObject {
         Task { await fetchProduct() }
         
         setGroupDisplays()
+        //getDailyBoundaryExtensionsModel()
     }
     
-    public func getGroupDisplay(displayType: GroupDisplayType) -> [ScreenTimeActivityEvent] {
-        //removeAllLimitsFromUserDefaults()
+    public func getGroupDisplay(getBlockedOnly: Bool) -> [Boundary] {
+        var boundaries = getBoundariesFromUserDefaults()
         
-        let filteredEvents = sharedDefaults!.dictionaryRepresentation()
-            .filter { $0.key.hasPrefix(displayType.rawValue) }
-            .compactMapValues { $0 as? Data }
-        
-        var events: [ScreenTimeActivityEvent] = []
-        
-        filteredEvents.forEach { data in
-            let activityEvent = try! JSONDecoder().decode(ScreenTimeActivityEvent.self, from: data.value)
-            
-            events.append(activityEvent)
+        if getBlockedOnly {
+            boundaries = boundaries.filter({ $0.isBlocked })
         }
         
-        return events
+        return boundaries
     }
 
     public func sendTimeRequest() async {
@@ -112,10 +102,9 @@ public class ScreenTimeService: ObservableObject {
         return String(randomCode)
     }
     
-    public func startMonitoring(limit: ScreenTimeActivityEvent) {
-        
-        if limitsSet.contains(where: { $0.id == limit.id }) {
-            removeLimitById(id: limit.id)
+    public func startMonitoring(boundary: Boundary) {
+        if boundariesSet.contains(where: { $0.id == boundary.id }) {
+            removeBoundaryById(id: boundary.id)
         }
         
         let schedule = DeviceActivitySchedule(
@@ -124,42 +113,87 @@ public class ScreenTimeService: ObservableObject {
             repeats: true
         )
         
-        let activityName = limit.id.uuidString
+        addBoundaryToUserDefaults(boundary: boundary)
         
-        let encoded = try! JSONEncoder().encode(limit)
-        sharedDefaults?.set(encoded, forKey: GroupDisplayType.limit.rawValue + activityName)
-        
-        if limit.weekdays.contains(Weekday.today) {
+        if boundary.weekdays.contains(Weekday.today) {
             try! center.startMonitoring(
-                DeviceActivityName(activityName),
+                DeviceActivityName(boundary.id.uuidString),
                 during: schedule,
-                events: [DeviceActivityEvent.Name("LimitEvent"): DeviceActivityEvent (
+                events: [DeviceActivityEvent.Name("Boundary"): DeviceActivityEvent (
                     applications: activitySelection.applicationTokens,
                     categories: activitySelection.categoryTokens,
                     webDomains: activitySelection.webDomainTokens,
-                    threshold: DateComponents(hour: limit.hours, second: limit.minutes)
+                    threshold: DateComponents(hour: boundary.hours, second: boundary.minutes)
                 )]
             )
         }
         
-        resetSelectedLimit()
+        resetSelectedBoundary()
         monitoringStarted = true
         
         setGroupDisplays()
+        updateLeftoverWeeklySaves()
     }
     
-    public func resetSelectedLimit() {
+    public func getBoundariesFromUserDefaults() -> [Boundary] {
+        if let boundaries = sharedDefaults!.data(forKey: BOUNDARIES_STRING) {
+            do {
+                let decodedBoundaries = try JSONDecoder().decode([Boundary].self, from: boundaries)
+                return decodedBoundaries
+            } catch {
+                return []
+            }
+        } else {
+            let freshBoundaries: [Boundary] = []
+            let encoded = try! JSONEncoder().encode(freshBoundaries)
+            
+            sharedDefaults!.set(encoded, forKey: BOUNDARIES_STRING)
+            return []
+        }
+    }
+    
+    private func updateLeftoverWeeklySaves() {
+        if sharedDefaults!.object(forKey: REMAINING_BOUNDARY_EXTENSIONS_STRING) != nil {
+            let leftoverSaves = sharedDefaults!.integer(forKey: REMAINING_BOUNDARY_EXTENSIONS_STRING)
+            sharedDefaults?.set(max(0, leftoverSaves - 1), forKey: REMAINING_BOUNDARY_EXTENSIONS_STRING) // This should never be able to go below 0 except for testing (why we're setting a minimum)
+        } else {
+            sharedDefaults?.set(1, forKey: REMAINING_BOUNDARY_EXTENSIONS_STRING) // Set to 1 because they've just used their first edit.
+        }
+    }
+    
+    public func getLeftoverWeeklySaves() -> Int {
+        return sharedDefaults!.integer(forKey: REMAINING_BOUNDARY_EXTENSIONS_STRING)
+    }
+    
+    public func getDailyBoundaryExtensionsModel() -> DailyBoundaryExtensionsModel {
+        if let dailyExtensionsData = sharedDefaults!.data(forKey: DAILY_BOUNDARY_EXTENSIONS_STRING) {
+            do {
+                let dailyExtensionsModel  = try JSONDecoder().decode(DailyBoundaryExtensionsModel.self, from: dailyExtensionsData)
+                return dailyExtensionsModel
+            } catch {
+                sharedDefaults?.removeObject(forKey: DAILY_BOUNDARY_EXTENSIONS_STRING)
+                return DailyBoundaryExtensionsModel()
+            }
+        } else {
+            let encoded = try! JSONEncoder().encode(DailyBoundaryExtensionsModel())
+            sharedDefaults?.set(encoded, forKey: DAILY_BOUNDARY_EXTENSIONS_STRING)
+            
+            return DailyBoundaryExtensionsModel()
+        }
+    }
+
+    public func resetSelectedBoundary() {
         activitySelection = FamilyActivitySelection()
     }
 
-    // This removes everything. Blocked apps, active monitoring sessions, and set limits. Basically a fresh start for testing + unbricks phone.
+    // This removes everything. Blocked apps, active monitoring sessions, and set boundaries. Basically a fresh start for testing + unbricks phone.
     public func clearAllRestrictions() {
         monitoringStarted = false
         clearShieldedApps()
         
         activityCenter.stopMonitoring(activityCenter.activities)
         
-        removeAllLimitsFromUserDefaults()
+        removeAllBoundariesFromUserDefaults()
         setGroupDisplays()
     }
     
@@ -171,99 +205,116 @@ public class ScreenTimeService: ObservableObject {
     }
 
     public func setGroupDisplays() {
-        limitsSet = getGroupDisplay(displayType: .limit)
-        limitsReached = getGroupDisplay(displayType: .block)
+        boundariesSet = getGroupDisplay(getBlockedOnly: false)
+        boundariesReached = getGroupDisplay(getBlockedOnly: true)
     }
     
     // for testing
-    private func removeAllLimitsFromUserDefaults() {
-        let eventsToRemove = sharedDefaults!.dictionaryRepresentation()
-            .filter { $0.key.hasPrefix(GroupDisplayType.limit.rawValue) || $0.key.hasPrefix(GroupDisplayType.block.rawValue) }
-        
-        eventsToRemove.forEach { event in
-            sharedDefaults?.removeObject(forKey: event.key)
-        }
+    private func removeAllBoundariesFromUserDefaults() {
+        sharedDefaults!.set([], forKey: BOUNDARIES_STRING)
     }
     
-    public func validateExtensionCode(inputPin: String, correctPin: String, group: ScreenTimeActivityEvent) { // not in use
+    public func validateExtensionCode(inputPin: String, correctPin: String, boundary: Boundary) { // not in use
         if inputPin == correctPin {
-            extendLimitForGroup(group: group)
+            extendBlockedBoundary(boundary: boundary)
             pinError = nil
         } else {
             pinError = "Invalid PIN"
         }
     }
 
-    public func extendLimitForGroup(group: ScreenTimeActivityEvent) {
+    public func extendBlockedBoundary(boundary: Boundary) {
         // These 3 variables get reassigned with the tokens to extend for removal. Muatating these set doesn't properly update them in real-time with the change detection. Need to reassign.
         var shieldedApps = settingsStore.shield.applications ?? []
         var shieldedWebDomainTokens = settingsStore.shield.webDomains ?? []
         var shieldedCategoryTokens = getShieldedCategoryTokens()
         
-        group.appTokens.forEach { token in
+        boundary.appTokens.forEach { token in
             shieldedApps.remove(token)
         }
         
         settingsStore.shield.applications = shieldedApps
         
-        group.categoryTokens.forEach { token in
+        boundary.categoryTokens.forEach { token in
             shieldedCategoryTokens.remove(token)
         }
         
         settingsStore.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.specific(shieldedCategoryTokens)
         
-        group.webDomainTokens.forEach { token in
+        boundary.webDomainTokens.forEach { token in
             shieldedWebDomainTokens.remove(token)
         }
         
         settingsStore.shield.webDomains = shieldedWebDomainTokens
         
-        // Remove the current block local storage object before starting the new session
-        sharedDefaults?.removeObject(forKey: GroupDisplayType.block.rawValue + group.id.uuidString)
+        let updatedBoundaries = getBoundariesFromUserDefaults().map { currentBoundary in
+            var updatedBoundary = currentBoundary
+            if currentBoundary.id == boundary.id {
+                updatedBoundary.isBlocked = false
+            }
+            return updatedBoundary
+        }
         
-        startMonitoringPostExtension(group: group)
+        sharedDefaults!.set(try! JSONEncoder().encode(updatedBoundaries), forKey: BOUNDARIES_STRING)
+        startMonitoringPostExtension(boundary: boundary)
     }
     
-    private func startMonitoringPostExtension(group: ScreenTimeActivityEvent) {
+    private func startMonitoringPostExtension(boundary: Boundary) {
         let schedule = DeviceActivitySchedule(
             intervalStart: DateComponents(hour: 0, minute: 0, second: 0),
             intervalEnd: DateComponents(hour: 23, minute: 59, second: 59),
             repeats: true)
         
-        let eventId = UUID()
+        var boundaryToExtend = boundary
         
-        let activityEvent = ScreenTimeActivityEvent(
-            id: eventId,
-            givenName: group.givenName,
-            appTokens: group.appTokens,
-            categoryTokens: group.categoryTokens,
-            webDomainTokens: group.webDomainTokens,
-            hours: 0,
-            minutes: 15,
-            weekdays: [Weekday.today], // We only want this limit to be active for the current day
-            invisibleLimit: true)
+        boundaryToExtend.isBlocked = false
+        updateExistingBoundaryInUserDefaults(updatedBoundary: boundaryToExtend)
         
-        let activityName = eventId.uuidString
-        
-        let encoded = try! JSONEncoder().encode(activityEvent)
-        sharedDefaults?.set(encoded, forKey: GroupDisplayType.limit.rawValue + activityName)
-
-        if activityEvent.weekdays.contains(Weekday.today) {
+        if boundary.weekdays.contains(Weekday.today) {
             try! center.startMonitoring(
-                DeviceActivityName(activityName),
+                DeviceActivityName(boundary.id.uuidString),
                 during: schedule,
-                events: [DeviceActivityEvent.Name("LimitEvent"): DeviceActivityEvent (
-                    applications: group.appTokens,
-                    categories: group.categoryTokens,
-                    webDomains: group.webDomainTokens,
-                    threshold: DateComponents(hour: 0, second: 15)
+                events: [DeviceActivityEvent.Name("Boundary"): DeviceActivityEvent (
+                    applications: boundary.appTokens,
+                    categories: boundary.categoryTokens,
+                    webDomains: boundary.webDomainTokens,
+                    threshold: DateComponents(hour: 0, minute: 15)
                 )]
             )
         }
         
         setGroupDisplays()
+        addBoundaryIdToWeeklyExtensions(id: boundaryToExtend.id)
     }
     
+    private func addBoundaryIdToWeeklyExtensions(id: UUID) {
+        var dailyExtensionsModel = getDailyBoundaryExtensionsModel()
+        dailyExtensionsModel.appendByWeekday(weekday: Weekday.today, valueToAppend: id)
+        
+        let encoded = try! JSONEncoder().encode(dailyExtensionsModel)
+        sharedDefaults!.set(encoded, forKey: DAILY_BOUNDARY_EXTENSIONS_STRING)
+    }
+    
+    private func addBoundaryToUserDefaults(boundary: Boundary) {
+        var boundaries = getBoundariesFromUserDefaults()
+        boundaries.append(boundary)
+        sharedDefaults!.set(try! JSONEncoder().encode(boundaries), forKey: BOUNDARIES_STRING)
+    }
+    
+    private func updateExistingBoundaryInUserDefaults(updatedBoundary: Boundary) {
+        let boundaries = getBoundariesFromUserDefaults()
+        
+        let updatedBoundaries = boundaries.map { boundary in
+            if boundary.id == updatedBoundary.id {
+                return updatedBoundary
+            }
+            
+            return boundary
+        }
+        
+        sharedDefaults!.set(try! JSONEncoder().encode(updatedBoundaries), forKey: BOUNDARIES_STRING)
+    }
+
     private func getShieldedCategoryTokens() -> Set<ActivityCategoryToken> {
         if let categories = settingsStore.shield.applicationCategories {
             switch categories {
@@ -281,13 +332,41 @@ public class ScreenTimeService: ObservableObject {
         return []
     }
     
-    public func deleteLimit(limitId: UUID) {
-        removeLimitById(id: limitId)
+    public func deleteBoundary(boundaryId: UUID) {
+        removeBoundaryById(id: boundaryId)
         setGroupDisplays()
     }
     
-    private func removeLimitById(id: UUID) {
-        sharedDefaults!.removeObject(forKey: GroupDisplayType.limit.rawValue + id.uuidString)
+    private func removeBoundaryById(id: UUID) {
+        let allBoundaries = getBoundariesFromUserDefaults()
+        
+        guard let targetBoundary = allBoundaries.first(where: { $0.id == id }) else {
+            return
+        }
+        
+        let filteredBoundaries = allBoundaries.filter({ $0.id != id })
+        
+        sharedDefaults?.set(try! JSONEncoder().encode(filteredBoundaries), forKey: BOUNDARIES_STRING)
+        
+        let currentBlockedApps = settingsStore.shield.applications ?? []
+        settingsStore.shield.applications = currentBlockedApps.filter({ !targetBoundary.appTokens.contains($0) })
+        
+        let currentBlockedWebDomains = settingsStore.shield.webDomains ?? []
+        settingsStore.shield.webDomains = currentBlockedWebDomains.filter({ !targetBoundary.webDomainTokens.contains($0) })
+        
+        if let categories = settingsStore.shield.applicationCategories {
+            switch categories {
+            case .none: break
+            case .specific(let specificCategories, let exceptions):
+                // You might also need to filter exceptions depending on your requirements
+                let filteredCategories = specificCategories.filter({ !targetBoundary.categoryTokens.contains($0) })
+                settingsStore.shield.applicationCategories = .specific(filteredCategories, except: exceptions)
+            case .all: break
+            @unknown default: break
+            }
+        }
+        
+        center.stopMonitoring([DeviceActivityName(id.uuidString)])
     }
     
     // MARK: - In-App Purchase Methods

@@ -40,7 +40,7 @@ struct TimeLimitSliderView: View {
     
     // Calculate progress as a value between 0.0 and 1.0.
     private var progress: Double {
-        totalTime > 0 ? min(1.0, elapsedTime / totalTime) : 0
+        totalTime > 0 ? min(1.0, elapsedTime / totalTime) : 0.0
     }
     
     /// Format seconds as "Hh Mm"
@@ -151,20 +151,14 @@ struct PillBarReport: DeviceActivityReportScene {
     typealias Configuration = PillBarViewConfiguration
     typealias Content = PillBarView
     
-    private func getBoundaries() -> [ScreenTimeActivityEvent] {
-        let filteredEvents = sharedDefaults!.dictionaryRepresentation()
-            .filter { $0.key.hasPrefix("LimitEvent+") }
-            .compactMapValues { $0 as? Data }
+    private func getBoundaries() -> [Boundary] {
+        let encoded = sharedDefaults!.data(forKey: BOUNDARIES_STRING)
         
-        var boundaries: [ScreenTimeActivityEvent] = []
-        
-        filteredEvents.forEach { data in
-            let activityEvent = try! JSONDecoder().decode(ScreenTimeActivityEvent.self, from: data.value)
-            
-            boundaries.append(activityEvent)
+        if encoded != nil {
+            return try! JSONDecoder().decode([Boundary].self, from: encoded!)
+        } else {
+            return []
         }
-        
-        return boundaries
     }
     
     func makeConfiguration(representing data: DeviceActivityResults<DeviceActivityData>) async -> Configuration {

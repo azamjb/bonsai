@@ -8,7 +8,8 @@ NSLocalNetworkUsageDescription</key>
 	<string>This app requires access to local network resources to communicate with nearby devices.</string>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
-		<string>com.yourapp.unshieldApps</string>
+		<string>com.bonsai.weeklyOperation</string>
+		<string>com.bonsai.unshieldApps</string>
 	</array>
 </dict>
 </plist>
