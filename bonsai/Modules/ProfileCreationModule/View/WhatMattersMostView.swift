@@ -196,12 +196,6 @@ struct WhatMattersMostView: View {
                     forwardButton
                 }
                 .padding(.leading, 200)
-                .simultaneousGesture(TapGesture().onEnded {
-                    Task {
-                        await viewModel.saveProfileFields(name: nil, phoneNumber: nil, hobbies: hobbies, termsAccepted: nil)
-                    }
-                })
-                
                 Spacer()
             }
         }
