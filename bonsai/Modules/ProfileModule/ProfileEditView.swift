@@ -133,6 +133,7 @@ struct ProfileEditView: View {
                     }
 
                     Button("Save") {
+<<<<<<< HEAD
                         Task {
                             await viewModel.saveProfileFields(
                                 name: editedName,
@@ -141,6 +142,11 @@ struct ProfileEditView: View {
                                 termsAccepted: nil)
                         }
 
+=======
+                        viewModel.saveBasicInfo(name: editedName, phoneNumber: editedPhone, hobbies: editedHobbies)
+//                        viewModel.saveHobbies(hobbies: editedHobbies)
+                        
+>>>>>>> 62e5fce (New Profile Service)
                         // Update original values to match edited values
                         originalName = editedName
                         originalPhone = editedPhone
