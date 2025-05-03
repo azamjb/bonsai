@@ -15,23 +15,31 @@ struct ContentView: View {
     
     var body: some View {
         TabView(selection: $tabSelection) {
-            ActivityReportView(tabSelection: $tabSelection)
-                .tabItem {
-                    Label("Activity", systemImage: "chart.pie")
-                }
-                .tag(1)
             
-            BoundaryViewerView(tabSelection: $tabSelection)
-                .tabItem {
-                    Label("Boundaries", systemImage: "shield.lefthalf.filled")
-                }
-                .tag(2)
-
-            ProfileView(viewModel: viewModel)
-                .tabItem {
-                    Label("Profile", systemImage: "person.fill")
-                }
-                .tag(3)
+            NavigationStack {
+                ActivityReportView(tabSelection: $tabSelection)
+            }
+            .tabItem {
+                Label("Activity", systemImage: "chart.pie")
+            }
+            .tag(1)
+            
+            NavigationStack {
+                BoundaryViewerView(tabSelection: $tabSelection)
+            }
+            .tabItem {
+                Label("Boundaries", systemImage: "shield.lefthalf.filled")
+            }
+            .tag(2)
+            
+            
+            NavigationStack {
+                ProfileView(viewModel: viewModel)
+            }
+            .tabItem {
+                Label("Profile", systemImage: "person.fill")
+            }
+            .tag(3)
         }
     }
 }

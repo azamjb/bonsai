@@ -32,6 +32,11 @@ class ProfileViewModel: ObservableObject {
     @Published var accountabilityPartner = AccountabilityPartner()
     private let profileService = ProfileService()
     
+    init() {
+            fetchUserProfile()
+            fetchAccountabilityPartner()
+        }
+    
     func fetchUserProfile() {
         userProfile = profileService.fetchUserProfile()
     }

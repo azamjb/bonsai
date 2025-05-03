@@ -84,10 +84,10 @@ struct ProfileCreation2View: View {
                 hideKeyboard()
                 isFieldFocused = false
             }
-            .customBackToolbar()
             .navigationDestination(isPresented: $isNavigating) {
                 DailyScreenTimeView(name: name, phoneNumber: phoneNumber)
             }
+            .navigationBarBackButtonHidden(true)
         }
         .preferredColorScheme(.light)
         .onTapGesture {

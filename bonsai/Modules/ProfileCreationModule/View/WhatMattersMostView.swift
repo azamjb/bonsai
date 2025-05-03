@@ -192,10 +192,11 @@ struct WhatMattersMostView: View {
                     .background(Color.primary)
                     .clipShape(Circle())
 
-                NavigationLink(destination: PastUsageInspireView(screenTime: screenTime, hobbies: hobbies)) {
+                NavigationLink(destination: PastUsageInspireView(screenTime: screenTime)) {
                     forwardButton
                 }
                 .padding(.leading, 200)
+                
                 Spacer()
             }
         }

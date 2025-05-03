@@ -8,8 +8,10 @@
 import Combine
 import Foundation
 
-
+@MainActor
 class ProfileCreationViewModel: ObservableObject {
+    
+    
     private let appGroupID = "group.com.bonsai"
 
     private var sharedDefaults: UserDefaults? {
@@ -20,6 +22,16 @@ class ProfileCreationViewModel: ObservableObject {
     @Published var accountabilityPartner = AccountabilityPartner()
     private let profileService: ProfileServiceProtocol = ProfileService()
     
+    init() {
+        Task {
+            await fetchInitialData()
+        }
+    }
+    
+    private func fetchInitialData() async {
+        userProfile = profileService.fetchUserProfile()
+        accountabilityPartner = profileService.fetchAccountabilityPartner()
+    }
 
     func saveProfileFields(name: String?, phoneNumber: String?, hobbies: [String]?, termsAccepted: Bool?) async {
         await profileService.saveProfileFields(name: name, phoneNumber: phoneNumber, hobbies: hobbies, termsAccepted: termsAccepted)
@@ -43,7 +55,6 @@ class ProfileCreationViewModel: ObservableObject {
     func initDailyBoundaryExtensions() {
         sharedDefaults?.set(try! JSONEncoder().encode(DailyBoundaryExtensionsModel()), forKey: DAILY_BOUNDARY_EXTENSIONS_STRING)
     }
-
 
     func fetchUserProfile() {
         userProfile = profileService.fetchUserProfile()

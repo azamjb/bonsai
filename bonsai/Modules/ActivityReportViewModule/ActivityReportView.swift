@@ -29,8 +29,10 @@ struct ActivityReportView: View {
 
     let center = AuthorizationCenter.shared
     
+    @AppStorage("hasAccountabilityPartner") var hasAccountabilityPartner: Bool = false
     @StateObject var viewModel: ActivityReportViewModel = ActivityReportViewModel()
     @EnvironmentObject var screenTime: ScreenTimeService
+    @State private var isAuthorized = false
     
     var now = Date()
     
@@ -61,7 +63,7 @@ struct ActivityReportView: View {
     @State private var analyticsRange: AnalyticsDisplaysType = .daily
 
     var body: some View {
-        NavigationView {
+       
             ScrollView {
                 VStack {
                     Group {
@@ -98,25 +100,34 @@ struct ActivityReportView: View {
                     }
                     .padding(.bottom, 25)
                     .padding(.top, 25)
-
-                    VStack(alignment: .leading) {
-                        Text("BOUNDARIES")
-                            .padding(.horizontal, 18)
-                            .padding(.bottom, 20)
-                        
-                        DeviceActivityReport(.init(rawValue: "pill_bar"), filter: dayFilter)
-                            .frame(height: CGFloat(screenTime.boundariesSet.count) * 90)
-                            .padding(.horizontal, 18)
-
-                        
-                        Text("BOUNDARY EXTENSIONS")
-                            .padding(.horizontal, 18)
-                            .padding(.top, 10)
-                            .font(.system(size: 10))
-                    }
                     
-                    dailyBoundaryExtensionsView(model: screenTime.getDailyBoundaryExtensionsModel())
-                        .padding(.bottom, 30)
+                    
+                    if (hasAccountabilityPartner) {
+                        
+                        Group {
+                            
+                            VStack(alignment: .leading) {
+                                Text("BOUNDARIES")
+                                    .padding(.horizontal, 18)
+                                    .padding(.bottom, 20)
+                                
+                                DeviceActivityReport(.init(rawValue: "pill_bar"), filter: dayFilter)
+                                    .frame(height: CGFloat(screenTime.boundariesSet.count) * 90)
+                                    .padding(.horizontal, 18)
+
+                                
+                                Text("BOUNDARY EXTENSIONS")
+                                    .padding(.horizontal, 18)
+                                    .padding(.top, 10)
+                                    .font(.system(size: 10))
+                            }
+                            
+                            dailyBoundaryExtensionsView(model: screenTime.getDailyBoundaryExtensionsModel())
+                                .padding(.bottom, 30)
+                            
+                        }
+                        
+                    }
                     
                     VStack(alignment: .leading) {
                         
@@ -169,14 +180,22 @@ struct ActivityReportView: View {
 
                             ZStack {
                                 // The reason im showing/hiding with conditional opactity is cuz the conditional would make it need to reaggregate the data, which sometimes left the area blank for some time (it's async)
-                                DeviceActivityReport(.init(rawValue: "top_apps_daily_report"), filter: dayFilter)
-                                    .opacity(analyticsRange == .daily ? 1 : 0)
+                                if isAuthorized {
+                                    DeviceActivityReport(.init(rawValue: "top_apps_daily_report"), filter: dayFilter)
+                                        .opacity(analyticsRange == .daily ? 1 : 0)
+                                }
                                 
-                                DeviceActivityReport(.init(rawValue: "top_apps_weekly_report"), filter: weekFilter)
-                                        .opacity(analyticsRange == .weekly ? 1 : 0)
-
-                                DeviceActivityReport(.init(rawValue: "top_apps_monthly_report"), filter: monthFilter)
-                                        .opacity(analyticsRange == .monthly ? 1 : 0)
+                                if isAuthorized {
+                                    DeviceActivityReport(.init(rawValue: "top_apps_weekly_report"), filter: weekFilter)
+                                            .opacity(analyticsRange == .weekly ? 1 : 0)
+                                }
+                                
+                                if isAuthorized {
+                                    DeviceActivityReport(.init(rawValue: "top_apps_monthly_report"), filter: monthFilter)
+                                            .opacity(analyticsRange == .monthly ? 1 : 0)
+                                }
+                                
+                                
                             }
                             .frame(height: 120)
                         }
@@ -184,35 +203,47 @@ struct ActivityReportView: View {
                     }
                     .padding(.horizontal, 18)
                     
-                    Divider()
-                        .frame(height: 1)
-                        .background(Color.primary)
-                        .padding(.bottom, 20)
-                    
-                    Text("EXTEND BOUNDARIES")
-                        .padding(.bottom, 30)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                    if (hasAccountabilityPartner) {
+                            
+                        Group {
+                            
+                            Divider()
+                                .frame(height: 1)
+                                .background(Color.primary)
+                                .padding(.bottom, 20)
+                            
+                            Text("EXTEND BOUNDARIES")
+                                .padding(.bottom, 30)
+                                .frame(maxWidth: .infinity, alignment: .leading)
 
-                    BonsaiNavLinkSmall(buttonText: "request boundary extension", destination: BoundaryExtensionRequestView())
-                        .padding(.bottom, 30)
-                
-                    BonsaiButtonSmall(buttonText: "override all boundaries") {
-                        screenTime.clearShieldedApps()
+                            BonsaiNavLinkSmall(buttonText: "request boundary extension", destination: BoundaryExtensionRequestView())
+                                .padding(.bottom, 30)
+                        
+                            BonsaiButtonSmall(buttonText: "override all boundaries") {
+                                screenTime.clearShieldedApps()
+                            }
+                            .padding(.bottom, 50)
+                        }
                     }
-                    .padding(.bottom, 50)
+                    
+                    
                 }
+                .navigationBarBackButtonHidden(true)
                 .padding(.horizontal, 18)
             }
             .onAppear {
                 Task {
                     do {
                         try await center.requestAuthorization(for: .individual)
+                        await MainActor.run {
+                            isAuthorized = true
+                        }
                     } catch {
                         print("Failed to request authorization: \(error)")
                     }
                 }
             }
-        }
+        
     }
     
     private func dailyBoundaryExtensionsView(model: DailyBoundaryExtensionsModel) -> some View {

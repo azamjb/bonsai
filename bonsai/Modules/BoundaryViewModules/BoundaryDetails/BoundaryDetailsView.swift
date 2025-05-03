@@ -22,7 +22,7 @@ struct BoundaryDetailsView: View {
     @State private var deepCopiedExistingBoundary: Boundary?
     @State private var isShowingFamilyActivityPicker: Bool = false
     @State private var activitySelection: FamilyActivitySelection = FamilyActivitySelection()
-    @StateObject private var screenTime: ScreenTimeService = ScreenTimeService()
+    @EnvironmentObject var screenTime: ScreenTimeService
    
     @State private var errorMessage: String? = nil
     @State private var submitAttempted: Bool = false

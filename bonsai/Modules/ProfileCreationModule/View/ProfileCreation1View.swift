@@ -76,10 +76,10 @@ struct ProfileCreation1View: View {
             .onTapGesture {
                 hideKeyboard()
             }
-            .customBackToolbar()
             .navigationDestination(isPresented: $isNavigating) {
                 ProfileCreation2View(name: name)
             }
+            .navigationBarBackButtonHidden(true)
         }
         .preferredColorScheme(.light)
     }

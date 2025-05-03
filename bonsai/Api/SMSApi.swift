@@ -39,5 +39,5 @@ class SMSApi : BaseApi {
             throw error
         }
     }
-    // Send request for more time to accountability partner ^
+   
 }

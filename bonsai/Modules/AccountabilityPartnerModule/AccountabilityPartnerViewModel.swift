@@ -45,6 +45,7 @@ import ManagedSettings
         
         let smsApi = SMSApi()
         code = generateRandomCode()
+        UserDefaults.standard.set(code, forKey: "AccountabilityPartnerInviteCode")
         
         do {
             try await smsApi.invite(
@@ -97,6 +98,11 @@ import ManagedSettings
         isSendingTimeRequest = true
         code = generateRandomCode()
         
+        
+        print("Phone number" + phoneNumber)
+        print("username" + userName)
+        print("apname" + accountabilityPartnerName)
+        print("note" + note)
         print(phoneNumber, userName, accountabilityPartnerName, note)
         do {
             try await smsApi.timeRequest(

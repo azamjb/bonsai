@@ -18,6 +18,7 @@ enum ProfileKey: String {
     case accountabilityPartner = "userProfile_accountabilityPartner"
 }
 
+
 protocol ProfileServiceProtocol {
     func saveProfileFields(name: String?, phoneNumber: String?, hobbies: [String]?, termsAccepted: Bool?) async
     func saveAccountabilityPartner(name: String, phoneNumber: String) async
@@ -25,6 +26,7 @@ protocol ProfileServiceProtocol {
     func fetchAccountabilityPartner() -> AccountabilityPartner
     func fetchProfileField(key: ProfileKey) -> Any?
 }
+
 
 class ProfileService: ProfileServiceProtocol {
     

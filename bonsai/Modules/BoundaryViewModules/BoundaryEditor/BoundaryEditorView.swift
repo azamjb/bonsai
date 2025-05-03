@@ -171,8 +171,14 @@ struct BoundaryEditorView: View {
     private var buttonContent: some View {
         VStack(spacing: 15) {
             BonsaiButtonRegular(buttonText: "add new boundary") {
+                Task {
+                    // Add a small delay to allow state to stabilize
+                    try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+                    DispatchQueue.main.async {
                 selectedBoundary = nil
                 showViewScreen = true
+                    }
+                }
             }
             
             BonsaiButtonRegular(buttonText: "save") {

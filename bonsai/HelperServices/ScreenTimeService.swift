@@ -68,6 +68,8 @@ public class ScreenTimeService: ObservableObject {
         }
         
         return boundaries
+        return []
+        
     }
 
     public func sendTimeRequest() async {
@@ -136,21 +138,31 @@ public class ScreenTimeService: ObservableObject {
     }
     
     public func getBoundariesFromUserDefaults() -> [Boundary] {
-        if let boundaries = sharedDefaults!.data(forKey: BOUNDARIES_STRING) {
+        guard let defaults = sharedDefaults else {
+            print("❌ sharedDefaults is nil — did you forget to set up your App Group?")
+            return []
+        }
+
+        if let data = defaults.data(forKey: BOUNDARIES_STRING) {
             do {
-                let decodedBoundaries = try JSONDecoder().decode([Boundary].self, from: boundaries)
+                let decodedBoundaries = try JSONDecoder().decode([Boundary].self, from: data)
                 return decodedBoundaries
             } catch {
+                print("❌ Failed to decode boundaries: \(error.localizedDescription)")
                 return []
             }
         } else {
             let freshBoundaries: [Boundary] = []
-            let encoded = try! JSONEncoder().encode(freshBoundaries)
-            
-            sharedDefaults!.set(encoded, forKey: BOUNDARIES_STRING)
+            do {
+                let encoded = try JSONEncoder().encode(freshBoundaries)
+                defaults.set(encoded, forKey: BOUNDARIES_STRING)
+            } catch {
+                print("❌ Failed to encode empty boundary list: \(error.localizedDescription)")
+            }
             return []
         }
     }
+
     
     private func updateLeftoverWeeklySaves() {
         if sharedDefaults!.object(forKey: REMAINING_BOUNDARY_EXTENSIONS_STRING) != nil {

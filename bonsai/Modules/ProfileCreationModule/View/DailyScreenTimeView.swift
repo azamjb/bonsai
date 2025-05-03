@@ -30,7 +30,7 @@ struct DailyScreenTimeView: View {
                     .background(Color.primary)
                     .clipShape(Circle())
 
-                NavigationLink(destination: WhatMattersMostView(screenTime: screenTime)) {
+                NavigationLink(destination: PastUsageInspireView(screenTime: screenTime)) {
                     forwardButton
                 }
                 .padding(.leading, 200)
@@ -38,7 +38,7 @@ struct DailyScreenTimeView: View {
                 Spacer()
             }
         }
-        .customBackToolbar()
+        .navigationBarBackButtonHidden(true)
     }
     
     

@@ -9,30 +9,38 @@ import SwiftUI
 
 struct ProfileView: View {
 
+    let accountApi = AccountApi()
+    let smsApi = SMSApi()
+    @StateObject var screenTime = ScreenTimeService()
+    
+    @State private var showRemoveConfirmation = false
     @StateObject var viewModel: ProfileViewModel = ProfileViewModel()
+    @State private var showPartnerSection: Bool = false
+    private let removePartnerMessage = "Are you sure you want to remove your accountability partner? You will not be able to use many features of the application until you add a new one"
+    @AppStorage("invitedAccountabilityPartner") private var invitedAccountabilityPartnerStorage: Bool = false
+    @AppStorage("hasAccountabilityPartner") private var hasPartnerStorage: Bool = false
+    @State private var shouldSetHasPartnerFalse: Bool = false
+    @State private var invitedPartnerShouldBeFalse: Bool = false
+
+
 
     var body: some View {
 
-        NavigationStack {
             ScrollView {
                 VStack {
 
                     NavigationLink(destination: SettingsView()) {
-
                         HStack {
-
                             Spacer()
-
                             Image(systemName: "slider.horizontal.3")
                                 .font(.system(size: 25))
                                 .foregroundColor(.primary)
                                 .padding(.vertical, 5)
-
                         }
                         .padding(.horizontal, 18)
                     }
 
-                    Group{
+                    Group {
                         HStack {
                             Text(viewModel.userProfile.name ?? "unable to find name")
                                 .fontWeight(.bold)
@@ -65,31 +73,7 @@ struct ProfileView: View {
                     }
 
                     Group {
-
                         HStack {
-                            Text("OBJECTIVES")
-                                .fontWeight(.bold)
-
-                            Spacer()
-
-                            Text(viewModel.userProfile.hobbies?.first ?? "")
-                                .font(.system(size: 14))
-                        }
-
-                        HStack {
-                            Spacer()
-                            VStack(alignment: .trailing) {
-
-                                ForEach(viewModel.userProfile.hobbies?.dropFirst() ?? [], id: \.self) { hobby in
-                                    Text(hobby)
-                                        .font(.system(size: 14))
-                                }
-                            }
-                        }
-
-
-                        HStack {
-
                             Text("PHONE")
                                 .fontWeight(.bold)
 
@@ -120,8 +104,8 @@ struct ProfileView: View {
                     .padding(.top, 10)
 
                     Divider()
-                        .frame(height: 1) // Line thickness
-                        .background(Color.primary) // Line color
+                        .frame(height: 1)
+                        .background(Color.primary)
                         .padding(.horizontal, 15)
 
                     Text("BALANCE STATS")
@@ -133,58 +117,50 @@ struct ProfileView: View {
 
                     HStack {
 
-                        VStack(alignment: .leading) {
+                            VStack(alignment: .leading) {
+                                Text("0")
+                                    .font(.system(size: 40))
+                                Text("CURRENT")
+                                    .font(.system(size: 10))
+                                Text("STREAK")
+                                    .font(.system(size: 10))
+                            }
 
-                            Text("0")
-                                .font(.system(size: 40))
-                            Text("CURRENT")
-                                .font(.system(size: 10))
-                            Text("STREAK")
-                                .font(.system(size: 10))
+                            Spacer()
 
-                        }
+                            VStack(alignment: .leading) {
+                                Text("0")
+                                    .font(.system(size: 40))
+                                Text("BEST")
+                                    .font(.system(size: 10))
+                                Text("STREAK")
+                                    .font(.system(size: 10))
+                            }
 
-                        Spacer()
+                            Spacer()
 
-                        VStack(alignment: .leading) {
-
-                            Text("0")
-                                .font(.system(size: 40))
-                            Text("BEST")
-                                .font(.system(size: 10))
-                            Text("STREAK")
-                                .font(.system(size: 10))
-
-                        }
-
-                        Spacer()
-
-                        VStack(alignment: .leading) {
-
-                            Text("0")
-                                .font(.system(size: 40))
-                            Text("HOURS")
-                                .font(.system(size: 10))
-                            Text("BACK")
-                                .font(.system(size: 10))
-
-                        }
-
-                        Spacer()
-
-                        VStack(alignment: .leading) {
-
-                            Text("0")
-                                .font(.system(size: 40))
-                            Text("DAYS")
-                                .font(.system(size: 10))
-                            Text("BALANCED")
-                                .font(.system(size: 10))
+                            VStack(alignment: .leading) {
+                                Text("0")
+                                    .font(.system(size: 40))
+                                Text("HOURS")
+                                    .font(.system(size: 10))
+                                Text("BACK")
+                                    .font(.system(size: 10))
+                            }
+                        
+                            Spacer()
+                        
+                            VStack(alignment: .leading) {
+                                Text("0")
+                                    .font(.system(size: 40))
+                                Text("DAYS")
+                                    .font(.system(size: 10))
+                                Text("BALANCED")
+                                    .font(.system(size: 10))
+                            }
 
                         }
-
-                    }
-                    .padding(.horizontal, 18)
+                        .padding(.horizontal, 18)
 
                     Divider()
                         .frame(height: 1)
@@ -194,40 +170,57 @@ struct ProfileView: View {
 
                     Spacer()
 
-                    VStack(alignment: .leading)  {
+                    // ✅ Conditionally show accountability partner section
+                    if showPartnerSection {
+                        Group {
+                            VStack(alignment: .leading) {
+                                Text("Accountability Partner")
+                                    .padding(.bottom, 10)
+                                    .padding(.top, 3)
+                                    .font(.system(size: 15))
 
-                        Text("Accountability Partner")
-                            .padding(.bottom, 10)
-                            .padding(.top, 3)
-                            .font(.system(size: 15))
+                                Text(viewModel.accountabilityPartner.name ?? "can't fetch name")
+                                    .fontWeight(.bold)
 
-                        Text(viewModel.accountabilityPartner.name ?? "can't fetch name")
-                            .fontWeight(.bold)
-                        Spacer()
-                        Text(viewModel.phoneNumberFormatter.string(for: viewModel.accountabilityPartner.phoneNumber) ?? "")
-                            .font(.system(size: 14))
+                                Spacer()
 
+                                Text(viewModel.phoneNumberFormatter.string(for: viewModel.accountabilityPartner.phoneNumber) ?? "")
+                                    .font(.system(size: 14))
 
-                    }
-                    .padding(.horizontal, 18)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                    NavigationLink(destination: ProfileCreation1View()) {
-                        HStack {
-                            Text("remove partner")
-                                .font(.system(size: 15))
-                                .foregroundColor(.primary)
-                                .padding(.vertical, 5)
-                                .padding(.horizontal, 20)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 20)
-                                        .stroke(Color.primary, lineWidth: 1)
-                                )
+                                
+                                Button(action: {
+                                    showRemoveConfirmation = true // show alert first
+                                }) {
+                                    HStack {
+                                        Text("remove partner")
+                                            .font(.system(size: 15))
+                                            .foregroundColor(.primary)
+                                            .padding(.vertical, 5)
+                                            .padding(.horizontal, 20)
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 20)
+                                                    .stroke(Color.primary, lineWidth: 1)
+                                            )
+                                    }
+                                }
+                                .padding(.top, 10)
+                                .padding(.bottom, 30)
+                                .alert(removePartnerMessage, isPresented: $showRemoveConfirmation) {
+                                    Button("Remove", role: .destructive) {
+                                        removeAccountabilityPartner()
+                                    }
+                                    Button("Cancel", role: .cancel) { }
+                                }
+                                
+                            }
+                            .padding(.horizontal, 18)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                         }
-
+                    } else {
+                        Text("No Accountability Partner")
+                            .padding(.top, 20)
+                            .padding(.bottom, 20)
                     }
-                    .padding(.top, 10)
-                    .padding(.bottom, 30)
 
                     HStack {
                         Image("placeholder")
@@ -238,10 +231,8 @@ struct ProfileView: View {
                     VStack {
                         Text("“The man who moves a mountain begins by carrying away small stones.”")
                             .frame(maxWidth: .infinity, alignment: .leading)
-
                         Text("- Brayden O'Neil")
                             .frame(maxWidth: .infinity, alignment: .trailing)
-
                         Text("BONSAI")
                             .font(.system(size: 25))
                             .foregroundColor(.primary)
@@ -249,19 +240,79 @@ struct ProfileView: View {
                     }
                     .padding(.horizontal, 18)
                     .padding(.top, 20)
-
-
                 }
                 .padding()
-                .task {
+                .navigationBarBackButtonHidden(true)
+                .onAppear {
                     viewModel.fetchUserProfile()
                     viewModel.fetchAccountabilityPartner()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        showPartnerSection = UserDefaults.standard.bool(forKey: "hasAccountabilityPartner")
+                    }
                 }
+            }
+        
+        .onChange(of: invitedPartnerShouldBeFalse) { newValue in
+            if newValue {
+                invitedAccountabilityPartnerStorage = false
+            }
+        }
+        .onChange(of: shouldSetHasPartnerFalse) { newValue in
+            if newValue {
+                hasPartnerStorage = false
             }
         }
     }
+    
+    
+    @MainActor
+    private func removeAccountabilityPartner() {
+        
+        Task {
+            
+            do {
+                
+                let idString = UserDefaults.standard.string(forKey: ProfileKey.id.rawValue)
+                let request = AddAccountabilityPartner(
+                    AccountabilityPartnerName: "",
+                    AccountabilityPartnerPhoneNumber: "",
+                    Id: idString ?? ""
+                )
+                let SMSInvite = SMSInvite(
+                    number: viewModel.accountabilityPartner.phoneNumber ?? "",
+                    username: viewModel.userProfile.name ?? "",
+                    accountabilityPartnerName: viewModel.accountabilityPartner.name ?? "", code: ""
+                )
+                
+                try await accountApi.addAccountabilityPartner(request: request)
+                
+                try await smsApi.removalNotif(request: SMSInvite)
+                
+                await MainActor.run {
+                    
+                    viewModel.accountabilityPartner.phoneNumber = nil
+                    viewModel.accountabilityPartner.name = nil
+                    screenTime.clearAllRestrictions()
+                    screenTime.boundariesSet.removeAll()
+                    invitedPartnerShouldBeFalse = true
+                    shouldSetHasPartnerFalse = true
+                    showPartnerSection = false
+                }
+                
+            } catch {
+                print("Failed to remove accountability partner: \(error)")
+            }
+           
+           
+            
+            
+            
+            
+        }
+    }
+
 }
 
-#Preview{
+#Preview {
     ProfileView()
 }

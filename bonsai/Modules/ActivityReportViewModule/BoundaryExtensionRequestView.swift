@@ -6,7 +6,6 @@ struct BoundaryExtensionRequestView: View {
     @StateObject var UserViewModel: ProfileViewModel = ProfileViewModel()
     @State private var isRememberMeChecked = false
     @EnvironmentObject var screenTime: ScreenTimeService
-    
     @State public var checkedItems: [Boundary : Bool] = [:] // dictionary to track which of the boundaries have been 'checked' to be extended
     
     @State private var requestNote: String = ""
@@ -46,6 +45,7 @@ struct BoundaryExtensionRequestView: View {
     
     private func setupOnAppear() {
         UserViewModel.fetchUserProfile()
+        
         screenTime.setGroupDisplays()
         for Boundary in screenTime.boundariesReached {
             if checkedItems[Boundary] == nil {
@@ -201,6 +201,8 @@ struct SentRequestCodesSection: View {
 struct EnterCodeSection: View {
     @Binding var pin: String
     let checkedItems: [Boundary: Bool]
+    @State private var showSuccessAlert = false
+    @State private var showFailureAlert = false
     @ObservedObject var viewModel: AccountabilityPartnerViewModel
     @ObservedObject var screenTime: ScreenTimeService
     
@@ -237,6 +239,16 @@ struct EnterCodeSection: View {
             }
             .padding(.bottom, 20)
         }
+        .alert("Code Validated", isPresented: $showSuccessAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("Screen time has been extended successfully.")
+        }
+        .alert("Invalid Code", isPresented: $showFailureAlert) {
+            Button("Try Again", role: .cancel) {}
+        } message: {
+            Text("The verification code you entered is not valid.")
+        }
     }
     
     private func handleCodeValidation() {
@@ -252,8 +264,11 @@ struct EnterCodeSection: View {
                 }
                 pin = ""
                 UserDefaults.standard.removeObject(forKey: LocalStorageKeys.timeExtensionRequestCode)
+                showSuccessAlert = true
+                
             } else {
                 print("invalid code")
+                showFailureAlert = true
             }
         }
     }

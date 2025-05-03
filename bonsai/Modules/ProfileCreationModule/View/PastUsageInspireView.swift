@@ -5,7 +5,7 @@ import FamilyControls
 struct PastUsageInspireView: View {
     
     @State var screenTime: String
-    @State var hobbies: [String]
+    
 
     
     let center = AuthorizationCenter.shared
@@ -35,7 +35,7 @@ struct PastUsageInspireView: View {
                AnyView(Text("But starting today, you choose differently")),
                AnyView(
                     
-                       Text("Starting today, you make the commitment to reclaim your time, for ") + Text(hobbiesOutput(hobbies: hobbies))
+                       Text("Starting today, you make the commitment to reclaim your time")
                            
                    
                )
@@ -63,6 +63,7 @@ struct PastUsageInspireView: View {
             .navigationDestination(isPresented: $navigateToNextView) {
                 ProfileCreation4View()
             }
+            .navigationBarBackButtonHidden(true)
             
             Spacer()
             Spacer()
@@ -73,7 +74,6 @@ struct PastUsageInspireView: View {
         .onAppear {
             showTextSequentially()
         }
-        .customBackToolbar()
     }
     
     func showTextSequentially() {
@@ -134,5 +134,5 @@ func calculateUsage(screenTime: String) -> Int {
 }
 
 #Preview {
-    PastUsageInspireView(screenTime: "4-6 hours", hobbies: ["Friends", "Family"])
+    PastUsageInspireView(screenTime: "4-6 hours")
 }

@@ -17,6 +17,10 @@ struct AddAccountabilityPartner: Encodable {
     let Id: String
 }
 
+struct RemoveAccountabilityPartner: Encodable {
+    
+    let userName, AccountabilityPartnerphoneNumber: String
+}
 
 struct checkAccountabilityPartner: Encodable {
     
