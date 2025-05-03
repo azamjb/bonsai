@@ -39,7 +39,7 @@ class TokenService: TokenServiceProtocol {
     private let storage: TokenStorageProtocol
     private let profile: ProfileServiceProtocol
     
-    init(storage: TokenStorageProtocol = TokenStorageService(), profile: ProfileServiceProtocol = ProfileService()) {
+    init(storage: TokenStorageProtocol, profile: ProfileServiceProtocol = ProfileService()) {
         self.storage = storage
         self.profile = profile
     }

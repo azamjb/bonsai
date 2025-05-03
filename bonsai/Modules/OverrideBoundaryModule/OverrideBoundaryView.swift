@@ -2,14 +2,15 @@
 //  OverrideBoundaryView.swift
 //  bonsai
 //
-//  Created by Nicolas Mingorance-Geraldo on 2025-04-15.
+//  Created by Nicolas Mingorance-Geraldo on 2025-05-03.
 //
 
 import SwiftUI
+
 struct OverrideBoundaryView: View {
     var body: some View {
         VStack {
-            Text("Override Boundary View")
+            Text("This is the override boundary view. testing testing 123 testing 123")
         }
     }
 }

@@ -16,7 +16,6 @@
 		24B0B7462D997C0B000BBE68 /* GlobalStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24B0B7422D997AC1000BBE68 /* GlobalStructs.swift */; };
 		24B0B7472D997C0B000BBE68 /* GlobalStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24B0B7422D997AC1000BBE68 /* GlobalStructs.swift */; };
 		24B0B7482D997C0B000BBE68 /* GlobalStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24B0B7422D997AC1000BBE68 /* GlobalStructs.swift */; };
-		24B0B7492D997C0B000BBE68 /* GlobalStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24B0B7422D997AC1000BBE68 /* GlobalStructs.swift */; };
 		A78D2F1F2DC46B6E001375B1 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = A78D2F1E2DC46B6E001375B1 /* GRDB */; };
 		B71551412CF96667000AFACB /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71551012CF957FF000AFACB /* DeviceActivity.framework */; };
 		B71551492CF96667000AFACB /* deviceactivitymonitor.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B71551402CF96667000AFACB /* deviceactivitymonitor.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };

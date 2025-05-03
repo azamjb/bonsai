@@ -218,8 +218,11 @@ struct ActivityReportView: View {
 
                             BonsaiNavLinkSmall(buttonText: "request boundary extension", destination: BoundaryExtensionRequestView())
                                 .padding(.bottom, 30)
+                            
+                            BonsaiNavLinkSmall(buttonText: "override boundaries", destination: OverrideBoundaryView())
+                                .padding(.bottom, 30)
 
-                            BonsaiButtonSmall(buttonText: "override all boundaries") {
+                            BonsaiButtonSmall(buttonText: "override all boundaries (testing only)") {
                                 screenTime.clearShieldedApps()
                             }
                             .padding(.bottom, 50)
