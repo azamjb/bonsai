@@ -29,7 +29,7 @@ protocol ProfileServiceProtocol {
 
 
 class ProfileService: ProfileServiceProtocol {
-    
+
     let accountApi = AccountApi()
     private var userProfile = UserProfile()
     private var accountabilityPartner = AccountabilityPartner()
@@ -41,7 +41,7 @@ class ProfileService: ProfileServiceProtocol {
         userProfile.termsAccepted = UserDefaults.standard.bool(forKey: ProfileKey.termsAccepted.rawValue)
         return userProfile
     }
-    
+
     func fetchAccountabilityPartner() -> AccountabilityPartner {
         if let data = UserDefaults.standard.data(forKey: ProfileKey.accountabilityPartner.rawValue),
            let partner = try? JSONDecoder().decode(AccountabilityPartner.self, from: data) {
@@ -52,7 +52,7 @@ class ProfileService: ProfileServiceProtocol {
 
     func fetchProfileField(key: ProfileKey) -> Any? {
         var profileField: Any?
-        
+
         switch(key) {
         case .name, .phoneNumber:
             profileField = UserDefaults.standard.string(forKey: key.rawValue)
@@ -98,7 +98,7 @@ class ProfileService: ProfileServiceProtocol {
             userProfile.hobbies = hobbies
             profileHasChanged = true
         }
-        
+
         if let termsAccepted = termsAccepted {
             UserDefaults.standard.set(termsAccepted, forKey: ProfileKey.termsAccepted.rawValue)
             userProfile.termsAccepted = termsAccepted
@@ -109,14 +109,14 @@ class ProfileService: ProfileServiceProtocol {
             await sendProfileToApi()
         }
     }
-    
+
     func saveAccountabilityPartner(name: String, phoneNumber: String) async {
         accountabilityPartner.name = name
         accountabilityPartner.phoneNumber = phoneNumber
         if let encoded = try? JSONEncoder().encode(accountabilityPartner) {
             UserDefaults.standard.set(encoded, forKey: ProfileKey.accountabilityPartner.rawValue)
         }
-        
+
         let idString = UserDefaults.standard.string(forKey: ProfileKey.id.rawValue)
         let request = AddAccountabilityPartner(AccountabilityPartnerName: name, AccountabilityPartnerPhoneNumber: phoneNumber, Id: idString ?? "")
 
@@ -125,14 +125,14 @@ class ProfileService: ProfileServiceProtocol {
             print("Successfully added accountability partner")
         } catch {
             print("Failed to add user: \(error.localizedDescription)")
-            
+
             if let error = error as? DecodingError {
                 print("Decoding error: \(error)")
             } else {
                 print("Raw error: \(error)")
             }
         }
-        
+
     }
 
     func sendProfileToApi () async {
@@ -140,11 +140,11 @@ class ProfileService: ProfileServiceProtocol {
 
         do {
             let response: AddUserResponse = try await accountApi.addUser(request: request)
-            
+
             let userId = response.id
             UserDefaults.standard.set(userId, forKey: ProfileKey.id.rawValue)
             print("User added successfully with ID: \(userId)")
-            
+
             userProfile.Id = userId
         } catch {
             print("Failed to add user: \(error)")

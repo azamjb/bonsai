@@ -8,16 +8,16 @@
 import SwiftUI
 
 struct WhatMattersMostView: View {
-    
+
     @ObservedObject var viewModel: ProfileCreationViewModel = ProfileCreationViewModel()
-    
+
     @State var hobbies: [String] = []
     @State var screenTime: String
-    
+
     let systemHobbies = ["Friends", "Family", "Self Care", "Education", "New Skills", "Fitness", "Career", "Projects", "Creativity", "Rest"]
-    
-    
-    
+
+
+
     var body: some View {
         NavigationStack {
             VStack {
@@ -26,15 +26,15 @@ struct WhatMattersMostView: View {
                 Text("Choose up to 5 areas to reallocate your time and start living with purpose.")
                     .padding(.top, 10)
                     .multilineTextAlignment(.center)
-                
+
                 Spacer()
-                
-                
+
+
                 HStack {
-                    
+
                     Spacer()
                     Spacer()
-                    
+
                     hobbyTile(
                         hobby: systemHobbies[0],
                         color: "#81CEB7",
@@ -48,7 +48,7 @@ struct WhatMattersMostView: View {
                         }
                     )
                     Spacer()
-                    
+
                     hobbyTile(
                         hobby: systemHobbies[1],
                         color: "#81CEB7",
@@ -61,19 +61,19 @@ struct WhatMattersMostView: View {
                             }
                         }
                     )
-                    
+
                     Spacer()
                     Spacer()
-                    
+
                 }
-                
+
                 Spacer()
-                
+
                 HStack {
-                    
+
                     Spacer()
                     Spacer()
-                    
+
                     hobbyTile(
                         hobby: systemHobbies[2],
                         color: "#31B788",
@@ -87,7 +87,7 @@ struct WhatMattersMostView: View {
                         }
                     )
                     Spacer()
-                    
+
                     hobbyTile(
                         hobby: systemHobbies[3],
                         color: "#31B788",
@@ -102,15 +102,15 @@ struct WhatMattersMostView: View {
                     )
                     Spacer()
                     Spacer()
-                    
+
                 }
                 Spacer()
-                
+
                 HStack {
-                    
+
                     Spacer()
                     Spacer()
-                    
+
                     hobbyTile(
                         hobby: systemHobbies[4],
                         color: "#148E63",
@@ -123,9 +123,9 @@ struct WhatMattersMostView: View {
                             }
                         }
                     )
-                    
+
                     Spacer()
-                    
+
                     hobbyTile(
                         hobby: systemHobbies[5],
                         color: "#148E63",
@@ -138,18 +138,18 @@ struct WhatMattersMostView: View {
                             }
                         }
                     )
-                    
+
                     Spacer()
                     Spacer()
-                    
+
                 }
                 Spacer()
-                
+
                 HStack {
-                    
+
                     Spacer()
                     Spacer()
-                    
+
                     hobbyTile(
                         hobby: systemHobbies[6],
                         color: "#0E7362",
@@ -162,9 +162,9 @@ struct WhatMattersMostView: View {
                             }
                         }
                     )
-                    
+
                     Spacer()
-                    
+
                     hobbyTile(
                         hobby: systemHobbies[7],
                         color: "#0E7362",
@@ -177,14 +177,14 @@ struct WhatMattersMostView: View {
                             }
                         }
                     )
-                    
+
                     Spacer()
                     Spacer()
-                    
+
                 }
-                
+
                 Spacer()
-                
+
                 let forwardButton = Image(systemName: "chevron.right")
                     .font(.system(size: 18))
                     .foregroundColor(.white)
@@ -196,7 +196,7 @@ struct WhatMattersMostView: View {
                     forwardButton
                 }
                 .padding(.leading, 200)
-                
+
                 Spacer()
             }
         }
@@ -204,9 +204,9 @@ struct WhatMattersMostView: View {
             viewModel.fetchUserProfile()
         }
         .customBackToolbar()
-        
+
     }
-    
+
     func screenTimeButton(title: String, color: String) -> some View {
         Button(action: {
             screenTime = title
@@ -225,7 +225,7 @@ struct WhatMattersMostView: View {
         }
         .padding(.bottom, 20)
     }
-    
+
     func hobbyTile(hobby: String, color: String, isSelected: Bool, onTap: @escaping () -> Void) -> some View {
         ZStack {
             RoundedRectangle(cornerRadius: 25)
@@ -235,7 +235,7 @@ struct WhatMattersMostView: View {
                     RoundedRectangle(cornerRadius: 25)
                         .stroke(isSelected ? Color.primary : Color.clear, lineWidth: 1)
                 )
-            
+
             Text(hobby)
                 .font(.system(size: 18, weight: .semibold))
                 .foregroundColor(.white)

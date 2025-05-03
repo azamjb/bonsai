@@ -145,7 +145,7 @@ struct ProfileEditView: View {
 =======
                         viewModel.saveBasicInfo(name: editedName, phoneNumber: editedPhone, hobbies: editedHobbies)
 //                        viewModel.saveHobbies(hobbies: editedHobbies)
-                        
+
 >>>>>>> 62e5fce (New Profile Service)
                         // Update original values to match edited values
                         originalName = editedName

@@ -1,10 +1,10 @@
 import SwiftUI
 
 struct ProfileCreation4View: View {
-    
+
 
     @ObservedObject var viewModel: ProfileCreationViewModel = ProfileCreationViewModel()
-   
+
     @ObservedObject var AccountabilityPartnerviewModel: AccountabilityPartnerViewModel = AccountabilityPartnerViewModel()
     @State private var hobbies: [String] = []
     @Environment(\.dismiss) var dismiss
@@ -18,19 +18,19 @@ struct ProfileCreation4View: View {
         NavigationStack {
             ZStack {
                 Color.white.ignoresSafeArea()
-                
+
                 VStack {
                     Spacer()
-                    
+
                     VStack(alignment: .leading) {
                         Text("Let's setup your")
                             .font(.title)
-                        
+
                         Text("Accountability Partner")
                             .font(.title)
                             .fontWeight(.bold)
                             .foregroundColor(.primary)
-                        
+
                         NavigationLink(destination: WhatIsAccountabilityPartnerView()) {
                             Text("What's an accountability partner?")
                                 .foregroundColor(.blue)
@@ -54,7 +54,7 @@ struct ProfileCreation4View: View {
                         .focused($isFieldFocused)
                     }
                     .padding(.horizontal, 30)
-                    
+
                     Spacer()
 
                     Button(action: {
@@ -81,22 +81,22 @@ struct ProfileCreation4View: View {
                             )
                             .simultaneousGesture(TapGesture().onEnded {
                         Task {
-                            
+
                             // HEREEEEEEE
                             let userName = UserDefaults.standard.string(forKey: ProfileKey.name.rawValue)
                             print("userNAME: " +  (userName ?? ""))
                             await AccountabilityPartnerviewModel.sendInvite(phoneNumber: accountabilityPartnerPhone, userName: userName ?? "", accountabilityPartnerName: accountabilityPartnerName)
-                            
+
                             UserDefaults.standard.set(false, forKey: "hasAccountabilityPartner") // set to false until accountability partner accepts invite (sends request code)
                             UserDefaults.standard.set(true, forKey: "invitedAccountabilityPartner") // whether a user has a current pending invite for an accountability partner
                             UserDefaults.standard.set(accountabilityPartnerPhone, forKey: "tempAccountabilityPartnerNumber")
                             UserDefaults.standard.set(accountabilityPartnerName, forKey: "tempAccountabilityPartnerName")
                         }
                     })
-                    
+
                     Spacer()
-                    
-                    
+
+
                     Button(action: {
                                 if isProfileCreated {
                                     dismiss() // just go back
@@ -121,7 +121,7 @@ struct ProfileCreation4View: View {
             .onTapGesture {
                 hideKeyboard()
             }
-            
+
         }
         .onAppear {
             viewModel.fetchUserProfile()
