@@ -16,6 +16,8 @@
 		24B0B7462D997C0B000BBE68 /* GlobalStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24B0B7422D997AC1000BBE68 /* GlobalStructs.swift */; };
 		24B0B7472D997C0B000BBE68 /* GlobalStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24B0B7422D997AC1000BBE68 /* GlobalStructs.swift */; };
 		24B0B7482D997C0B000BBE68 /* GlobalStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24B0B7422D997AC1000BBE68 /* GlobalStructs.swift */; };
+		24B0B7492D997C0B000BBE68 /* GlobalStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24B0B7422D997AC1000BBE68 /* GlobalStructs.swift */; };
+		A78D2F1F2DC46B6E001375B1 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = A78D2F1E2DC46B6E001375B1 /* GRDB */; };
 		B71551412CF96667000AFACB /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71551012CF957FF000AFACB /* DeviceActivity.framework */; };
 		B71551492CF96667000AFACB /* deviceactivitymonitor.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B71551402CF96667000AFACB /* deviceactivitymonitor.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B715517C2CFABBF4000AFACB /* deviceactivityreport.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = B71551702CFABBF4000AFACB /* deviceactivityreport.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -239,6 +241,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A78D2F1F2DC46B6E001375B1 /* GRDB in Frameworks */,
 				249650312D345D0D0091B4F4 /* DigitEntryView in Frameworks */,
 				242A1FC52D274E8200D5CD5E /* iPhoneNumberField in Frameworks */,
 			);
@@ -364,6 +367,7 @@
 			packageProductDependencies = (
 				242A1FC42D274E8200D5CD5E /* iPhoneNumberField */,
 				249650302D345D0D0091B4F4 /* DigitEntryView */,
+				A78D2F1E2DC46B6E001375B1 /* GRDB */,
 			);
 			productName = bonsaitest;
 			productReference = B71550B72CF9519F000AFACB /* bonsai.app */;
@@ -550,6 +554,7 @@
 			packageReferences = (
 				242A1FC32D274E5200D5CD5E /* XCRemoteSwiftPackageReference "iPhoneNumberField" */,
 				2496502F2D345CB00091B4F4 /* XCRemoteSwiftPackageReference "DigitEntryView" */,
+				A78D2F1D2DC46B6E001375B1 /* XCRemoteSwiftPackageReference "GRDB" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B71550B82CF9519F000AFACB /* Products */;
@@ -1278,6 +1283,14 @@
 				minimumVersion = 1.0.3;
 			};
 		};
+		A78D2F1D2DC46B6E001375B1 /* XCRemoteSwiftPackageReference "GRDB" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/groue/GRDB.swift";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1290,6 +1303,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 2496502F2D345CB00091B4F4 /* XCRemoteSwiftPackageReference "DigitEntryView" */;
 			productName = DigitEntryView;
+		};
+		A78D2F1E2DC46B6E001375B1 /* GRDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A78D2F1D2DC46B6E001375B1 /* XCRemoteSwiftPackageReference "GRDB" */;
+			productName = GRDB;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
