@@ -16,7 +16,7 @@ enum TokenTransactionType: String, Codable {
 
 struct TokenTransaction: Codable, FetchableRecord, PersistableRecord {
     var id: UUID
-    var userId: UUID
+    var userId: String
     var transactionId: String?
     var timestamp: Date
     var netTokenChange: Int
@@ -28,10 +28,10 @@ struct TokenTransaction: Codable, FetchableRecord, PersistableRecord {
 }
 
 protocol TokenServiceProtocol {
-    func fetchAllTokenTransactions(forUserWithId userId: UUID) async throws -> [TokenTransaction]
-    func fetchTokenBalance(forUserWithId userId: UUID) async throws -> Int
-    func spendToken(forUserWithId userId: UUID, amount: Int) async throws -> Bool
-    func grantTokens(forUserWithId userId: UUID, amount: Int) async throws -> Bool
+    func fetchAllTokenTransactions(forUserWithId userId: String) async throws -> [TokenTransaction]
+    func fetchTokenBalance(forUserWithId userId: String) async throws -> Int
+    func spendToken(forUserWithId userId: String, amount: Int) async throws -> Bool
+    func grantTokens(forUserWithId userId: String, amount: Int) async throws -> Bool
 }
 
 class TokenService: TokenServiceProtocol {
@@ -44,20 +44,26 @@ class TokenService: TokenServiceProtocol {
         self.profile = profile
     }
     
-    func fetchAllTokenTransactions(forUserWithId userId: UUID) async throws -> [TokenTransaction] {
+    func fetchAllTokenTransactions(forUserWithId userId: String) async throws -> [TokenTransaction] {
         var transactions: [TokenTransaction] = try storage.loadTokenTransactions(forUserId: userId)
         return transactions
     }
     
-    func fetchTokenBalance(forUserWithId userId: UUID) async throws -> Int {
+    func fetchTokenBalance(forUserWithId userId: String) async throws -> Int {
+        if let latestTransaction = try storage.loadLatestTransaction(forUserId: userId) {
+            return latestTransaction.balanceAfterChange
+        }
+        // return 0 if there are no transactions present
         return 0
     }
     
-    func spendToken(forUserWithId userId: UUID, amount: Int) async throws -> Bool {
+    // TODO
+    func spendToken(forUserWithId userId: String, amount: Int) async throws -> Bool {
         return true
     }
     
-    func grantTokens(forUserWithId userId: UUID, amount: Int) async throws -> Bool {
+    // TODO
+    func grantTokens(forUserWithId userId: String, amount: Int) async throws -> Bool {
         return true
     }
 }
@@ -65,8 +71,9 @@ class TokenService: TokenServiceProtocol {
 
 
 protocol TokenStorageProtocol {
-    func loadTokenTransactions(forUserId userId: UUID) throws -> [TokenTransaction]
-    func saveTokenTransaction(_ transaction: TokenTransaction, forUserId userId: UUID) throws
+    func loadLatestTransaction(forUserId userId: String) throws -> TokenTransaction?
+    func loadTokenTransactions(forUserId userId: String) throws -> [TokenTransaction]
+    func saveTokenTransaction(_ transaction: TokenTransaction, forUserId userId: String) throws
 }
 
 // abstracted service to allow us to integrate CoreData or CloudKit later down the line if we want to
@@ -78,16 +85,26 @@ class TokenStorageService: TokenStorageProtocol {
         self.db = database
     }
     
-    func loadTokenTransactions(forUserId userId: UUID) throws -> [TokenTransaction] {
+    func loadLatestTransaction(forUserId userId: String) throws -> TokenTransaction? {
         try db.read { db in
             try TokenTransaction
-                .filter(Column("userId") == userId.uuidString)
+                .filter(Column("userId") == userId)
+                .order(Column("timestamp").desc)
+                .limit(1)
+                .fetchOne(db)
+        }
+    }
+    
+    func loadTokenTransactions(forUserId userId: String) throws -> [TokenTransaction] {
+        try db.read { db in
+            try TokenTransaction
+                .filter(Column("userId") == userId)
                 .order(Column("timestamp").desc)
                 .fetchAll(db)
         }
     }
     
-    func saveTokenTransaction(_ transaction: TokenTransaction, forUserId userId: UUID) throws {
+    func saveTokenTransaction(_ transaction: TokenTransaction, forUserId userId: String) throws {
         try db.write { db in
             try transaction.insert(db)
         }

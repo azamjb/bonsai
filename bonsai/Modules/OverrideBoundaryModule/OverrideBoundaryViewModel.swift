@@ -9,15 +9,59 @@ import Combine
 import Foundation
 
 class OverrideBoundaryViewModel: ObservableObject {
+    @Published var errorMessage: String?
     @Published var tokenTransactions: [TokenTransaction] = []
+    @Published var tokenBalance: Int = 0
     private let tokenService: TokenServiceProtocol
+    private let profileService: ProfileServiceProtocol
+    private let userId: String
     
     init() {
         let tokenStorage = TokenStorageService(database: LocalDatabase.shared.databaseWriter)
         self.tokenService = TokenService(storage: tokenStorage)
+        self.profileService = ProfileService()
+        userId = profileService.fetchUserProfile().Id ?? "Unknown User"
     }
     
-    func fetchTokenTransactions() async {
-        
+    func loadData() {
+        Task {
+            await loadTokenBalance()
+            await loadTokenTransactions()
+        }
+    }
+    
+    func loadTokenTransactions() async {
+        do {
+            // Fetch the transactions
+            let transactions = try await tokenService.fetchAllTokenTransactions(forUserWithId: userId)
+            
+            // Update on main thread since we're changing @Published properties
+            DispatchQueue.main.async {
+                self.tokenTransactions = transactions
+                self.errorMessage = nil
+            }
+        } catch {
+            DispatchQueue.main.async {
+                self.errorMessage = "Failed to fetch transactions: \(error.localizedDescription)"
+            }
+        }
+    }
+    
+    func loadTokenBalance() async {
+        do {
+            // Fetch the transactions
+            let balance = try await tokenService.fetchTokenBalance(forUserWithId: userId)
+            
+            // Update on main thread since we're changing @Published properties
+            // (this should be propogated to fix the other thread issues we have)
+            DispatchQueue.main.async {
+                self.tokenBalance = balance
+                self.errorMessage = nil
+            }
+        } catch {
+            DispatchQueue.main.async {
+                self.errorMessage = "Failed to fetch token balance: \(error.localizedDescription)"
+            }
+        }
     }
 }
