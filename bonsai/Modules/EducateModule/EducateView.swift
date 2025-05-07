@@ -18,7 +18,7 @@ struct EducateView: View {
                     
                     Text("Welcome To")
                         .font(.headline)
-                        .font(.system(size: 20, weight: .bold))
+                        .font(.system(size: 30, weight: .bold))
                         .padding(.top, 60)
 
                     VStack(spacing: -115) {
@@ -40,6 +40,7 @@ struct EducateView: View {
                             .fixedSize(horizontal: false, vertical: true)
                             .multilineTextAlignment(.center)
                     }
+                    .padding(.bottom, 50)
 
                     
                     VStack(alignment: .leading) {
@@ -49,13 +50,13 @@ struct EducateView: View {
                             .padding(.bottom, 5)
                             .fontWeight(.bold)
                         
-                        Text("• Pick the apps you want to track")
+                        Text("Pick the apps you want to track")
                             .font(.caption)
                         
-                        Text("• Set screen time goals")
+                        Text("Set screen time goals")
                             .font(.caption)
                         
-                        Text("• Stay focused and in control")
+                        Text("Stay focused and in control")
                             .font(.caption)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -70,20 +71,28 @@ struct EducateView: View {
                             .font(.title2)
                             .padding(.bottom, 5)
                             .fontWeight(.bold)
+                            .lineLimit(1)
+                            .truncationMode(.tail)
                         
-                        Text("• Choose an Accountability Partner to keep you ontrack")
+                        Text("Choose a partner to keep you on track")
                             .font(.caption)
+                            .lineLimit(1)
+                            .truncationMode(.tail)
                         
-                        Text("• When you reach a limit, the Shield appears - time to step away")
+                        Text("When you reach a limit, your apps get blocked")
                             .font(.caption)
+                            .lineLimit(1)
+                            .truncationMode(.tail)
                         
-                        Text("• Need more time? Your partner can send a code to grant you access")
+                        Text("Need more time? Your partner can grant you access")
                             .font(.caption)
+                            .lineLimit(1)
+                            .truncationMode(.tail)
                     }
                     .frame(maxWidth: .infinity, alignment: .trailing)
                     .padding(.trailing, 5)
                     .padding(.bottom, 160)
-                    
+
                     
                     
                     VStack(alignment: .leading) {
@@ -96,24 +105,22 @@ struct EducateView: View {
                             .font(.title3)
                             .padding(.bottom, 5)
                         
-                        Text("• Check your dashboard")
+                        Text("Check your dashboard")
                             .font(.caption)
                         
-                        Text("• See your progress")
+                        Text("See your progress")
                             .font(.caption)
                         
-                        Text("• Create space for what matters")
+                        Text("Create space for what matters")
                             .font(.caption)
                         
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.leading, 5)
-                    .padding(.bottom, 160)
+                    .padding(.bottom, 140)
                     
                     
-                    
-                    
-
+        
                     Image("tagline")
                         .resizable()
                         .scaledToFit()

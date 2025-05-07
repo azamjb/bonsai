@@ -13,6 +13,7 @@ struct ProfileView: View {
     let smsApi = SMSApi()
     @StateObject var screenTime = ScreenTimeService()
     
+    @EnvironmentObject var quoteViewModel: QuoteViewModel
     @State private var showRemoveConfirmation = false
     @StateObject var viewModel: ProfileViewModel = ProfileViewModel()
     @State private var showPartnerSection: Bool = false
@@ -170,7 +171,7 @@ struct ProfileView: View {
 
                     Spacer()
 
-                    // ✅ Conditionally show accountability partner section
+                    
                     if showPartnerSection {
                         Group {
                             VStack(alignment: .leading) {
@@ -229,10 +230,14 @@ struct ProfileView: View {
                     }
 
                     VStack {
-                        Text("“The man who moves a mountain begins by carrying away small stones.”")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        Text("- Brayden O'Neil")
-                            .frame(maxWidth: .infinity, alignment: .trailing)
+                        if let quote = quoteViewModel.quote {
+                            Text("\"\(quote.quote)\"")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            Text("- \(quote.author)")
+                                .frame(maxWidth: .infinity, alignment: .trailing)
+                        } else {
+                            Text("Loading...")
+                        }
                         Text("BONSAI")
                             .font(.system(size: 25))
                             .foregroundColor(.primary)
@@ -266,7 +271,7 @@ struct ProfileView: View {
     
     
     @MainActor
-    private func removeAccountabilityPartner() {
+    func removeAccountabilityPartner() {
         
         Task {
             
@@ -304,9 +309,6 @@ struct ProfileView: View {
             }
            
            
-            
-            
-            
             
         }
     }

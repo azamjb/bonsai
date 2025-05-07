@@ -31,3 +31,7 @@ struct checkAccountabilityPartner: Encodable {
 struct AddUserResponse: Decodable {
     let id: String
 }
+
+struct DeleteUser: Encodable {
+    let id: String
+}

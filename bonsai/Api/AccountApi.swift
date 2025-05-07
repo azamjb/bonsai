@@ -54,6 +54,15 @@ class AccountApi : BaseApi {
         return response
     }
     
+    func deleteUser(request: DeleteUser) async throws {
+        let (responseData, httpResponse) = try await self.makePOSTRequest(url: getBaseUrl(endpoint: "user/deleteUser"), bodyObject: request)
+        
+        if let error = checkForErrorFromResponse(responseData: responseData!, httpResponse: httpResponse) {
+            throw error
+        }
+        
+    }
+    
     
     func addAccountabilityPartner(request: AddAccountabilityPartner) async throws {
         let (responseData, httpResponse) = try await self.makePOSTRequest(url: getBaseUrl(endpoint: "user/addAccountabilityPartner"), bodyObject: request)

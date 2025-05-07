@@ -8,6 +8,7 @@
 import Foundation
 import Combine
 
+
 class PhoneNumberFormatter: Formatter {
     override func string(for obj: Any?) -> String? {
         guard let phoneNumber = obj as? String else { return nil }
@@ -44,6 +45,8 @@ class ProfileViewModel: ObservableObject {
     func fetchAccountabilityPartner() {
         accountabilityPartner = profileService.fetchAccountabilityPartner()
     }
+    
+    
     
     var currentMonth: String {
             let dateFormatter = DateFormatter()

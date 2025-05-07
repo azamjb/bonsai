@@ -16,6 +16,7 @@ import BackgroundTasks
 struct bonsaiApp: App {
     
     @StateObject private var screenTime = ScreenTimeService()
+    @StateObject private var quoteViewModel = QuoteViewModel()
     
     init() {
         AppShieldSchedulerService.shared.setupDailyUnshield()
@@ -34,6 +35,7 @@ struct bonsaiApp: App {
         WindowGroup {
             RootView()
                 .environmentObject(screenTime)
+                .environmentObject(quoteViewModel)
             //ContentView()
         }
     }
@@ -42,7 +44,7 @@ struct bonsaiApp: App {
 
 // Here we can set a way to display splash screen then profile creation or skip straight to ContentView()
 struct RootView: View {
-    @AppStorage("isProfileCreated") private var isProfileCreated = false
+    @AppStorage("isProfileCreated") public var isProfileCreated = false
     @State private var isSplashScreenActive: Bool = false
     
     var body: some View {
