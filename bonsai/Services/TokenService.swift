@@ -14,7 +14,7 @@ enum TokenTransactionType: String, Codable {
     case grant = "GRANTS" // this is likely for subscriptions to be able to gift from the app without purchase process
 }
 
-struct TokenTransaction: Codable, FetchableRecord, PersistableRecord {
+struct TokenTransaction: Codable, FetchableRecord, PersistableRecord, Identifiable {
     var id: UUID
     var userId: String
     var transactionId: String?
@@ -45,7 +45,7 @@ class TokenService: TokenServiceProtocol {
     }
     
     func fetchAllTokenTransactions(forUserWithId userId: String) async throws -> [TokenTransaction] {
-        var transactions: [TokenTransaction] = try storage.loadTokenTransactions(forUserId: userId)
+        let transactions: [TokenTransaction] = try storage.loadTokenTransactions(forUserId: userId)
         return transactions
     }
     
@@ -62,7 +62,7 @@ class TokenService: TokenServiceProtocol {
         var tokenBalance = try await fetchTokenBalance(forUserWithId: userId)
         if tokenBalance >= amount {
             tokenBalance -= amount
-            var transaction = TokenTransaction(
+            let transaction = TokenTransaction(
                 id: UUID(),
                 userId: userId,
                 transactionId: nil,
@@ -82,7 +82,7 @@ class TokenService: TokenServiceProtocol {
         do {
             var tokenBalance = try await fetchTokenBalance(forUserWithId: userId)
             tokenBalance += amount
-            var transaction = TokenTransaction(
+            let transaction = TokenTransaction(
                 id: UUID(),
                 userId: userId,
                 transactionId: nil,

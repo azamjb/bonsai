@@ -47,6 +47,18 @@ class OverrideBoundaryViewModel: ObservableObject {
         }
     }
     
+    func grantTokens(_ amount: Int) async {
+        do {
+            try await tokenService.grantTokens(forUserWithId: userId, amount: amount)
+            await loadTokenBalance()
+            await loadTokenTransactions()
+        } catch {
+            DispatchQueue.main.async {
+                self.errorMessage = "Failed to grant tokens: \(error.localizedDescription)"
+            }
+        }
+    }
+    
     func loadTokenBalance() async {
         do {
             // Fetch the transactions
@@ -63,5 +75,12 @@ class OverrideBoundaryViewModel: ObservableObject {
                 self.errorMessage = "Failed to fetch token balance: \(error.localizedDescription)"
             }
         }
+    }
+
+    var currentDate: String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "d MMM yyyy"
+        // DateFormatter uses the user's locale by default
+        return dateFormatter.string(from: Date())
     }
 }
