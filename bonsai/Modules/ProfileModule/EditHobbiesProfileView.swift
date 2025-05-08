@@ -11,13 +11,13 @@ struct EditHobbiesProfileView: View {
     @Binding var hobbies: [String]
     @State private var hobbyList: [String] = []
     @Environment(\.presentationMode) var presentationMode
-    
+
     var body: some View {
         VStack {
             Text("Edit Hobbies")
                 .font(.system(size: 20))
                 .padding(.top, 20)
-            
+
             List {
                 ForEach(hobbyList.indices, id: \.self) { index in
                     TextField("Hobby \(index + 1)", text: $hobbyList[index])
@@ -25,15 +25,15 @@ struct EditHobbiesProfileView: View {
                 .onDelete { indexSet in
                     hobbyList.remove(atOffsets: indexSet)
                 }
-                
+
                 Button("Add Hobby") {
                     hobbyList.append("")
                 }
                 .padding(.vertical, 10)
             }
-            
 
-            
+
+
             Button("Save") {
                 hobbies = hobbyList.filter { !$0.isEmpty }
                 presentationMode.wrappedValue.dismiss()
