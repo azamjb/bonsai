@@ -34,6 +34,7 @@ struct ProfileEditView: View {
     var body: some View {
         ScrollView {
             VStack {
+            
                 Text("PROFILE EDITOR")
                     .font(.system(size: 25))
                     .padding(.top, 30)
