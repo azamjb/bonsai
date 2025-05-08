@@ -56,14 +56,46 @@ class TokenService: TokenServiceProtocol {
         // return 0 if there are no transactions present
         return 0
     }
-    
-    // TODO
+
+
     func spendToken(forUserWithId userId: String, amount: Int) async throws -> Bool {
+        var tokenBalance = try await fetchTokenBalance(forUserWithId: userId)
+        if tokenBalance >= amount {
+            tokenBalance -= amount
+            var transaction = TokenTransaction(
+                id: UUID(),
+                userId: userId,
+                transactionId: nil,
+                timestamp: Date(),
+                netTokenChange: -amount,
+                balanceAfterChange: tokenBalance,
+                type: .spend
+            )
+            try storage.saveTokenTransaction(forUserId: userId, transaction)
+        } else {
+            return false 
+        }
         return true
     }
     
-    // TODO
     func grantTokens(forUserWithId userId: String, amount: Int) async throws -> Bool {
+        do {
+            var tokenBalance = try await fetchTokenBalance(forUserWithId: userId)
+            tokenBalance += amount
+            var transaction = TokenTransaction(
+                id: UUID(),
+                userId: userId,
+                transactionId: nil,
+                timestamp: Date(),
+                netTokenChange: amount,
+                balanceAfterChange: tokenBalance,
+                type: .spend
+            )
+            try storage.saveTokenTransaction(forUserId: userId, transaction)
+        } catch {
+            print("Failed to grant tokens to user: \(error.localizedDescription)")
+            return false
+        }
         return true
     }
 }
@@ -73,7 +105,7 @@ class TokenService: TokenServiceProtocol {
 protocol TokenStorageProtocol {
     func loadLatestTransaction(forUserId userId: String) throws -> TokenTransaction?
     func loadTokenTransactions(forUserId userId: String) throws -> [TokenTransaction]
-    func saveTokenTransaction(_ transaction: TokenTransaction, forUserId userId: String) throws
+    func saveTokenTransaction(forUserId userId: String, _ transaction: TokenTransaction) throws
 }
 
 // abstracted service to allow us to integrate CoreData or CloudKit later down the line if we want to
@@ -104,7 +136,7 @@ class TokenStorageService: TokenStorageProtocol {
         }
     }
     
-    func saveTokenTransaction(_ transaction: TokenTransaction, forUserId userId: String) throws {
+    func saveTokenTransaction(forUserId userId: String, _ transaction: TokenTransaction) throws {
         try db.write { db in
             try transaction.insert(db)
         }

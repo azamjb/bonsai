@@ -23,7 +23,7 @@ class OverrideBoundaryViewModel: ObservableObject {
         userId = profileService.fetchUserProfile().Id ?? "Unknown User"
     }
     
-    func loadData() {
+    func loadData() { 
         Task {
             await loadTokenBalance()
             await loadTokenTransactions()
