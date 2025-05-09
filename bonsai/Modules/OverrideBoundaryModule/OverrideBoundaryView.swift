@@ -82,6 +82,12 @@ struct OverrideBoundaryView: View {
                 // Inject the token service view here to prevent weird nesting issues
                 TokenServiceView(viewModel)
                 
+                // TODO: TURN THIS INTO A BUTTON EVENTUALLY
+                Text("where is my money going?")
+                    .font(.system(size: 12))
+                    .underline(true, pattern: .solid)
+                    .foregroundColor(Color(red: 0, green: 0.04, blue: 0.54))
+                    .frame(width: 165, alignment: .topLeading)
             }
             .padding(.horizontal, 45)
         }
@@ -153,11 +159,12 @@ struct TokenServiceView: View {
                     
                     ForEach(viewModel.tokenTransactions) { transaction in
                         VStack(alignment: .leading){
-                            Text("\(transaction.timestamp)")
+                            Text("\(viewModel.makeSimpleDate(transaction.timestamp))")
                                 .foregroundColor(Color(red: 0.42, green: 0.41, blue: 0.41))
+                                .font(.system(size: 12))
 
                             HStack {
-                                Text(transaction.type.rawValue.capitalized)
+                                Text(viewModel.longFormTransactionType(transaction.type.rawValue.capitalized))
                                     .font(.system(size: 15))
                                     .foregroundColor(.primary)
                                 Spacer()
@@ -166,7 +173,6 @@ struct TokenServiceView: View {
                                     .foregroundColor(transaction.netTokenChange >= 0 ? .green : .red)
                                     .font(.system(size: 18))
                             }
-                            .padding(.vertical, 4)
                             HStack{
                                 Spacer()
                                 Text("\(transaction.balanceAfterChange)")

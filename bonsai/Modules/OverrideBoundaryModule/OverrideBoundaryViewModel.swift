@@ -95,4 +95,34 @@ class OverrideBoundaryViewModel: ObservableObject {
         // DateFormatter uses the user's locale by default
         return dateFormatter.string(from: Date())
     }
+    
+    func makeSimpleDate(_ date: Date) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "d MMM yyyy"
+        let timeFormatter = DateFormatter()
+        timeFormatter.dateFormat = "h:mm a"
+        
+        var dateString: String = dateFormatter.string(from: date)
+        if Calendar.current.isDateInToday(date) {
+            dateString = "Today, \(dateString)"
+        } else if Calendar.current.isDateInYesterday(date) {
+            dateString = "Yesterday, \(dateString)"
+        }
+        
+        let timeString = timeFormatter.string(from: date)
+        return "\(dateString) - \(timeString)"
+    }
+    
+    func longFormTransactionType(_ transactionType: String) -> String {
+        switch transactionType {
+        case "Grants":
+            return "bonsai supplied"
+        case "Spend":
+            return "Token Spend"
+        case "Purchase":
+            return "Token Purchase"
+        default:
+            return "token heist"
+        }
+    }
 }
