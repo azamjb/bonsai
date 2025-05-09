@@ -76,6 +76,18 @@ class OverrideBoundaryViewModel: ObservableObject {
             }
         }
     }
+    
+    func spendToken(tokenSpendAmount: Int) async {
+        do {
+            try await tokenService.spendToken(forUserWithId: userId, amount: tokenSpendAmount)
+            await loadTokenBalance()
+            await loadTokenTransactions()
+        } catch {
+            DispatchQueue.main.async {
+                self.errorMessage = "Failed to fetch token balance: \(error.localizedDescription)"
+            }
+        }
+    }
 
     var currentDate: String {
         let dateFormatter = DateFormatter()

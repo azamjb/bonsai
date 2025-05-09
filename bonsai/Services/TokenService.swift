@@ -89,7 +89,7 @@ class TokenService: TokenServiceProtocol {
                 timestamp: Date(),
                 netTokenChange: amount,
                 balanceAfterChange: tokenBalance,
-                type: .spend
+                type: .grant
             )
             try storage.saveTokenTransaction(forUserId: userId, transaction)
         } catch {

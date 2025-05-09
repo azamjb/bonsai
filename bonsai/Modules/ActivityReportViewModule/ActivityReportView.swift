@@ -206,7 +206,6 @@ struct ActivityReportView: View {
                     if (hasAccountabilityPartner) {
 
                         Group {
-
                             Divider()
                                 .frame(height: 1)
                                 .background(Color.primary)
@@ -219,7 +218,7 @@ struct ActivityReportView: View {
                             BonsaiNavLinkSmall(buttonText: "request boundary extension", destination: BoundaryExtensionRequestView())
                                 .padding(.bottom, 30)
                             
-                            BonsaiNavLinkSmall(buttonText: "override boundaries", destination: OverrideBoundaryView())
+                            BonsaiNavLinkSmall(buttonText: "override boundaries", destination: OverrideBoundaryView(screenTime))
                                 .padding(.bottom, 30)
 
                             BonsaiButtonSmall(buttonText: "override all boundaries (testing only)") {
