@@ -35,7 +35,7 @@ struct EditHobbiesProfileView: View {
 
             
             Button("Save") {
-                hobbies = hobbyList.filter { !$0.isEmpty }
+                hobbies = hobbyList
                 presentationMode.wrappedValue.dismiss()
             }
             .font(.system(size: 15))

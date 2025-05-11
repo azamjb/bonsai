@@ -12,7 +12,7 @@ struct ProfileView: View {
     let accountApi = AccountApi()
     let smsApi = SMSApi()
     @StateObject var screenTime = ScreenTimeService()
-    
+
     @EnvironmentObject var quoteViewModel: QuoteViewModel
     @State private var showRemoveConfirmation = false
     @StateObject var viewModel: ProfileViewModel = ProfileViewModel()
@@ -148,9 +148,9 @@ struct ProfileView: View {
                                 Text("BACK")
                                     .font(.system(size: 10))
                             }
-                        
+
                             Spacer()
-                        
+
                             VStack(alignment: .leading) {
                                 Text("0")
                                     .font(.system(size: 40))
@@ -171,7 +171,7 @@ struct ProfileView: View {
 
                     Spacer()
 
-                    
+
                     if showPartnerSection {
                         Group {
                             VStack(alignment: .leading) {
@@ -188,7 +188,7 @@ struct ProfileView: View {
                                 Text(viewModel.phoneNumberFormatter.string(for: viewModel.accountabilityPartner.phoneNumber) ?? "")
                                     .font(.system(size: 14))
 
-                                
+
                                 Button(action: {
                                     showRemoveConfirmation = true // show alert first
                                 }) {
@@ -212,7 +212,7 @@ struct ProfileView: View {
                                     }
                                     Button("Cancel", role: .cancel) { }
                                 }
-                                
+
                             }
                             .padding(.horizontal, 18)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -256,7 +256,7 @@ struct ProfileView: View {
                     }
                 }
             }
-        
+
         .onChange(of: invitedPartnerShouldBeFalse) { newValue in
             if newValue {
                 invitedAccountabilityPartnerStorage = false
@@ -268,15 +268,15 @@ struct ProfileView: View {
             }
         }
     }
-    
-    
+
+
     @MainActor
     func removeAccountabilityPartner() {
-        
+
         Task {
-            
+
             do {
-                
+
                 let idString = UserDefaults.standard.string(forKey: ProfileKey.id.rawValue)
                 let request = AddAccountabilityPartner(
                     AccountabilityPartnerName: "",
@@ -288,13 +288,13 @@ struct ProfileView: View {
                     username: viewModel.userProfile.name ?? "",
                     accountabilityPartnerName: viewModel.accountabilityPartner.name ?? "", code: ""
                 )
-                
+
                 try await accountApi.addAccountabilityPartner(request: request)
-                
+
                 try await smsApi.removalNotif(request: SMSInvite)
-                
+
                 await MainActor.run {
-                    
+
                     viewModel.accountabilityPartner.phoneNumber = nil
                     viewModel.accountabilityPartner.name = nil
                     screenTime.clearAllRestrictions()
@@ -303,13 +303,13 @@ struct ProfileView: View {
                     shouldSetHasPartnerFalse = true
                     showPartnerSection = false
                 }
-                
+
             } catch {
                 print("Failed to remove accountability partner: \(error)")
             }
-           
-           
-            
+
+
+
         }
     }
 

@@ -65,7 +65,7 @@ public struct BonsaiNavLinkSmall<Destination: View>: View {
     public var body: some View {
         NavigationLink(destination: destination) {
             Text(buttonText)
-                .font(.system(size: 15))
+                .font(.system(size: 16))
                 .foregroundColor(.primary)
                 .padding(.vertical, 10)
                 .padding(.horizontal, 60)

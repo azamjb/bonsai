@@ -11,7 +11,7 @@ import FamilyControls
 
 enum AnalyticsDisplaysType: Int {
     case daily = 1, weekly = 2, monthly = 3
-    
+
     var fullName: String {
         switch self {
         case .daily:
@@ -28,20 +28,20 @@ struct ActivityReportView: View {
     @Binding var tabSelection: Int
 
     let center = AuthorizationCenter.shared
-    
+
     @AppStorage("hasAccountabilityPartner") var hasAccountabilityPartner: Bool = false
     @StateObject var viewModel: ActivityReportViewModel = ActivityReportViewModel()
     @EnvironmentObject var screenTime: ScreenTimeService
     @State private var isAuthorized = false
-    
+
     var now = Date()
-    
+
     @State private var dayFilter = DeviceActivityFilter(
         segment: .daily(during: Calendar.current.dateInterval(of: .day, for: .now)!),
         users: .all,
         devices: .init([.iPhone, .iPad])
     )
-    
+
     @State private var weekFilter = DeviceActivityFilter(
         segment: .weekly(during: DateInterval(
             start: Calendar.current.date(byAdding: .day, value: -7, to: Date())!,
@@ -50,7 +50,7 @@ struct ActivityReportView: View {
         users: .all,
         devices: .init([.iPhone, .iPad])
     )
-    
+
     @State private var monthFilter = DeviceActivityFilter(
         segment: .weekly(during: DateInterval(
             start: Calendar.current.date(byAdding: .day, value: -30, to: Date())!,
@@ -63,7 +63,7 @@ struct ActivityReportView: View {
     @State private var analyticsRange: AnalyticsDisplaysType = .daily
 
     var body: some View {
-       
+
             ScrollView {
                 VStack {
                     Group {
@@ -72,26 +72,26 @@ struct ActivityReportView: View {
                                 Text("TOTAL")
                                     .foregroundColor(.secondary)
                                     .font(.system(size: 10))
-                                
+
                                 Text("SCREEN TIME")
                                     .foregroundColor(.secondary)
                                     .font(.system(size: 10))
                             }
-                            
+
                             Spacer()
-                            
+
                             Text(mediumDateFormat(date: Date()))
                                 .multilineTextAlignment(.center)
                                 .foregroundStyle(.secondary)
                                 .font(.system(size: 11))
                         }
                         .padding(.horizontal, 75)
-                        
+
                         DeviceActivityReport(.init(rawValue: "total_activity"), filter: dayFilter)
                             .frame(height: 50)
                     }
                     .padding(.top, 30)
-                    
+
                     HStack {
                         Image("koibois")
                             .resizable()
@@ -100,49 +100,49 @@ struct ActivityReportView: View {
                     }
                     .padding(.bottom, 25)
                     .padding(.top, 25)
-                    
-                    
+
+
                     if (hasAccountabilityPartner) {
-                        
+
                         Group {
-                            
+
                             VStack(alignment: .leading) {
                                 Text("BOUNDARIES")
                                     .padding(.horizontal, 18)
                                     .padding(.bottom, 20)
-                                
+
                                 DeviceActivityReport(.init(rawValue: "pill_bar"), filter: dayFilter)
                                     .frame(height: CGFloat(screenTime.boundariesSet.count) * 90)
                                     .padding(.horizontal, 18)
 
-                                
+
                                 Text("BOUNDARY EXTENSIONS")
                                     .padding(.horizontal, 18)
                                     .padding(.top, 10)
                                     .font(.system(size: 10))
                             }
-                            
+
                             dailyBoundaryExtensionsView(model: screenTime.getDailyBoundaryExtensionsModel())
                                 .padding(.bottom, 30)
-                            
+
                         }
-                        
+
                     }
-                    
+
                     VStack(alignment: .leading) {
-                        
+
                         Divider()
                             .frame(height: 1)
                             .background(Color.primary)
                             .padding(.bottom, 20)
-                        
+
                         VStack(alignment: .leading) {
                             HStack {
                                 Text("ANALYTICS")
                                     .padding(.bottom, 5)
-                                
+
                                 Spacer()
-                                
+
                                 Menu {
                                     Button {
                                         analyticsRange = .daily
@@ -157,7 +157,7 @@ struct ActivityReportView: View {
                                             .foregroundStyle(Color.primary)
                                     }
                                     // TODO - Fix monthly
-                                    
+
                                     Button {
                                         analyticsRange = .monthly
                                     } label: {
@@ -169,11 +169,11 @@ struct ActivityReportView: View {
                                         .foregroundStyle(Color.primary)
                                 }
                             }
-                            
+
                             Text("Top 4 apps and daily usage")
                                 .font(.caption)
                                 .foregroundStyle(Color.secondary)
-                            
+
                             Text(mediumDateFormat(date: Date.now))
                                 .font(.caption)
                                 .foregroundStyle(Color.secondary)
@@ -184,49 +184,51 @@ struct ActivityReportView: View {
                                     DeviceActivityReport(.init(rawValue: "top_apps_daily_report"), filter: dayFilter)
                                         .opacity(analyticsRange == .daily ? 1 : 0)
                                 }
-                                
+
                                 if isAuthorized {
                                     DeviceActivityReport(.init(rawValue: "top_apps_weekly_report"), filter: weekFilter)
                                             .opacity(analyticsRange == .weekly ? 1 : 0)
                                 }
-                                
+
                                 if isAuthorized {
                                     DeviceActivityReport(.init(rawValue: "top_apps_monthly_report"), filter: monthFilter)
                                             .opacity(analyticsRange == .monthly ? 1 : 0)
                                 }
-                                
-                                
+
+
                             }
                             .frame(height: 120)
                         }
-                        
+
                     }
                     .padding(.horizontal, 18)
-                    
+
                     if (hasAccountabilityPartner) {
-                            
+
                         Group {
-                            
                             Divider()
                                 .frame(height: 1)
                                 .background(Color.primary)
                                 .padding(.bottom, 20)
-                            
+
                             Text("EXTEND BOUNDARIES")
                                 .padding(.bottom, 30)
                                 .frame(maxWidth: .infinity, alignment: .leading)
 
                             BonsaiNavLinkSmall(buttonText: "request boundary extension", destination: BoundaryExtensionRequestView())
                                 .padding(.bottom, 30)
-                        
-                            BonsaiButtonSmall(buttonText: "override all boundaries") {
+                            
+                            BonsaiNavLinkSmall(buttonText: "override boundaries", destination: OverrideBoundaryView(screenTime))
+                                .padding(.bottom, 30)
+
+                            BonsaiButtonSmall(buttonText: "override all boundaries (testing only)") {
                                 screenTime.clearShieldedApps()
                             }
                             .padding(.bottom, 50)
                         }
                     }
-                    
-                    
+
+
                 }
                 .navigationBarBackButtonHidden(true)
                 .padding(.horizontal, 18)
@@ -243,9 +245,9 @@ struct ActivityReportView: View {
                     }
                 }
             }
-        
+
     }
-    
+
     private func dailyBoundaryExtensionsView(model: DailyBoundaryExtensionsModel) -> some View {
         HStack(spacing: 1) {
             extensionCountView(color: "0x1E2368", day: "MON", count: model.monday.count)
@@ -257,28 +259,28 @@ struct ActivityReportView: View {
             extensionCountView(color: "0xC95102", day: "SUN", count: model.sunday.count)
         }
     }
-    
+
     private func extensionCountView(color: String, day: String, count: Int) -> some View {
         ZStack {
             Rectangle()
                 .frame(width: 45, height: 60)
                 .foregroundColor(Color(hex: color)) // Change color
                 .cornerRadius(10) // Optional rounded corners
-            
+
             VStack {
-                
+
                 Text(String(count))
                     .font(.system(size: 35))
                     .foregroundColor(.white)
                     .fontWeight(.bold)
-                
+
                 Text(day)
                     .font(.system(size: 8))
                     .foregroundColor(.white)
                     .fontWeight(.bold)
             }
         }
-        
+
     }
 }
 

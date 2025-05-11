@@ -7,12 +7,12 @@ struct BoundaryExtensionRequestView: View {
     @State private var isRememberMeChecked = false
     @EnvironmentObject var screenTime: ScreenTimeService
     @State public var checkedItems: [Boundary : Bool] = [:] // dictionary to track which of the boundaries have been 'checked' to be extended
-    
+
     @State private var requestNote: String = ""
     @State private var pin: String = ""
     @FocusState private var isFieldFocused: Bool
     @AppStorage("isProfileCreated") private var isProfileCreated = false
-    
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -42,10 +42,10 @@ struct BoundaryExtensionRequestView: View {
         .customBackToolbar()
         .navigationBarBackButtonHidden(true)
     }
-    
+
     private func setupOnAppear() {
         UserViewModel.fetchUserProfile()
-        
+
         screenTime.setGroupDisplays()
         for Boundary in screenTime.boundariesReached {
             if checkedItems[Boundary] == nil {
@@ -53,7 +53,7 @@ struct BoundaryExtensionRequestView: View {
             }
         }
     }
-    
+
     private func updateCheckedItems(_ newboundaries: [Boundary]) {
         for Boundary in newboundaries {
             if checkedItems[Boundary] == nil {
@@ -75,7 +75,7 @@ struct HeaderView: View {
             Text("Request")
                 .font(.title2)
                 .foregroundStyle(.primary)
-            
+
             Text("Boundary Extension")
                 .font(.title2)
                 .foregroundStyle(.primary)
@@ -87,7 +87,7 @@ struct HeaderView: View {
 struct SelectAppsSection: View {
     @ObservedObject var screenTime: ScreenTimeService
     @Binding var checkedItems: [Boundary: Bool]
-    
+
     var body: some View {
         VStack {
             Text("SELECT APPS")
@@ -95,7 +95,7 @@ struct SelectAppsSection: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.bottom, 6)
                 .foregroundStyle(.primary)
-            
+
             if !screenTime.boundariesReached.isEmpty {
                 VStack(alignment: .leading) {
                     ForEach(screenTime.boundariesReached, id: \.id) { Boundary in
@@ -107,7 +107,7 @@ struct SelectAppsSection: View {
                                 checkedItems[Boundary] = newValue
                             }
                         )
-                        
+
                         CheckboxView(
                             isChecked: isCheckedBinding,
                             label: Boundary.givenName
@@ -128,7 +128,7 @@ struct SelectAppsSection: View {
 struct NoteSection: View {
     @Binding var requestNote: String
     @FocusState var isFieldFocused: Bool
-    
+
     var body: some View {
         VStack(spacing: 16) {
             TextField("Add a note...", text: $requestNote)
@@ -145,7 +145,7 @@ struct SendCodeButton: View {
     @ObservedObject var viewModel: AccountabilityPartnerViewModel
     @ObservedObject var userViewModel: ProfileViewModel
     @Binding var requestNote: String
-    
+
     var body: some View {
         Button {
             Task {
@@ -181,14 +181,14 @@ struct SentRequestCodesSection: View {
                 .background(Color.primary)
                 .padding(.top, 10)
                 .padding(.bottom, 10)
-            
+
             VStack {
                 Text("SENT REQUEST CODES")
                     .font(.system(size: 15))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.bottom, 6)
                     .foregroundStyle(.primary)
-                
+
                 Text("You haven't sent your partner any codes yet.")
                     .font(.system(size: 15))
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -205,7 +205,7 @@ struct EnterCodeSection: View {
     @State private var showFailureAlert = false
     @ObservedObject var viewModel: AccountabilityPartnerViewModel
     @ObservedObject var screenTime: ScreenTimeService
-    
+
     var body: some View {
         VStack {
             Divider()
@@ -213,16 +213,16 @@ struct EnterCodeSection: View {
                 .background(Color.primary)
                 .padding(.top, 90)
                 .padding(.bottom, 10)
-            
+
             Text("ENTER REQUEST CODE")
                 .font(.system(size: 15))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.bottom, 60)
-            
+
             PinEntryView(pin: $pin)
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.bottom, 50)
-            
+
             Button {
                 handleCodeValidation()
             } label: {
@@ -250,11 +250,11 @@ struct EnterCodeSection: View {
             Text("The verification code you entered is not valid.")
         }
     }
-    
+
     private func handleCodeValidation() {
         Task {
             let validated = viewModel.validateVerificationCode(Pin: pin)
-            
+
             if validated {
                 for (boundary, isChecked) in checkedItems {
                     if isChecked {
@@ -265,7 +265,7 @@ struct EnterCodeSection: View {
                 pin = ""
                 UserDefaults.standard.removeObject(forKey: LocalStorageKeys.timeExtensionRequestCode)
                 showSuccessAlert = true
-                
+
             } else {
                 print("invalid code")
                 showFailureAlert = true
@@ -277,9 +277,9 @@ struct EnterCodeSection: View {
 struct PinEntryView: View {
     @Binding var pin: String
     @FocusState private var isPinFocused: Bool
-    
+
     private let pinLength = 6
-    
+
     var body: some View {
         HStack(spacing: 10) {
             ForEach(0..<pinLength, id: \.self) { index in
@@ -287,7 +287,7 @@ struct PinEntryView: View {
                     Text(pin.count > index ? String(pin[pin.index(pin.startIndex, offsetBy: index)]) : "")
                         .font(.title)
                         .foregroundColor(.primary)
-                    
+
                     Rectangle()
                         .frame(width: 30, height: 2)
                         .foregroundColor(.primary)
@@ -313,7 +313,7 @@ struct PinEntryView: View {
 struct CheckboxView: View {
     @Binding var isChecked: Bool
     let label: String
-    
+
     var body: some View {
         HStack {
             Image(systemName: isChecked ? "checkmark.square" : "square")
@@ -334,13 +334,13 @@ struct CheckboxView: View {
 
 struct CustomTextFieldStyle2: ViewModifier {
     let placeholder: String
-    
+
     func body(content: Content) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(placeholder)
                 .foregroundColor(.secondary)
                 .font(.system(size: 13))
-            
+
             content
                 .padding(.vertical, 10)
                 .padding(.horizontal, 12)
