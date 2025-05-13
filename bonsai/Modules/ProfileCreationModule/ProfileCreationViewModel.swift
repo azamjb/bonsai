@@ -53,7 +53,8 @@ class ProfileCreationViewModel: ObservableObject {
     }
 
     func initDailyBoundaryExtensions() {
-        sharedDefaults?.set(try! JSONEncoder().encode(DailyBoundaryExtensionsModel()), forKey: DAILY_BOUNDARY_EXTENSIONS_STRING)
+        let emptyArr: [DailyBoundaryExtensionsModel] = []
+        sharedDefaults?.set(try! JSONEncoder().encode(emptyArr), forKey: DAILY_BOUNDARY_EXTENSIONS_STRING)
     }
 
     func fetchUserProfile() {
@@ -62,5 +63,9 @@ class ProfileCreationViewModel: ObservableObject {
 
     func fetchAccountabilityPartner() {
         accountabilityPartner = profileService.fetchAccountabilityPartner()
+    }
+    
+    func setProfileCreatedDate() {
+        sharedDefaults?.set(try! JSONEncoder().encode(Date()), forKey: SIGN_UP_DATE_STRING)
     }
 }

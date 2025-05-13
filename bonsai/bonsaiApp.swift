@@ -14,21 +14,14 @@ import BackgroundTasks
 
 @main
 struct bonsaiApp: App {
-    
     @StateObject private var screenTime = ScreenTimeService()
+    @StateObject private var notificationHandler = NotificationHandler.shared
     @StateObject private var quoteViewModel = QuoteViewModel()
     
     init() {
-        AppShieldSchedulerService.shared.setupDailyUnshield()
+        NightlySchedulerService.shared.setupDailyUnshield()
         WeeklySchedulerService.shared.setupWeeklySchedule()
-
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-            if granted {
-                print("Notification permission granted")
-            } else {
-                print("Notification permission denied")
-            }
-        }
+        NotificationHandler.shared.requestAuthorization()
     }
 
     var body: some Scene {
@@ -36,6 +29,7 @@ struct bonsaiApp: App {
             RootView()
                 .environmentObject(screenTime)
                 .environmentObject(quoteViewModel)
+                .environmentObject(notificationHandler)
             //ContentView()
         }
     }

@@ -101,7 +101,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		24B0B7422D997AC1000BBE68 /* GlobalStructs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalStructs.swift; sourceTree = "<group>"; };
 		B71550B72CF9519F000AFACB /* bonsai.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = bonsai.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B71550C72CF951A0000AFACB /* bonsaiTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bonsaiTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B71550D12CF951A0000AFACB /* bonsaiUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bonsaiUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -117,6 +116,36 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		247B0D7B2DC7DD9D001E772C /* Exceptions for "bonsai" folder in "bonsaiTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Static/Extensions.swift,
+				Static/GlobalStructs.swift,
+				Static/LocalStorageKeys.swift,
+				Static/Utils.swift,
+			);
+			target = B71550C62CF951A0000AFACB /* bonsaiTests */;
+		};
+		247B0D7C2DC7DD9D001E772C /* Exceptions for "bonsai" folder in "bonsaiUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Static/Extensions.swift,
+				Static/GlobalStructs.swift,
+				Static/LocalStorageKeys.swift,
+				Static/Utils.swift,
+			);
+			target = B71550D02CF951A0000AFACB /* bonsaiUITests */;
+		};
+		247B0D832DC7DE3F001E772C /* Exceptions for "bonsai" folder in "ShieldActionExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Static/Extensions.swift,
+				Static/GlobalStructs.swift,
+				Static/LocalStorageKeys.swift,
+				Static/Utils.swift,
+			);
+			target = B77B2DCC2DB9FAAB0018F685 /* ShieldActionExtension */;
+		};
 		24E3C57D2D5586D60087940E /* Exceptions for "bonsai" folder in "bonsai" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -155,14 +184,20 @@
 		B7F0144C2D238F09002BB521 /* Exceptions for "bonsai" folder in "deviceactivitymonitor" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				GlobalFunctions.swift,
+				Static/Extensions.swift,
+				Static/GlobalStructs.swift,
+				Static/LocalStorageKeys.swift,
+				Static/Utils.swift,
 			);
 			target = B715513F2CF96667000AFACB /* deviceactivitymonitor */;
 		};
 		B7F0144D2D238F09002BB521 /* Exceptions for "bonsai" folder in "deviceactivityreport" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				GlobalFunctions.swift,
+				Static/Extensions.swift,
+				Static/GlobalStructs.swift,
+				Static/LocalStorageKeys.swift,
+				Static/Utils.swift,
 			);
 			target = B715516F2CFABBF4000AFACB /* deviceactivityreport */;
 		};
@@ -170,7 +205,10 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Assets.xcassets,
-				GlobalFunctions.swift,
+				Static/Extensions.swift,
+				Static/GlobalStructs.swift,
+				Static/LocalStorageKeys.swift,
+				Static/Utils.swift,
 			);
 			target = B76F61FB2D03FFE20092DA9E /* shieldConfiguration */;
 		};
@@ -181,9 +219,12 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				24E3C57D2D5586D60087940E /* Exceptions for "bonsai" folder in "bonsai" target */,
+				247B0D7B2DC7DD9D001E772C /* Exceptions for "bonsai" folder in "bonsaiTests" target */,
+				247B0D7C2DC7DD9D001E772C /* Exceptions for "bonsai" folder in "bonsaiUITests" target */,
 				B7F0144C2D238F09002BB521 /* Exceptions for "bonsai" folder in "deviceactivitymonitor" target */,
 				B7F0144D2D238F09002BB521 /* Exceptions for "bonsai" folder in "deviceactivityreport" target */,
 				B7F0144E2D238F09002BB521 /* Exceptions for "bonsai" folder in "shieldConfiguration" target */,
+				247B0D832DC7DE3F001E772C /* Exceptions for "bonsai" folder in "ShieldActionExtension" target */,
 			);
 			path = bonsai;
 			sourceTree = "<group>";
@@ -299,7 +340,6 @@
 		B71550AE2CF9519F000AFACB = {
 			isa = PBXGroup;
 			children = (
-				24B0B7422D997AC1000BBE68 /* GlobalStructs.swift */,
 				B7186B4C2D333920000723BE /* StoreKitConfig.storekit */,
 				B71550B92CF9519F000AFACB /* bonsai */,
 				B71550CA2CF951A0000AFACB /* bonsaiTests */,
@@ -629,7 +669,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				24B0B7432D997AC4000BBE68 /* GlobalStructs.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -637,7 +676,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				24B0B7442D997C0B000BBE68 /* GlobalStructs.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -645,7 +683,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				24B0B7452D997C0B000BBE68 /* GlobalStructs.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -653,7 +690,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				24B0B7462D997C0B000BBE68 /* GlobalStructs.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -661,7 +697,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				24B0B7472D997C0B000BBE68 /* GlobalStructs.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -669,7 +704,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				24B0B7482D997C0B000BBE68 /* GlobalStructs.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -3,8 +3,8 @@ import BackgroundTasks
 import ManagedSettings
 import DeviceActivity
 
-class AppShieldSchedulerService {
-    static let shared = AppShieldSchedulerService()
+class NightlySchedulerService {
+    static let shared = NightlySchedulerService ()
     let screenTime = ScreenTimeService()
     
     let backgroundTaskIdentifier = "com.bonsai.unshieldApps"
@@ -80,8 +80,10 @@ class AppShieldSchedulerService {
             self.startMonitoringBoundariesForToday()
             
             // Log successful execution
-            self.sharedDefaults?.set(Date(), forKey: LAST_SUCCESSFUL_UNSHIELD_STRING)
-            self.scheduleDebugNotification(for: Date(), message: "Apps unshielded successfully")
+            self.sharedDefaults!.set(Date(), forKey: LAST_SUCCESSFUL_UNSHIELD_STRING)
+            
+            // Reset the sent codes for today
+            self.sharedDefaults!.set(try! JSONEncoder().encode([SentExtensionCodeModel]()), forKey: ACTIVE_EXTENSION_CODES_STRING)
             
             success = true
             taskGroup.leave()
@@ -116,10 +118,6 @@ class AppShieldSchedulerService {
     }
     
     private func startMonitoringBoundariesForToday() {
-        guard let sharedDefaults = sharedDefaults else {
-            return
-        }
-        
         let activityCenter = DeviceActivityCenter()
         activityCenter.stopMonitoring(activityCenter.activities) // kill all active monitoring seshs
         
@@ -130,7 +128,7 @@ class AppShieldSchedulerService {
         )
         
         var allBoundaries = screenTime.getBoundariesFromUserDefaults()
-        var boundariesForToday = allBoundaries.filter({ $0.weekdays.contains(Weekday.today) })
+        let boundariesForToday = allBoundaries.filter({ $0.weekdays.contains(Weekday.today) })
 
         for boundary in boundariesForToday {
             do {
@@ -159,7 +157,7 @@ class AppShieldSchedulerService {
             }
         }
         
-        sharedDefaults.set(try! JSONEncoder().encode(allBoundaries), forKey: BOUNDARIES_STRING)
+        self.sharedDefaults!.set(try! JSONEncoder().encode(allBoundaries), forKey: BOUNDARIES_STRING)
     }
     
     private func scheduleDebugNotification(for date: Date, message: String) {

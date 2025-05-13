@@ -17,8 +17,6 @@ struct ProfileCreation4View: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color.white.ignoresSafeArea()
-
                 VStack {
                     Spacer()
 

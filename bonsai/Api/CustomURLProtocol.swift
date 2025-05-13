@@ -23,8 +23,8 @@ class CustomURLProtocol: URLProtocol {
         newRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         newRequest.setValue("*/*", forHTTPHeaderField: "Accept")
         
-        let bearer = UserDefaults.standard.string(forKey: LocalStorageKeys.bearer)
-        let userId = UserDefaults.standard.string(forKey: LocalStorageKeys.userId)
+        let bearer = UserDefaults.standard.string(forKey: BEARER_STRING)
+        let userId = UserDefaults.standard.string(forKey: USER_ID_STRING)
         
         if(bearer != nil) {
             newRequest.setValue("Bearer \(bearer!)", forHTTPHeaderField: "Authorization")

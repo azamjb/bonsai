@@ -9,9 +9,9 @@ import SwiftUI
 import ManagedSettings
 
 struct ContentView: View {
-    
     @State private var tabSelection = 1
     @StateObject var viewModel: ProfileViewModel = ProfileViewModel()
+    @EnvironmentObject var notificationHandler: NotificationHandler
     
     var body: some View {
         TabView(selection: $tabSelection) {
@@ -40,6 +40,9 @@ struct ContentView: View {
                 Label("Profile", systemImage: "person.fill")
             }
             .tag(3)
+        }
+        .sheet(isPresented: $notificationHandler.showExtensionRequest) {
+            BoundaryExtensionRequestView()
         }
     }
 }
