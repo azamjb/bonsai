@@ -10,6 +10,7 @@ import FamilyControls
 import ManagedSettings
 
 @MainActor public class AccountabilityPartnerViewModel: ObservableObject {
+    private var screenTime = ScreenTimeService()
     
     @Published public var phoneNumber: String = ""
     @Published public var code: String = ""
@@ -28,8 +29,6 @@ import ManagedSettings
     @Published public var isSendingInvite: Bool = false
     @Published public var isSendingTimeRequest: Bool = false
     @Published public var isRemovingAccountabilityPartner: Bool = false
-    
-    
     
 
     private let userDefaultsKey = "SelectedActivity"
@@ -93,17 +92,11 @@ import ManagedSettings
         isRemovingAccountabilityPartner =  false
     }
     
-    public func sendTimeRequest(phoneNumber: String, userName: String, accountabilityPartnerName: String, note: String) async {
+    public func sendTimeRequest(phoneNumber: String, userName: String, accountabilityPartnerName: String, note: String, boundaries: [Boundary]) async {
         let smsApi = SMSApi()
         isSendingTimeRequest = true
         code = generateRandomCode()
         
-        
-        print("Phone number" + phoneNumber)
-        print("username" + userName)
-        print("apname" + accountabilityPartnerName)
-        print("note" + note)
-        print(phoneNumber, userName, accountabilityPartnerName, note)
         do {
             try await smsApi.timeRequest(
                 request: SMSRequest(
@@ -114,7 +107,10 @@ import ManagedSettings
                     code: code
                 )
             )
-            UserDefaults.standard.set(code, forKey: LocalStorageKeys.timeExtensionRequestCode) // set code in local
+            
+            boundaries.forEach { boundary in
+                screenTime.addActiveExtensionCode(boundaryId: boundary.id, code: code)
+            }
         } catch let error as StringError {
             timeRequestErrorMessage = error.message
         } catch {
@@ -124,13 +120,18 @@ import ManagedSettings
         isSendingTimeRequest = false
     }
     
-    public func validateVerificationCode( Pin: String) -> Bool { // validate if the code entered by the user is correct or incorrect
-        print("code: " + (UserDefaults.standard.string(forKey: LocalStorageKeys.timeExtensionRequestCode) ?? ""))
-        print("pin: " + Pin)
-        if Pin == (UserDefaults.standard.string(forKey: LocalStorageKeys.timeExtensionRequestCode) ?? "") {
-            return true;
+    public func validateVerificationCode(pin: String) -> Bool { // validate if the code entered by the user is correct or incorrect
+        let foundExtensionCodeModel = screenTime.getSentExtensionCodes().first { model in
+            return model.isCodeValid && model.code == pin
+        }
+        
+        if let model = foundExtensionCodeModel {
+            screenTime.extendBlockedBoundary(boundaryId: model.boundaryId)
+            screenTime.setGroupDisplays()
+            
+            return true
         } else {
-            return false;
+            return false
         }
     }
 

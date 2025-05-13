@@ -22,7 +22,7 @@ extension DeviceActivityReport.Context {
 
 // MARK: - Data Model for a Usage Group
 struct UsageGroup: Identifiable {
-    var id: String { groupName }
+    var id: UUID
     let groupName: String
     let elapsedTime: TimeInterval   // Time spent (in seconds)
     let totalAllowedTime: TimeInterval  // Allowed time (in seconds)
@@ -37,6 +37,7 @@ struct PillBarViewConfiguration {
 struct TimeLimitSliderView: View {
     let elapsedTime: TimeInterval
     let totalTime: TimeInterval
+    let boundaryId: UUID
     
     // Calculate progress as a value between 0.0 and 1.0.
     private var progress: Double {
@@ -50,6 +51,32 @@ struct TimeLimitSliderView: View {
         return "\(hours)h \(minutes)m"
     }
     
+    private func hasBoundaryBeenExtendedToday(id: UUID) -> Bool {
+        if let dailyExtensionsData = sharedDefaults!.data(forKey: DAILY_BOUNDARY_EXTENSIONS_STRING) {
+            do {
+                let dailyExtensionsModels = try JSONDecoder().decode([DailyBoundaryExtensionsModel].self, from: dailyExtensionsData)
+                return dailyExtensionsModels.contains(where: { areDatesSameDay(date1: $0.extendedDateTimeUtc, date2: Date()) && $0.boundaryId == id })
+            } catch {
+                return false
+            }
+        } else {
+            return false
+        }
+    }
+    
+    private func hasExtensionCodeBeenSentForBoundary(id: UUID) -> Bool {
+        if let activeCodesData = sharedDefaults!.data(forKey: ACTIVE_EXTENSION_CODES_STRING) {
+            do {
+                let activeCodeModels = try JSONDecoder().decode([SentExtensionCodeModel].self, from: activeCodesData)
+                return activeCodeModels.contains(where: { areDatesSameDay(date1: $0.sentDateTimeUtc, date2: Date()) && $0.boundaryId == id })
+            } catch {
+                return false
+            }
+        } else {
+            return false
+        }
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             GeometryReader { geometry in
@@ -58,25 +85,75 @@ struct TimeLimitSliderView: View {
                         .fill(Color.gray.opacity(0.2))
                         .frame(height: 10)
                     
-                    ZStack(alignment: .leading) {
-                        LinearGradient(
-                            gradient: Gradient(stops: [
-                                Gradient.Stop(color: Color(hex: "0x121961"), location: 0.0),
-                                Gradient.Stop(color: Color(hex: "0x534E88"), location: 0.25),
-                                Gradient.Stop(color: Color(hex: "0x97366B"), location: 0.5),
-                                Gradient.Stop(color: Color(hex: "0xF87946"), location: 0.75),
-                                Gradient.Stop(color: Color(hex: "0xC95001"), location: 1.0)
-                            ]),
-                            startPoint: .leading,
-                            endPoint: .trailing
+                    if hasBoundaryBeenExtendedToday(id: boundaryId) {
+                        ZStack(alignment: .leading) {
+                            LinearGradient(
+                                gradient: Gradient(stops: [Gradient.Stop(color: Color.primary, location: 0.0)]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                            .frame(width: geometry.size.width, height: 12)
+                        }
+                        .clipShape(
+                            Capsule()
+                                .path(in: CGRect(x: 0, y: 0, width: geometry.size.width, height: 12))
                         )
-                        .frame(width: geometry.size.width, height: 10)
+                        
+                        Text("BOUNDARY EXTENDED")
+                            .foregroundStyle(Color.white)
+                            .font(Font.system(size: 10))
+                            .bold()
+                            .frame(width: geometry.size.width, height: 12, alignment: .center)
+                        
+                    } else if hasExtensionCodeBeenSentForBoundary(id: boundaryId) {
+                        ZStack(alignment: .leading) {
+                            LinearGradient(
+                                gradient: Gradient(stops: [
+                                    Gradient.Stop(color: Color(hex: "0x121961"), location: 0.0),
+                                    Gradient.Stop(color: Color(hex: "0x534E88"), location: 0.25),
+                                    Gradient.Stop(color: Color(hex: "0x97366B"), location: 0.5),
+                                    Gradient.Stop(color: Color(hex: "0xF87946"), location: 0.75),
+                                    Gradient.Stop(color: Color(hex: "0xC95001"), location: 1.0)
+                                ]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                            .frame(width: geometry.size.width, height: 12)
+                        }
+                        .clipShape(
+                            Capsule()
+                                .path(in: CGRect(x: 0, y: 0, width: geometry.size.width * CGFloat(progress), height: 12))
+                        )
+                        .animation(.easeInOut, value: progress)
+                        
+                        Text("EXTENSION CODE SENT")
+                            .foregroundStyle(Color.white)
+                            .font(Font.system(size: 10))
+                            .bold()
+                            .frame(width: geometry.size.width, height: 12, alignment: .center)
+                        
                     }
-                    .clipShape(
-                        Capsule()
-                            .path(in: CGRect(x: 0, y: 0, width: geometry.size.width * CGFloat(progress), height: 10))
-                    )
-                    .animation(.easeInOut, value: progress)
+                    else {
+                        ZStack(alignment: .leading) {
+                            LinearGradient(
+                                gradient: Gradient(stops: [
+                                    Gradient.Stop(color: Color(hex: "0x121961"), location: 0.0),
+                                    Gradient.Stop(color: Color(hex: "0x534E88"), location: 0.25),
+                                    Gradient.Stop(color: Color(hex: "0x97366B"), location: 0.5),
+                                    Gradient.Stop(color: Color(hex: "0xF87946"), location: 0.75),
+                                    Gradient.Stop(color: Color(hex: "0xC95001"), location: 1.0)
+                                ]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                            .frame(width: geometry.size.width, height: 12)
+                        }
+                        .clipShape(
+                            Capsule()
+                                .path(in: CGRect(x: 0, y: 0, width: geometry.size.width * CGFloat(progress), height: 12))
+                        )
+                        .animation(.easeInOut, value: progress)
+                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -119,7 +196,7 @@ struct PillBarView: View {
                             .foregroundColor(.primary)
                     }
                     
-                    TimeLimitSliderView(elapsedTime: group.elapsedTime, totalTime: group.totalAllowedTime)
+                    TimeLimitSliderView(elapsedTime: group.elapsedTime, totalTime: group.totalAllowedTime, boundaryId: group.id)
                 }
             }
         }
@@ -197,6 +274,7 @@ struct PillBarReport: DeviceActivityReportScene {
             
             usageGroups.insert(
                 UsageGroup(
+                    id: boundary.id,
                     groupName: boundary.givenName,
                     elapsedTime: elapsedTime,
                     totalAllowedTime: TimeInterval(boundary.hours * 3600 + boundary.minutes * 60)
@@ -205,7 +283,6 @@ struct PillBarReport: DeviceActivityReportScene {
             )
         }
         
-        print("hello")
         return PillBarViewConfiguration(usageGroups: usageGroups)
     }
     

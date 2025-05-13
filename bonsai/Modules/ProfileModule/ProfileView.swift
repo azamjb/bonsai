@@ -118,7 +118,7 @@ struct ProfileView: View {
                     HStack {
 
                             VStack(alignment: .leading) {
-                                Text("0")
+                                Text(String(viewModel.getCurrentStreakDays()))
                                     .font(.system(size: 40))
                                 Text("CURRENT")
                                     .font(.system(size: 10))
@@ -129,7 +129,7 @@ struct ProfileView: View {
                             Spacer()
 
                             VStack(alignment: .leading) {
-                                Text("0")
+                                Text(String(viewModel.getLongestStreakDays()))
                                     .font(.system(size: 40))
                                 Text("BEST")
                                     .font(.system(size: 10))
@@ -151,7 +151,7 @@ struct ProfileView: View {
                             Spacer()
                         
                             VStack(alignment: .leading) {
-                                Text("0")
+                                Text(String(viewModel.getTotalDaysWithoutExtension()))
                                     .font(.system(size: 40))
                                 Text("DAYS")
                                     .font(.system(size: 10))

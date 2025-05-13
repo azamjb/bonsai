@@ -11,7 +11,7 @@ import Charts
 
 // MARK: - Define Custom Contexts
 extension DeviceActivityReport.Context {
-    static let pieChart = Self("pie Chart")
+    static let pieChart = Self("pie_chart")
 }
 
 // MARK: - Configuration for PieChartView

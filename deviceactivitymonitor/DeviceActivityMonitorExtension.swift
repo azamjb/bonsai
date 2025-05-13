@@ -34,17 +34,18 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
         if let data = sharedDefaults!.data(forKey: BOUNDARIES_STRING) {
             var boundaries = try! JSONDecoder().decode([Boundary].self, from: data)
             
-            var boundary = boundaries.first(where: { $0.id == UUID(uuidString: activity.rawValue) })!
-            boundary.isBlocked = true
-            
-            boundary.appTokens.forEach { token in handleThresholdReached(appToken: token) }
-            boundary.categoryTokens.forEach { token in handleThresholdReached(categoryToken: token) }
-            boundary.webDomainTokens.forEach { token in handleThresholdReached(webDomainToken: token) }
-            
-            boundaries.removeAll(where: { $0.id == boundary.id })
-            boundaries.append(boundary)
-            
-            sharedDefaults?.set(try! JSONEncoder().encode(boundaries), forKey: BOUNDARIES_STRING)
+            if var boundary = boundaries.first(where: { $0.id == UUID(uuidString: activity.rawValue) }) {
+                boundary.isBlocked = true
+                
+                boundary.appTokens.forEach { token in handleThresholdReached(appToken: token) }
+                boundary.categoryTokens.forEach { token in handleThresholdReached(categoryToken: token) }
+                boundary.webDomainTokens.forEach { token in handleThresholdReached(webDomainToken: token) }
+                
+                boundaries.removeAll(where: { $0.id == boundary.id })
+                boundaries.append(boundary)
+                
+                sharedDefaults?.set(try! JSONEncoder().encode(boundaries), forKey: BOUNDARIES_STRING)
+            }
         }
     }
     

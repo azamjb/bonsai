@@ -22,9 +22,9 @@ struct BoundaryExtensionRequestView: View {
                         HeaderView()
                         SelectAppsSection(screenTime: screenTime, checkedItems: $checkedItems)
                         NoteSection(requestNote: $requestNote, isFieldFocused: _isFieldFocused)
-                        SendCodeButton(viewModel: viewModel, userViewModel: UserViewModel, requestNote: $requestNote)
-                        SentRequestCodesSection()
+                        SendCodeButton(viewModel: viewModel, userViewModel: UserViewModel, requestNote: $requestNote, checkedItems: $checkedItems)
                         EnterCodeSection(pin: $pin, checkedItems: checkedItems, viewModel: viewModel, screenTime: screenTime)
+                        SentRequestCodesSection(sentExtensionRequestsThisWeek: screenTime.getSentExtensionRequestsThisWeek())
                     }
                     .padding(.horizontal, 40)
                 }
@@ -145,6 +145,7 @@ struct SendCodeButton: View {
     @ObservedObject var viewModel: AccountabilityPartnerViewModel
     @ObservedObject var userViewModel: ProfileViewModel
     @Binding var requestNote: String
+    @Binding var checkedItems: [Boundary: Bool]
     
     var body: some View {
         Button {
@@ -153,7 +154,8 @@ struct SendCodeButton: View {
                     phoneNumber: userViewModel.accountabilityPartner.phoneNumber ?? "",
                     userName: userViewModel.userProfile.name ?? "",
                     accountabilityPartnerName: userViewModel.accountabilityPartner.name ?? "",
-                    note: requestNote
+                    note: requestNote,
+                    boundaries: checkedItems.filter({ $0.value == true }).map({ $0.key })
                 )
                 requestNote = ""
             }
@@ -174,6 +176,8 @@ struct SendCodeButton: View {
 }
 
 struct SentRequestCodesSection: View {
+    var sentExtensionRequestsThisWeek: [(String, Date)]
+    
     var body: some View {
         VStack {
             Divider()
@@ -183,16 +187,34 @@ struct SentRequestCodesSection: View {
                 .padding(.bottom, 10)
             
             VStack {
-                Text("SENT REQUEST CODES")
+                Text("SENT REQUEST CODES TODAY")
                     .font(.system(size: 15))
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.bottom, 6)
+                    .padding(.bottom, 12)
                     .foregroundStyle(.primary)
                 
-                Text("You haven't sent your partner any codes yet.")
-                    .font(.system(size: 15))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .foregroundColor(.secondary)
+                VStack {
+                    if sentExtensionRequestsThisWeek.count == 0 {
+                        Text("You haven't sent your partner any codes yet.")
+                            .font(.system(size: 15))
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .foregroundColor(.secondary)
+                    } else {
+                        ForEach(0..<sentExtensionRequestsThisWeek.count, id: \.self) { index in
+                            let (name, date) = sentExtensionRequestsThisWeek[index]
+                            VStack(alignment: .leading) {
+                                Text(name)
+                                    .bold()
+                                
+                                Text(mediumDateTimeFormat(date: date))
+                                    .foregroundStyle(.secondary)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.bottom, 10)
+                        }
+                    }
+                }
+                .frame(maxHeight: 300)
             }
         }
     }
@@ -211,7 +233,7 @@ struct EnterCodeSection: View {
             Divider()
                 .frame(height: 1)
                 .background(Color.primary)
-                .padding(.top, 90)
+                .padding(.top, 10)
                 .padding(.bottom, 10)
             
             Text("ENTER REQUEST CODE")
@@ -253,19 +275,11 @@ struct EnterCodeSection: View {
     
     private func handleCodeValidation() {
         Task {
-            let validated = viewModel.validateVerificationCode(Pin: pin)
+            let validated = viewModel.validateVerificationCode(pin: pin)
             
             if validated {
-                for (boundary, isChecked) in checkedItems {
-                    if isChecked {
-                        screenTime.extendBlockedBoundary(boundary: boundary)
-                        screenTime.setGroupDisplays()
-                    }
-                }
                 pin = ""
-                UserDefaults.standard.removeObject(forKey: LocalStorageKeys.timeExtensionRequestCode)
                 showSuccessAlert = true
-                
             } else {
                 print("invalid code")
                 showFailureAlert = true

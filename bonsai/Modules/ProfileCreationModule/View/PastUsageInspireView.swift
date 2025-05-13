@@ -5,9 +5,7 @@ import FamilyControls
 struct PastUsageInspireView: View {
     
     @State var screenTime: String
-    
 
-    
     let center = AuthorizationCenter.shared
     
     var usageYears: Int {
@@ -121,16 +119,29 @@ func hobbiesOutput(hobbies: [String]) -> String {
 func calculateUsage(screenTime: String) -> Int {
     switch screenTime {
     case "1-2 hours":
+        saveHoursPerDay(hours: 1.5)
         return 6
     case "2-4 hours":
+        saveHoursPerDay(hours: 3)
         return 12
     case "4-6 hours":
+        saveHoursPerDay(hours: 5)
         return 18
     case "7+ hours":
+        saveHoursPerDay(hours: 8)
         return 23
     default:
         return 0
     }
+    
+}
+
+func saveHoursPerDay(hours: Double) {
+    var sharedDefaults: UserDefaults? {
+        UserDefaults(suiteName: "group.com.bonsai")
+    }
+    
+    sharedDefaults?.set(try! JSONEncoder().encode(hours), forKey: HOURS_PER_DAY_STRING)
 }
 
 #Preview {

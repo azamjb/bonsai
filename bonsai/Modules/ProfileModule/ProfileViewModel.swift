@@ -28,14 +28,21 @@ class PhoneNumberFormatter: Formatter {
 }
 
 class ProfileViewModel: ObservableObject {
+    private let appGroupID = "group.com.bonsai"
+
+    private var sharedDefaults: UserDefaults? {
+        UserDefaults(suiteName: appGroupID)
+    }
+
     @Published var userProfile = UserProfile()
     @Published var accountabilityPartner = AccountabilityPartner()
+    private let screenTime = ScreenTimeService()
     private let profileService = ProfileService()
     
     init() {
-            fetchUserProfile()
-            fetchAccountabilityPartner()
-        }
+        fetchUserProfile()
+        fetchAccountabilityPartner()
+    }
     
     func fetchUserProfile() {
         userProfile = profileService.fetchUserProfile()
@@ -46,10 +53,10 @@ class ProfileViewModel: ObservableObject {
     }
     
     var currentMonth: String {
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "MMMM"
-            return dateFormatter.string(from: Date())
-        }
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MMMM"
+        return dateFormatter.string(from: Date())
+    }
     
     let phoneNumberFormatter = PhoneNumberFormatter()
     
@@ -57,6 +64,91 @@ class ProfileViewModel: ObservableObject {
         await profileService.saveProfileFields(name: name, phoneNumber: phoneNumber, hobbies: hobbies, termsAccepted: termsAccepted)
         fetchUserProfile()
     }
+    
+    public func getCurrentStreakDays() -> Int {
+        let sortedExtensions = screenTime.getDailyBoundaryExtensionsModels().sorted(by: { $0.extendedDateTimeUtc < $1.extendedDateTimeUtc })
+        
+        if sortedExtensions.isEmpty {
+            return 0
+        }
+        
+        let mostRecentExtension = sortedExtensions.last!
+        
+        let secondsDifference = Date().timeIntervalSinceReferenceDate - mostRecentExtension.extendedDateTimeUtc.timeIntervalSinceReferenceDate
+        
+        // convert seconds to days and return int
+        return Int(secondsDifference / (60 * 60 * 24))
+    }
+    
+    public func getLongestStreakDays() -> Int {
+        let extensions = screenTime.getDailyBoundaryExtensionsModels().sorted(by: { $0.extendedDateTimeUtc < $1.extendedDateTimeUtc })
+        
+        if extensions.isEmpty {
+            return 0
+        }
+        
+        var longestStreak = 0
+        
+        // loop through extensions to find the longest gap between them
+        for i in 0..<(extensions.count - 1) {
+            let currentExtension = extensions[i]
+            let nextExtension = extensions[i + 1]
+            
+            let secondsDifference = nextExtension.extendedDateTimeUtc.timeIntervalSinceReferenceDate - currentExtension.extendedDateTimeUtc.timeIntervalSinceReferenceDate
+            let daysDifference = Int(secondsDifference / (60 * 60 * 24))
+            
+            if daysDifference > longestStreak {
+                longestStreak = daysDifference
+            }
+        }
+        
+        // check the streak from the last extension to today
+        let lastExtension = extensions.last!
+        let secondsSinceLastExtension = Date().timeIntervalSinceReferenceDate - lastExtension.extendedDateTimeUtc.timeIntervalSinceReferenceDate
+        let daysSinceLastExtension = Int(secondsSinceLastExtension / (60 * 60 * 24))
+        
+        if daysSinceLastExtension > longestStreak {
+            longestStreak = daysSinceLastExtension
+        }
+        
+        return longestStreak
+    }
+    
+    public func getTotalDaysWithoutExtension() -> Int {
+        if let signUpDateData = sharedDefaults!.data(forKey: SIGN_UP_DATE_STRING) {
+            var signUpDate = try! JSONDecoder().decode(Date.self, from: signUpDateData)
+            signUpDate = Calendar.current.date(byAdding: .day, value: -35, to: Date())!
+            
+            // get all extensions after the start date
+            let allExtensions = screenTime.getDailyBoundaryExtensionsModels()
+            let extensionsAfterStartDate = allExtensions.filter {
+                $0.extendedDateTimeUtc >= signUpDate
+            }
+            
+            // calculate total days from start date to now
+            let totalSeconds = Date().timeIntervalSinceReferenceDate - signUpDate.timeIntervalSinceReferenceDate
+            let totalDays = Int(totalSeconds / (60 * 60 * 24))
+            
+            // count days with extensions (we need to count each day only once)
+            var daysWithExtensionsSet = Set<String>()
+            let calendar = Calendar.current
+            
+            for extensionModel in extensionsAfterStartDate {
+                // get the date components to identify the day (ignoring time)
+                let components = calendar.dateComponents([.year, .month, .day], from: extensionModel.extendedDateTimeUtc)
+                // create a string key for the day
+                if let year = components.year, let month = components.month, let day = components.day {
+                    let dayKey = "\(year)-\(month)-\(day)"
+                    daysWithExtensionsSet.insert(dayKey)
+                }
+            }
+            
+            let daysWithExtensions = daysWithExtensionsSet.count
+            
+            return totalDays - daysWithExtensions
+        } else {
+            sharedDefaults!.set(try! JSONEncoder().encode(Date()), forKey: SIGN_UP_DATE_STRING)
+            return 0
+        }
+    }
 }
-
-

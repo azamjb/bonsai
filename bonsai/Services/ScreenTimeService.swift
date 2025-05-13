@@ -47,7 +47,7 @@ public class ScreenTimeService: ObservableObject {
     let activityName = DeviceActivityName("ScreenTimeActivity")
     let eventName = DeviceActivityEvent.Name("ScreenTimeThreshold")
 
-    @AppStorage(LocalStorageKeys.AccountabilityPartnerNumber) private var accountabilityPartnerNumber: String?
+    @AppStorage(ACCOUNTABILITY_PARTNER_NUMBER) private var accountabilityPartnerNumber: String?
     
     // Product ID for the in-app purchase
     private let productID = "com.azam.bonsai.screentimemanualoverride"
@@ -57,7 +57,7 @@ public class ScreenTimeService: ObservableObject {
         Task { await fetchProduct() }
         
         setGroupDisplays()
-        //getDailyBoundaryExtensionsModel()
+        print(getSentExtensionCodes())
     }
     
     public func getGroupDisplay(getBlockedOnly: Bool) -> [Boundary] {
@@ -68,37 +68,8 @@ public class ScreenTimeService: ObservableObject {
         }
         
         return boundaries
-        return []
-        
     }
 
-    public func sendTimeRequest() async {
-        let smsApi = SMSApi()
-        code = generateRandomCode()
-        
-        do {
-            try await smsApi.timeRequest(
-                request: SMSRequest(
-                    number: accountabilityPartnerNumber!,
-                    username: "Azam",
-                    accountabilityPartnerName: "Bob",
-                    note: "",
-                    code: code
-                )
-            )
-            
-            timeExtensionRequestCode = code
-            UserDefaults.standard.set(code, forKey: LocalStorageKeys.timeExtensionRequestCode) // set code in local
-        } catch let error as StringError {
-            timeRequestErrorMessage = error.message
-        } catch {
-            timeRequestErrorMessage = error.localizedDescription
-        }
-        
-        isSendingTimeRequest = false
-        sentTimeRequest = true
-    }
-    
     public func generateRandomCode() -> String {
         let randomCode = Int.random(in: 100_000...999_999)
         return String(randomCode)
@@ -137,6 +108,17 @@ public class ScreenTimeService: ObservableObject {
         updateLeftoverWeeklySaves()
     }
     
+    public func getBoundaryById(id: UUID) -> Boundary? {
+        let boundaries = getBoundariesFromUserDefaults()
+        
+        if boundaries.count > 0 {
+            let boundary = boundaries.first { boundary in return boundary.id == id }
+            return boundary
+        } else {
+            return nil
+        }
+    }
+    
     public func getBoundariesFromUserDefaults() -> [Boundary] {
         guard let defaults = sharedDefaults else {
             print("❌ sharedDefaults is nil — did you forget to set up your App Group?")
@@ -162,7 +144,45 @@ public class ScreenTimeService: ObservableObject {
             return []
         }
     }
+    
+    public func getSentExtensionCodes() -> [SentExtensionCodeModel] {
+        if let data = sharedDefaults!.data(forKey: ACTIVE_EXTENSION_CODES_STRING) {
+            do {
+                let activeCodeModel = try JSONDecoder().decode([SentExtensionCodeModel].self, from: data)
+                return activeCodeModel
+            } catch {
+                print("failed to decode")
+                return []
+            }
+        } else {
+            print("non")
+            return []
+        }
+    }
 
+    public func addActiveExtensionCode(boundaryId: UUID, code: String) {
+        var sentExtensionCodeModels = getSentExtensionCodes()
+        
+        sentExtensionCodeModels = sentExtensionCodeModels.map({ model in
+            var updatedModel = model
+            
+            if updatedModel.boundaryId == boundaryId {
+                updatedModel.isCodeValid = false
+            }
+            
+            return updatedModel
+        })
+
+        sentExtensionCodeModels.append(SentExtensionCodeModel(boundaryId: boundaryId, code: code, sentDateTimeUtc: Date()))
+
+        sharedDefaults!.set(try! JSONEncoder().encode(sentExtensionCodeModels), forKey: ACTIVE_EXTENSION_CODES_STRING)
+    }
+    
+    public func getCodeForBoundaryId(boundaryId: UUID) -> String {
+        let activeExtensionModels = getSentExtensionCodes()
+        
+        return activeExtensionModels.first(where: { $0.boundaryId == boundaryId })?.code ?? ""
+    }
     
     private func updateLeftoverWeeklySaves() {
         if sharedDefaults!.object(forKey: REMAINING_BOUNDARY_EXTENSIONS_STRING) != nil {
@@ -177,20 +197,22 @@ public class ScreenTimeService: ObservableObject {
         return sharedDefaults!.integer(forKey: REMAINING_BOUNDARY_EXTENSIONS_STRING)
     }
     
-    public func getDailyBoundaryExtensionsModel() -> DailyBoundaryExtensionsModel {
+    public func getDailyBoundaryExtensionsModels() -> [DailyBoundaryExtensionsModel] {
         if let dailyExtensionsData = sharedDefaults!.data(forKey: DAILY_BOUNDARY_EXTENSIONS_STRING) {
             do {
-                let dailyExtensionsModel  = try JSONDecoder().decode(DailyBoundaryExtensionsModel.self, from: dailyExtensionsData)
-                return dailyExtensionsModel
+                let dailyExtensionsModels  = try JSONDecoder().decode([DailyBoundaryExtensionsModel].self, from: dailyExtensionsData)
+                return dailyExtensionsModels
             } catch {
                 sharedDefaults?.removeObject(forKey: DAILY_BOUNDARY_EXTENSIONS_STRING)
-                return DailyBoundaryExtensionsModel()
+                return []
             }
         } else {
-            let encoded = try! JSONEncoder().encode(DailyBoundaryExtensionsModel())
+            let emptyArr: [DailyBoundaryExtensionsModel] = []
+            
+            let encoded = try! JSONEncoder().encode(emptyArr)
             sharedDefaults?.set(encoded, forKey: DAILY_BOUNDARY_EXTENSIONS_STRING)
             
-            return DailyBoundaryExtensionsModel()
+            return []
         }
     }
 
@@ -228,47 +250,50 @@ public class ScreenTimeService: ObservableObject {
     
     public func validateExtensionCode(inputPin: String, correctPin: String, boundary: Boundary) { // not in use
         if inputPin == correctPin {
-            extendBlockedBoundary(boundary: boundary)
+            extendBlockedBoundary(boundaryId: boundary.id)
             pinError = nil
         } else {
             pinError = "Invalid PIN"
         }
     }
 
-    public func extendBlockedBoundary(boundary: Boundary) {
-        // These 3 variables get reassigned with the tokens to extend for removal. Muatating these set doesn't properly update them in real-time with the change detection. Need to reassign.
-        var shieldedApps = settingsStore.shield.applications ?? []
-        var shieldedWebDomainTokens = settingsStore.shield.webDomains ?? []
-        var shieldedCategoryTokens = getShieldedCategoryTokens()
+    public func extendBlockedBoundary(boundaryId: UUID) {
         
-        boundary.appTokens.forEach { token in
-            shieldedApps.remove(token)
-        }
-        
-        settingsStore.shield.applications = shieldedApps
-        
-        boundary.categoryTokens.forEach { token in
-            shieldedCategoryTokens.remove(token)
-        }
-        
-        settingsStore.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.specific(shieldedCategoryTokens)
-        
-        boundary.webDomainTokens.forEach { token in
-            shieldedWebDomainTokens.remove(token)
-        }
-        
-        settingsStore.shield.webDomains = shieldedWebDomainTokens
-        
-        let updatedBoundaries = getBoundariesFromUserDefaults().map { currentBoundary in
-            var updatedBoundary = currentBoundary
-            if currentBoundary.id == boundary.id {
-                updatedBoundary.isBlocked = false
+        if let boundary = getBoundaryById(id: boundaryId) {
+            // These 3 variables get reassigned with the tokens to extend for removal. Muatating these set doesn't properly update them in real-time with the change detection. Need to reassign.
+            var shieldedApps = settingsStore.shield.applications ?? []
+            var shieldedWebDomainTokens = settingsStore.shield.webDomains ?? []
+            var shieldedCategoryTokens = getShieldedCategoryTokens()
+            
+            boundary.appTokens.forEach { token in
+                shieldedApps.remove(token)
             }
-            return updatedBoundary
+            
+            settingsStore.shield.applications = shieldedApps
+            
+            boundary.categoryTokens.forEach { token in
+                shieldedCategoryTokens.remove(token)
+            }
+            
+            settingsStore.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.specific(shieldedCategoryTokens)
+            
+            boundary.webDomainTokens.forEach { token in
+                shieldedWebDomainTokens.remove(token)
+            }
+            
+            settingsStore.shield.webDomains = shieldedWebDomainTokens
+            
+            let updatedBoundaries = getBoundariesFromUserDefaults().map { currentBoundary in
+                var updatedBoundary = currentBoundary
+                if currentBoundary.id == boundary.id {
+                    updatedBoundary.isBlocked = false
+                }
+                return updatedBoundary
+            }
+            
+            sharedDefaults!.set(try! JSONEncoder().encode(updatedBoundaries), forKey: BOUNDARIES_STRING)
+            startMonitoringPostExtension(boundary: boundary)
         }
-        
-        sharedDefaults!.set(try! JSONEncoder().encode(updatedBoundaries), forKey: BOUNDARIES_STRING)
-        startMonitoringPostExtension(boundary: boundary)
     }
     
     private func startMonitoringPostExtension(boundary: Boundary) {
@@ -296,15 +321,17 @@ public class ScreenTimeService: ObservableObject {
         }
         
         setGroupDisplays()
-        addBoundaryIdToWeeklyExtensions(id: boundaryToExtend.id)
+        addBoundaryIdToExtensionModels(id: boundaryToExtend.id)
     }
     
-    private func addBoundaryIdToWeeklyExtensions(id: UUID) {
-        var dailyExtensionsModel = getDailyBoundaryExtensionsModel()
-        dailyExtensionsModel.appendByWeekday(weekday: Weekday.today, valueToAppend: id)
+    private func addBoundaryIdToExtensionModels(id: UUID) {
+        var dailyExtensionsModels = getDailyBoundaryExtensionsModels()
+        dailyExtensionsModels.append(DailyBoundaryExtensionsModel(boundaryId: id, extendedDateTimeUtc: Date()))
         
-        let encoded = try! JSONEncoder().encode(dailyExtensionsModel)
+        let encoded = try! JSONEncoder().encode(dailyExtensionsModels)
+        
         sharedDefaults!.set(encoded, forKey: DAILY_BOUNDARY_EXTENSIONS_STRING)
+        sharedDefaults!.synchronize()
     }
     
     private func addBoundaryToUserDefaults(boundary: Boundary) {
@@ -349,6 +376,22 @@ public class ScreenTimeService: ObservableObject {
         setGroupDisplays()
     }
     
+    public func getSentExtensionRequestsThisWeek() -> [(String, Date)] {
+        let today = Date()
+        let sentThisWeek = getSentExtensionCodes().filter({ areDatesSameDay(date1: $0.sentDateTimeUtc, date2: today) })
+        
+        let tuple = sentThisWeek.compactMap({ sentCode in
+            
+            if let boundary = getBoundaryById(id: sentCode.boundaryId) {
+                return (boundary.givenName, sentCode.sentDateTimeUtc)
+            }
+            
+            return nil
+        }).sorted(by: { $0.1 < $1.1 })
+        
+        return tuple
+    }
+
     private func removeBoundaryById(id: UUID) {
         let allBoundaries = getBoundariesFromUserDefaults()
         

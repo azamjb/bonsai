@@ -50,7 +50,7 @@ struct BoundaryDetailsView: View {
         
         if let currentBoundary = selectedBoundary.wrappedValue {
             self._boundaryToUse = State(initialValue: currentBoundary)
-            deepCopiedExistingBoundary = DeepCopier.Copy(currentBoundary)
+            deepCopiedExistingBoundary = DeepCopy(currentBoundary)
 
             isNewBoundary = false
             

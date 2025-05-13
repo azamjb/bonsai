@@ -87,11 +87,6 @@ class WeeklySchedulerService {
         
         taskGroup.enter()
         DispatchQueue.global(qos: .userInitiated).async {
-            let encoded = try! JSONEncoder().encode(DailyBoundaryExtensionsModel())
-            self.sharedDefaults?.set(encoded, forKey: DAILY_BOUNDARY_EXTENSIONS_STRING)
-            
-            self.sharedDefaults?.set(2, forKey: REMAINING_BOUNDARY_EXTENSIONS_STRING)
-
             self.scheduleDebugNotification(for: Date(), message: "Weekly Monday operation executed successfully")
             
             success = true

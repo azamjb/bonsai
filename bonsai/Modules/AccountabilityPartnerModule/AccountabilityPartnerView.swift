@@ -7,7 +7,7 @@ import ManagedSettings
 struct AccountabilityPartnerView: View {
     @Binding var tabSelection: Int
 
-    @AppStorage(LocalStorageKeys.AccountabilityPartnerNumber) private var AccountabilityPartnerNumber: String?
+    @AppStorage(ACCOUNTABILITY_PARTNER_NUMBER) private var AccountabilityPartnerNumber: String?
     @StateObject var UserViewModel: ProfileViewModel = ProfileViewModel()
     
     @StateObject private var viewModel = AccountabilityPartnerViewModel()
@@ -132,11 +132,11 @@ struct AccountabilityPartnerView: View {
                         Button(action: {
                             UIApplication.shared.dismissKeyboard()
                             Task {
-                                await viewModel.sendTimeRequest(
-                                    phoneNumber: UserViewModel.accountabilityPartner.phoneNumber ?? "",
-                                    userName: UserViewModel.userProfile.name ?? "",
-                                    accountabilityPartnerName: UserViewModel.accountabilityPartner.name ?? "",
-                                    note: "")
+//                                await viewModel.sendTimeRequest(
+//                                    phoneNumber: UserViewModel.accountabilityPartner.phoneNumber ?? "",
+//                                    userName: UserViewModel.userProfile.name ?? "",
+//                                    accountabilityPartnerName: UserViewModel.accountabilityPartner.name ?? "",
+//                                    note: "")
                             }
                         })
                         {

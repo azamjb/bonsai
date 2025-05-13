@@ -61,6 +61,7 @@ struct ActivityReportView: View {
     )
 
     @State private var analyticsRange: AnalyticsDisplaysType = .daily
+    @State private var refreshID = UUID()
 
     var body: some View {
        
@@ -101,7 +102,6 @@ struct ActivityReportView: View {
                     .padding(.bottom, 25)
                     .padding(.top, 25)
                     
-                    
                     if (hasAccountabilityPartner) {
                         
                         Group {
@@ -122,7 +122,7 @@ struct ActivityReportView: View {
                                     .font(.system(size: 10))
                             }
                             
-                            dailyBoundaryExtensionsView(model: screenTime.getDailyBoundaryExtensionsModel())
+                            dailyBoundaryExtensionsView(models: screenTime.getDailyBoundaryExtensionsModels())
                                 .padding(.bottom, 30)
                             
                         }
@@ -228,6 +228,7 @@ struct ActivityReportView: View {
                     
                     
                 }
+                .id(refreshID)
                 .navigationBarBackButtonHidden(true)
                 .padding(.horizontal, 18)
             }
@@ -242,20 +243,27 @@ struct ActivityReportView: View {
                         print("Failed to request authorization: \(error)")
                     }
                 }
+                
+                refreshID = UUID()
             }
         
     }
-    
-    private func dailyBoundaryExtensionsView(model: DailyBoundaryExtensionsModel) -> some View {
+   
+    private func dailyBoundaryExtensionsView(models: [DailyBoundaryExtensionsModel]) -> some View {
         HStack(spacing: 1) {
-            extensionCountView(color: "0x1E2368", day: "MON", count: model.monday.count)
-            extensionCountView(color: "0x454380", day: "TUE", count: model.tuesday.count)
-            extensionCountView(color: "0x7D4077", day: "WED", count: model.wednesday.count)
-            extensionCountView(color: "0x9D3B6A", day: "THU", count: model.thursday.count)
-            extensionCountView(color: "0xDB6552", day: "FRI", count: model.friday.count)
-            extensionCountView(color: "0xE56829", day: "SAT", count: model.saturday.count)
-            extensionCountView(color: "0xC95102", day: "SUN", count: model.sunday.count)
+            extensionCountView(color: "0x1E2368", day: "MON", count: getAmountOfExtensionsForWeekday(weekday: .monday, models: models))
+            extensionCountView(color: "0x454380", day: "TUE", count: getAmountOfExtensionsForWeekday(weekday: .tuesday, models: models))
+            extensionCountView(color: "0x7D4077", day: "WED", count: getAmountOfExtensionsForWeekday(weekday: .wednesday, models: models))
+            extensionCountView(color: "0x9D3B6A", day: "THU", count: getAmountOfExtensionsForWeekday(weekday: .thursday, models: models))
+            extensionCountView(color: "0xDB6552", day: "FRI", count: getAmountOfExtensionsForWeekday(weekday: .friday, models: models))
+            extensionCountView(color: "0xE56829", day: "SAT", count: getAmountOfExtensionsForWeekday(weekday: .saturday, models: models))
+            extensionCountView(color: "0xC95102", day: "SUN", count: getAmountOfExtensionsForWeekday(weekday: .sunday, models: models))
         }
+    }
+    
+    private func getAmountOfExtensionsForWeekday(weekday: Weekday, models: [DailyBoundaryExtensionsModel]) -> Int {
+        let models = models.filter({ areDatesSameDay(date1: $0.extendedDateTimeUtc, date2: (getDateInWeekStartingFromThisMonday(weekday: weekday) ?? Date.distantFuture)) })
+        return models.count
     }
     
     private func extensionCountView(color: String, day: String, count: Int) -> some View {

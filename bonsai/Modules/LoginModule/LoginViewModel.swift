@@ -33,8 +33,8 @@ import SwiftUICore
             
             let loginResponse = try await accountApi.login(request: LoginRequest(email: email, password: password))
             
-            UserDefaults.standard.set(loginResponse.bearer, forKey: LocalStorageKeys.bearer)
-            UserDefaults.standard.set(loginResponse.userId, forKey: LocalStorageKeys.userId)
+            UserDefaults.standard.set(loginResponse.bearer, forKey: BEARER_STRING)
+            UserDefaults.standard.set(loginResponse.userId, forKey: USER_ID_STRING)
             
             navGuardService.isLoggedIn = true
             
