@@ -10,12 +10,6 @@
 		242A1CD12D271CB300D5CD5E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B76F620D2D040EB40092DA9E /* UIKit.framework */; };
 		242A1FC52D274E8200D5CD5E /* iPhoneNumberField in Frameworks */ = {isa = PBXBuildFile; productRef = 242A1FC42D274E8200D5CD5E /* iPhoneNumberField */; };
 		249650312D345D0D0091B4F4 /* DigitEntryView in Frameworks */ = {isa = PBXBuildFile; productRef = 249650302D345D0D0091B4F4 /* DigitEntryView */; };
-		24B0B7432D997AC4000BBE68 /* GlobalStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24B0B7422D997AC1000BBE68 /* GlobalStructs.swift */; };
-		24B0B7442D997C0B000BBE68 /* GlobalStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24B0B7422D997AC1000BBE68 /* GlobalStructs.swift */; };
-		24B0B7452D997C0B000BBE68 /* GlobalStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24B0B7422D997AC1000BBE68 /* GlobalStructs.swift */; };
-		24B0B7462D997C0B000BBE68 /* GlobalStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24B0B7422D997AC1000BBE68 /* GlobalStructs.swift */; };
-		24B0B7472D997C0B000BBE68 /* GlobalStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24B0B7422D997AC1000BBE68 /* GlobalStructs.swift */; };
-		24B0B7482D997C0B000BBE68 /* GlobalStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24B0B7422D997AC1000BBE68 /* GlobalStructs.swift */; };
 		A78D2F1F2DC46B6E001375B1 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = A78D2F1E2DC46B6E001375B1 /* GRDB */; };
 		B71551412CF96667000AFACB /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71551012CF957FF000AFACB /* DeviceActivity.framework */; };
 		B71551492CF96667000AFACB /* deviceactivitymonitor.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B71551402CF96667000AFACB /* deviceactivitymonitor.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };

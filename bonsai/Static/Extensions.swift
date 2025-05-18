@@ -19,39 +19,56 @@ extension String {
 
 extension Date {
     static func today() -> Date {
-      return Date()
+        return Date()
     }
-
+    
     func next(_ weekday: Weekday, considerToday: Bool = false) -> Date {
         return get(.next, weekday, considerToday: considerToday)
     }
-
+    
     func previous(_ weekday: Weekday, considerToday: Bool = false) -> Date {
         return get(.previous, weekday, considerToday: considerToday)
     }
-
+    
     func get(_ direction: SearchDirection, _ weekDay: Weekday, considerToday consider: Bool = false) -> Date {
         let dayName = weekDay.fullName.lowercased()
-
+        
         let weekdaysName = getWeekDaysInEnglish().map { $0.lowercased() }
-
+        
         assert(weekdaysName.contains(dayName), "weekday symbol should be in form \(weekdaysName)")
-
+        
         let searchWeekdayIndex = weekdaysName.firstIndex(of: dayName)! + 1
-
+        
         let calendar = Calendar(identifier: .gregorian)
-
+        
         if consider && calendar.component(.weekday, from: self) == searchWeekdayIndex {
-          return self
+            return self
         }
-
+        
         var nextDateComponent = calendar.dateComponents([.hour, .minute, .second], from: self)
         nextDateComponent.weekday = searchWeekdayIndex
-
+        
         let date = calendar.nextDate(after: self, matching: nextDateComponent, matchingPolicy: .nextTime, direction: direction.calendarSearchDirection)
         return date!
     }
-
+    
+    static var yesterday: Date { return Date().dayBefore }
+    static var tomorrow:  Date { return Date().dayAfter }
+    var dayBefore: Date {
+        return Calendar.current.date(byAdding: .day, value: -1, to: noon)!
+    }
+    var dayAfter: Date {
+        return Calendar.current.date(byAdding: .day, value: 1, to: noon)!
+    }
+    var noon: Date {
+        return Calendar.current.date(bySettingHour: 12, minute: 0, second: 0, of: self)!
+    }
+    var month: Int {
+        return Calendar.current.component(.month,  from: self)
+    }
+    var isLastDayOfMonth: Bool {
+        return dayAfter.month != month
+    }
 }
 
 extension Date {

@@ -146,7 +146,7 @@ public class ScreenTimeService: ObservableObject {
     }
     
     public func getSentExtensionCodes() -> [SentExtensionCodeModel] {
-        if let data = sharedDefaults!.data(forKey: ACTIVE_EXTENSION_CODES_STRING) {
+        if let data = sharedDefaults!.data(forKey: SENT_EXTENSION_CODES_STRING) {
             do {
                 let activeCodeModel = try JSONDecoder().decode([SentExtensionCodeModel].self, from: data)
                 return activeCodeModel
@@ -175,7 +175,7 @@ public class ScreenTimeService: ObservableObject {
 
         sentExtensionCodeModels.append(SentExtensionCodeModel(boundaryId: boundaryId, code: code, sentDateTimeUtc: Date()))
 
-        sharedDefaults!.set(try! JSONEncoder().encode(sentExtensionCodeModels), forKey: ACTIVE_EXTENSION_CODES_STRING)
+        sharedDefaults!.set(try! JSONEncoder().encode(sentExtensionCodeModels), forKey: SENT_EXTENSION_CODES_STRING)
     }
     
     public func getCodeForBoundaryId(boundaryId: UUID) -> String {

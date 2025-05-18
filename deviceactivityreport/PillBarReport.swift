@@ -65,7 +65,7 @@ struct TimeLimitSliderView: View {
     }
     
     private func hasExtensionCodeBeenSentForBoundary(id: UUID) -> Bool {
-        if let activeCodesData = sharedDefaults!.data(forKey: ACTIVE_EXTENSION_CODES_STRING) {
+        if let activeCodesData = sharedDefaults!.data(forKey: SENT_EXTENSION_CODES_STRING) {
             do {
                 let activeCodeModels = try JSONDecoder().decode([SentExtensionCodeModel].self, from: activeCodesData)
                 return activeCodeModels.contains(where: { areDatesSameDay(date1: $0.sentDateTimeUtc, date2: Date()) && $0.boundaryId == id })

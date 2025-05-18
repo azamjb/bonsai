@@ -119,8 +119,7 @@ class ProfileViewModel: ObservableObject {
     
     public func getTotalDaysWithoutExtension() -> Int {
         if let signUpDateData = sharedDefaults!.data(forKey: SIGN_UP_DATE_STRING) {
-            var signUpDate = try! JSONDecoder().decode(Date.self, from: signUpDateData)
-            signUpDate = Calendar.current.date(byAdding: .day, value: -35, to: Date())!
+            let signUpDate = try! JSONDecoder().decode(Date.self, from: signUpDateData)
             
             // get all extensions after the start date
             let allExtensions = screenTime.getDailyBoundaryExtensionsModels()
@@ -153,5 +152,9 @@ class ProfileViewModel: ObservableObject {
             sharedDefaults!.set(try! JSONEncoder().encode(Date()), forKey: SIGN_UP_DATE_STRING)
             return 0
         }
+    }
+    
+    public func getExtensionRequestsCount() -> Int {
+        return screenTime.getSentExtensionCodes().count 
     }
 }

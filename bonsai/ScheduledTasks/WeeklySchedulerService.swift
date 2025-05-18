@@ -87,15 +87,12 @@ class WeeklySchedulerService {
         
         taskGroup.enter()
         DispatchQueue.global(qos: .userInitiated).async {
-            self.scheduleDebugNotification(for: Date(), message: "Weekly Monday operation executed successfully")
-            
             success = true
             taskGroup.leave()
         }
         
         // Set up expiration handler
         task.expirationHandler = {
-            self.scheduleDebugNotification(for: Date(), message: "Weekly operation task expired")
             taskGroup.leave()
         }
         

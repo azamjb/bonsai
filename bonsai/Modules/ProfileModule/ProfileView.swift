@@ -141,11 +141,11 @@ struct ProfileView: View {
                             Spacer()
 
                             VStack(alignment: .leading) {
-                                Text("0")
+                                Text(String(viewModel.getExtensionRequestsCount()))
                                     .font(.system(size: 40))
-                                Text("HOURS")
+                                Text("EXTENSIONS")
                                     .font(.system(size: 10))
-                                Text("BACK")
+                                Text("REQUESTED")
                                     .font(.system(size: 10))
                             }
 

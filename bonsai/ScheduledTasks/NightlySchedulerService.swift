@@ -59,9 +59,6 @@ class NightlySchedulerService {
             
             // Request notification permissions if needed
             UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in }
-            
-            // Schedule local notification for debug purposes
-            scheduleDebugNotification(for: nextMidnight, message: "Unshield task scheduled for midnight")
         } catch {
             print("Could not schedule app unshield: \(error)")
         }
@@ -78,12 +75,10 @@ class NightlySchedulerService {
         DispatchQueue.global(qos: .userInitiated).async {
             self.unshieldApps()
             self.startMonitoringBoundariesForToday()
+            self.deactivateExtensionCodesForYesterday()
             
             // Log successful execution
             self.sharedDefaults!.set(Date(), forKey: LAST_SUCCESSFUL_UNSHIELD_STRING)
-            
-            // Reset the sent codes for today
-            self.sharedDefaults!.set(try! JSONEncoder().encode([SentExtensionCodeModel]()), forKey: ACTIVE_EXTENSION_CODES_STRING)
             
             success = true
             taskGroup.leave()
@@ -158,6 +153,19 @@ class NightlySchedulerService {
         }
         
         self.sharedDefaults!.set(try! JSONEncoder().encode(allBoundaries), forKey: BOUNDARIES_STRING)
+    }
+    
+    private func deactivateExtensionCodesForYesterday() {
+        var extensionCodes = screenTime.getSentExtensionCodes()
+        let yesterday = Date.yesterday
+        
+        extensionCodes = extensionCodes.filter({ areDatesSameDay(date1: yesterday, date2: $0.sentDateTimeUtc) }).map { code in
+            var updatedCode = code
+            updatedCode.isCodeValid = false
+            return updatedCode
+        }
+        
+        sharedDefaults!.set(try! JSONEncoder().encode(extensionCodes), forKey: SENT_EXTENSION_CODES_STRING)
     }
     
     private func scheduleDebugNotification(for date: Date, message: String) {

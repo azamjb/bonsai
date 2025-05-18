@@ -60,6 +60,23 @@ struct TopAppsView: View {
     }
 }
 
+struct AppTokenIconStyle: LabelStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.icon
+            .scaleEffect(1.5)
+            .foregroundColor(.blue)
+    }
+}
+
+struct AppTokenTitleStyle: LabelStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.title
+            .font(.system(size: 11))
+            .foregroundColor(.primary)
+            .lineLimit(1)
+    }
+}
+
 struct AppReportDisplay: View {
     let appToken: ApplicationToken
     let displayTime: String
@@ -73,25 +90,18 @@ struct AppReportDisplay: View {
                 
                 HStack(alignment: .center, spacing: 8) {
                     Label(appToken)
-                        .labelStyle(.iconOnly)
-                        .scaleEffect(1.5)
-                        .frame(width: 36, height: 36)
-                        .background(Color.white.opacity(0.0001))
+                        .labelStyle(AppTokenIconStyle())
                     
                     VStack(alignment: .leading, spacing: 4) {
                         Label(appToken)
-                            .labelStyle(.titleOnly)
-                            .font(.system(size: 12))
-                            .lineLimit(1)
-                            .frame(width: 100, height: 16, alignment: .leading)
-                            .truncationMode(.tail)
+                            .labelStyle(AppTokenTitleStyle())
                         
                         Text(displayTime)
                             .font(.system(size: 11))
                             .foregroundColor(.primary)
                             .frame(height: 14, alignment: .leading)
                     }
-                    .frame(width: 100, alignment: .leading)
+                    .frame(maxWidth: 100, alignment: .leading)
                 }
             }
         }
