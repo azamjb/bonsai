@@ -79,10 +79,7 @@ struct ProfileCreation4View: View {
                             )
                             .simultaneousGesture(TapGesture().onEnded {
                         Task {
-
-                            // HEREEEEEEE
                             let userName = UserDefaults.standard.string(forKey: ProfileKey.name.rawValue)
-                            print("userNAME: " +  (userName ?? ""))
                             await AccountabilityPartnerviewModel.sendInvite(phoneNumber: accountabilityPartnerPhone, userName: userName ?? "", accountabilityPartnerName: accountabilityPartnerName)
 
                             UserDefaults.standard.set(false, forKey: "hasAccountabilityPartner") // set to false until accountability partner accepts invite (sends request code)

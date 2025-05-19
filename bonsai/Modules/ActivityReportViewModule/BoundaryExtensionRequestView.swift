@@ -12,6 +12,8 @@ struct BoundaryExtensionRequestView: View {
     @State private var pin: String = ""
     @FocusState private var isFieldFocused: Bool
     @AppStorage("isProfileCreated") private var isProfileCreated = false
+    
+    @State public var showNoBoundariesSelectedError: Bool = false
 
     var body: some View {
         NavigationStack {
@@ -20,11 +22,11 @@ struct BoundaryExtensionRequestView: View {
                     VStack(alignment: .leading) {
                         Spacer()
                         HeaderView()
-                        SelectAppsSection(screenTime: screenTime, checkedItems: $checkedItems)
+                        SelectAppsSection(screenTime: screenTime, checkedItems: $checkedItems, showErrorMessage: $showNoBoundariesSelectedError)
                         NoteSection(requestNote: $requestNote, isFieldFocused: _isFieldFocused)
-                        SendCodeButton(viewModel: viewModel, userViewModel: UserViewModel, requestNote: $requestNote, checkedItems: $checkedItems)
+                        SendCodeButton(viewModel: viewModel, userViewModel: UserViewModel, requestNote: $requestNote, checkedItems: $checkedItems, showErrorMessage: $showNoBoundariesSelectedError)
                         EnterCodeSection(pin: $pin, checkedItems: checkedItems, viewModel: viewModel, screenTime: screenTime)
-                        SentRequestCodesSection(sentExtensionRequestsThisWeek: screenTime.getSentExtensionRequestsThisWeek())
+                        SentRequestCodesSection(sentExtensionRequestsThisWeek: screenTime.getSentExtensionCodesAsBoundaryNameAndDateDict())
                     }
                     .padding(.horizontal, 40)
                 }
@@ -87,6 +89,7 @@ struct HeaderView: View {
 struct SelectAppsSection: View {
     @ObservedObject var screenTime: ScreenTimeService
     @Binding var checkedItems: [Boundary: Bool]
+    @Binding var showErrorMessage: Bool
 
     var body: some View {
         VStack {
@@ -110,6 +113,7 @@ struct SelectAppsSection: View {
 
                         CheckboxView(
                             isChecked: isCheckedBinding,
+                            showErrorMessage: $showErrorMessage,
                             label: Boundary.givenName
                         )
                     }
@@ -146,32 +150,47 @@ struct SendCodeButton: View {
     @ObservedObject var userViewModel: ProfileViewModel
     @Binding var requestNote: String
     @Binding var checkedItems: [Boundary: Bool]
+    @Binding var showErrorMessage: Bool
     
     var body: some View {
-        Button {
-            Task {
-                await viewModel.sendTimeRequest(
-                    phoneNumber: userViewModel.accountabilityPartner.phoneNumber ?? "",
-                    userName: userViewModel.userProfile.name ?? "",
-                    accountabilityPartnerName: userViewModel.accountabilityPartner.name ?? "",
-                    note: requestNote,
-                    boundaries: checkedItems.filter({ $0.value == true }).map({ $0.key })
-                )
-                requestNote = ""
+        VStack {
+            Button {
+                if checkedItems.filter({ $0.value }).isEmpty {
+                    showErrorMessage = true
+                } else {
+                    showErrorMessage = false
+                    
+                    Task {
+                        await viewModel.sendTimeRequest(
+                            phoneNumber: userViewModel.accountabilityPartner.phoneNumber ?? "",
+                            userName: userViewModel.userProfile.name ?? "",
+                            accountabilityPartnerName: userViewModel.accountabilityPartner.name ?? "",
+                            note: requestNote,
+                            boundaries: checkedItems.filter({ $0.value == true }).map({ $0.key })
+                        )
+                        
+                        requestNote = ""
+                    }
+                }
+            } label: {
+                Text("send code to partner")
+                    .font(.system(size: 15))
+                    .foregroundColor(.primary)
+                    .padding(.vertical, 15)
+                    .padding(.horizontal, 80)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20)
+                            .stroke(Color.primary, lineWidth: 1)
+                    )
+                    .padding(.bottom, 30)
             }
-        } label: {
-            Text("send code to partner")
-                .font(.system(size: 15))
-                .foregroundColor(.primary)
-                .padding(.vertical, 15)
-                .padding(.horizontal, 80)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 20)
-                        .stroke(Color.primary, lineWidth: 1)
-                )
+            
+            if showErrorMessage {
+                Text("Please select at least one boundary.")
+                    .foregroundColor(.red)
+            }
         }
-        .padding(.bottom, 30)
     }
 }
 
@@ -187,7 +206,7 @@ struct SentRequestCodesSection: View {
                 .padding(.bottom, 10)
 
             VStack {
-                Text("SENT REQUEST CODES TODAY")
+                Text("SENT REQUEST CODES")
                     .font(.system(size: 15))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.bottom, 12)
@@ -199,6 +218,7 @@ struct SentRequestCodesSection: View {
                             .font(.system(size: 15))
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .foregroundColor(.secondary)
+                            .padding(.bottom, 20)
                     } else {
                         ForEach(0..<sentExtensionRequestsThisWeek.count, id: \.self) { index in
                             let (name, date) = sentExtensionRequestsThisWeek[index]
@@ -326,6 +346,7 @@ struct PinEntryView: View {
 
 struct CheckboxView: View {
     @Binding var isChecked: Bool
+    @Binding var showErrorMessage: Bool
     let label: String
 
     var body: some View {
@@ -334,11 +355,13 @@ struct CheckboxView: View {
                 .font(.system(size: 20))
                 .onTapGesture {
                     isChecked.toggle()
+                    showErrorMessage = false
                 }
             Text(label)
                 .font(.system(size: 15))
                 .onTapGesture {
                     isChecked.toggle()
+                    showErrorMessage = false
                 }
         }
         .contentShape(Rectangle())

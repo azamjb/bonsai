@@ -18,7 +18,7 @@ public struct BonsaiButtonRegular: View {
         }) {
             Rectangle()
                 .foregroundColor(.clear)
-                .frame(width: 299, height: 51)
+                .frame(width: 300, height: 50)
                 .cornerRadius(30)
                 .overlay(
                     RoundedRectangle(cornerRadius: 30)
@@ -44,7 +44,7 @@ public struct BonsaiButtonSmall: View {
                 .font(.system(size: 15))
                 .foregroundColor(.primary)
                 .padding(.vertical, 10)
-                .padding(.horizontal, 80)
+                .frame(minWidth: 300)
                 .overlay(
                     RoundedRectangle(cornerRadius: 20)
                         .stroke(Color.primary, lineWidth: 1)
@@ -68,7 +68,7 @@ public struct BonsaiNavLinkSmall<Destination: View>: View {
                 .font(.system(size: 16))
                 .foregroundColor(.primary)
                 .padding(.vertical, 10)
-                .padding(.horizontal, 60)
+                .frame(minWidth: 300)
                 .overlay(
                     RoundedRectangle(cornerRadius: 20)
                         .stroke(Color.primary, lineWidth: 1)

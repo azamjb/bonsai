@@ -7,7 +7,7 @@ struct CustomBackToolbarModifier: ViewModifier {
         content
             .navigationBarBackButtonHidden(true)
             .onAppear {
-                setTransparentNavBar()
+                //setTransparentNavBar()
                 enableSwipeBackGesture()
             }
             .toolbar {

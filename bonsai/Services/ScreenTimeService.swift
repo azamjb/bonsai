@@ -57,7 +57,6 @@ public class ScreenTimeService: ObservableObject {
         Task { await fetchProduct() }
         
         setGroupDisplays()
-        print(getSentExtensionCodes())
     }
     
     public func getGroupDisplay(getBlockedOnly: Bool) -> [Boundary] {
@@ -376,17 +375,13 @@ public class ScreenTimeService: ObservableObject {
         setGroupDisplays()
     }
     
-    public func getSentExtensionRequestsThisWeek() -> [(String, Date)] {
-        let today = Date()
-        let sentThisWeek = getSentExtensionCodes().filter({ areDatesSameDay(date1: $0.sentDateTimeUtc, date2: today) })
-        
-        let tuple = sentThisWeek.compactMap({ sentCode in
-            
+    public func getSentExtensionCodesAsBoundaryNameAndDateDict() -> [(String, Date)] {
+        let tuple = getSentExtensionCodes().compactMap({ sentCode in
             if let boundary = getBoundaryById(id: sentCode.boundaryId) {
                 return (boundary.givenName, sentCode.sentDateTimeUtc)
+            } else {
+                return ("Deleted Boundary", sentCode.sentDateTimeUtc)
             }
-            
-            return nil
         }).sorted(by: { $0.1 < $1.1 })
         
         return tuple
