@@ -32,6 +32,7 @@ protocol TokenServiceProtocol {
     func fetchTokenBalance(forUserWithId userId: String) async throws -> Int
     func spendToken(forUserWithId userId: String, amount: Int) async throws -> Bool
     func grantTokens(forUserWithId userId: String, amount: Int) async throws -> Bool
+    func purchaseTokens(forUserWithId userId: String, amount: Int, transactionId: String) async throws
 }
 
 class TokenService: TokenServiceProtocol {
@@ -97,6 +98,26 @@ class TokenService: TokenServiceProtocol {
             return false
         }
         return true
+    }
+    
+    func purchaseTokens(forUserWithId userId: String, amount: Int, transactionId: String) async throws {
+        do {
+            var tokenBalance = try await fetchTokenBalance(forUserWithId: userId)
+            tokenBalance += amount
+            let transaction = TokenTransaction(
+                id: UUID(),
+                userId: userId,
+                transactionId: transactionId,
+                timestamp: Date(),
+                netTokenChange: amount,
+                balanceAfterChange: tokenBalance,
+                type: .purchase
+            )
+            try storage.saveTokenTransaction(forUserId: userId, transaction)
+        } catch {
+            print("Failed to purchase tokens to user: \(error.localizedDescription)")
+            throw error
+        }
     }
 }
 
