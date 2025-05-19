@@ -44,9 +44,11 @@ struct OverrideBoundaryView: View {
                         .padding(.bottom, 6)
                     
                     BonsaiButtonSmall(buttonText: " override limits ") {
-                        screenTime.clearShieldedApps()
                         Task {
-                            await viewModel.spendToken(tokenSpendAmount: 1)
+                            var successfulSpend = await viewModel.spendToken(tokenSpendAmount: 1)
+                            if successfulSpend {
+                                screenTime.clearShieldedApps()
+                            }
                         }
                     }
                     .padding(.bottom, 5)

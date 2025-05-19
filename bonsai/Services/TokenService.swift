@@ -58,7 +58,6 @@ class TokenService: TokenServiceProtocol {
         return 0
     }
 
-
     func spendToken(forUserWithId userId: String, amount: Int) async throws -> Bool {
         var tokenBalance = try await fetchTokenBalance(forUserWithId: userId)
         if tokenBalance >= amount {
@@ -74,7 +73,7 @@ class TokenService: TokenServiceProtocol {
             )
             try storage.saveTokenTransaction(forUserId: userId, transaction)
         } else {
-            return false 
+            return false
         }
         return true
     }
