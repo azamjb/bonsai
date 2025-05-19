@@ -10,6 +10,7 @@ import SwiftUI
 struct OverrideBoundaryView: View {
     @StateObject var viewModel: OverrideBoundaryViewModel = OverrideBoundaryViewModel()
     @ObservedObject var screenTime: ScreenTimeService
+    @State private var isPaymentSheetPresented = false
     
     init(_ screenTime: ScreenTimeService) {
         self.screenTime = screenTime
@@ -37,12 +38,12 @@ struct OverrideBoundaryView: View {
                     Text("OVERRIDE TOKENS")
                         .fontWeight(.medium)
                         .font(.system(size: 20))
-                    
+                     
                     Text("Override tokens will override all set boundaries until 12:00 am. ")
                         .font(.system(size: 12))
                         .padding(.bottom, 6)
                     
-                    BonsaiButtonSmall(buttonText: "override limits") {
+                    BonsaiButtonSmall(buttonText: " override limits ") {
                         screenTime.clearShieldedApps()
                         Task {
                             await viewModel.spendToken(tokenSpendAmount: 1)
@@ -51,15 +52,12 @@ struct OverrideBoundaryView: View {
                     .padding(.bottom, 5)
                     .frame(maxWidth: .infinity, alignment: .center)
                     
-                    BonsaiNavLinkSmall(buttonText: "    purchase tokens ", destination: BoundaryExtensionRequestView())
-                        .frame(maxWidth: .infinity, alignment: .center)
-                    
-                    Button ("Free Tokens"){
-                        Task {
-                            await viewModel.grantTokens(3)
-                        }
+                    BonsaiButtonSmall(buttonText: "purchase tokens") {
+                        isPaymentSheetPresented.toggle()
                     }
-                    
+                    .padding(.bottom, 5)
+                    .frame(maxWidth: .infinity, alignment: .center)
+
                     // need to make this a page eventually
                     Text("why tokens")
                         .font(.system(size: 12))
@@ -90,6 +88,15 @@ struct OverrideBoundaryView: View {
                     .frame(width: 165, alignment: .topLeading)
             }
             .padding(.horizontal, 45)
+        }
+        .sheet(isPresented: $isPaymentSheetPresented) {
+            PurchaseTokenBottomSheetView()
+                .presentationDetents([.fraction(0.60)])
+        }
+        .onChange(of: isPaymentSheetPresented) {
+            if !isPaymentSheetPresented {
+                viewModel.loadData()
+            }
         }
         
         
@@ -203,3 +210,5 @@ struct TokenServiceView: View {
         }
     }
 }
+
+

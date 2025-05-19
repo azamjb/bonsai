@@ -9,6 +9,7 @@ import SwiftUICore
 import SwiftUI
 
 public struct BonsaiButtonRegular: View {
+    var contrastedColorTheme: Bool = false
     var buttonText: String
     var onClick: () -> Void
     
@@ -22,11 +23,11 @@ public struct BonsaiButtonRegular: View {
                 .cornerRadius(30)
                 .overlay(
                     RoundedRectangle(cornerRadius: 30)
-                        .stroke(Color.primary, lineWidth: 1)
+                        .stroke(contrastedColorTheme ? Color(.systemBackground) : Color.primary, lineWidth: 1)
                 )
                 .overlay(
                     Text(buttonText)
-                        .foregroundColor(.primary)
+                        .foregroundColor(contrastedColorTheme ? Color(.systemBackground) : Color.primary)
                 )
         }
     }
