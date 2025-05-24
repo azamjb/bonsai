@@ -21,18 +21,29 @@ struct OverrideBoundaryView: View {
         ScrollView{
             VStack(alignment: .leading) {
                 // Title stack with Crash!!
-                VStack(alignment: .leading) {
-                    Text("CRASH")
-                        .fontWeight(.bold)
-                        .font(.system(size: 80))
-                    Text("OUT")
-                        .font(.system(size: 40))
-                        .padding(.top,-70)
-                        .padding(.horizontal, 10)
+                ZStack(alignment: .leading) {
+                    VStack(alignment: .leading) {
+                        Text("CRASH")
+                            .fontWeight(.heavy)
+                            .font(.system(size: 80))
+                            .frame(maxWidth: .infinity, alignment: .topLeading)
+                        
+                        Text("OUT")
+                            .fontWeight(.semibold)
+                            .font(.system(size: 40))
+                            .padding(.top, -70)
+                            .padding(.horizontal, 10)
+                            .zIndex(1)
+                    }
                     
-                    Text("Crash will go here")
+                    Image("crash_transparent_bgd")
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 320, height: 170, alignment: .center)
+                        .offset(x: -20, y: 125)
+                        .zIndex(0)
                 }
-                
+                .padding(.bottom, 120)
                 
                 VStack(alignment: .leading) {
                     Text("OVERRIDE TOKENS")
@@ -45,7 +56,7 @@ struct OverrideBoundaryView: View {
                     
                     BonsaiButtonSmall(buttonText: " override limits ") {
                         Task {
-                            var successfulSpend = await viewModel.spendToken(tokenSpendAmount: 1)
+                            let successfulSpend = await viewModel.spendToken(tokenSpendAmount: 1)
                             if successfulSpend {
                                 screenTime.clearShieldedApps()
                             }
