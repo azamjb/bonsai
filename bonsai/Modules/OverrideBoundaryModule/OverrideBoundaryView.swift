@@ -70,13 +70,16 @@ struct OverrideBoundaryView: View {
                     }
                     .padding(.bottom, 5)
                     .frame(maxWidth: .infinity, alignment: .center)
-
-                    // need to make this a page eventually
-                    Text("why tokens")
-                        .font(.system(size: 12))
-                        .underline()
-                        .foregroundColor(Color(red: 0, green: 0.1, blue: 0.54))
-                        .frame(maxWidth: .infinity, alignment: .center)
+                    
+                    NavigationLink(destination: FreqAskedQuestionsView(scrollToID: "manual_token_use")) {
+                        VStack(alignment: .leading) {
+                            Text("why tokens")
+                                .font(.system(size: 12))
+                                .underline()
+                                .foregroundColor(Color(red: 0, green: 0.1, blue: 0.54))
+                                .frame(maxWidth: .infinity, alignment: .center)
+                        }
+                    }
                 }
                 .padding(.vertical, 30)
                 
