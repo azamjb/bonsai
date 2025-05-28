@@ -70,10 +70,12 @@ struct AppTokenIconStyle: LabelStyle {
 
 struct AppTokenTitleStyle: LabelStyle {
     func makeBody(configuration: Configuration) -> some View {
-        configuration.title
-            .font(.system(size: 11))
-            .foregroundColor(.primary)
-            .lineLimit(1)
+        HStack {
+            configuration.title
+        }
+        .font(.system(size: 11))
+        .foregroundColor(.primary)
+        .lineLimit(1)
     }
 }
 

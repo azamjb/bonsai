@@ -41,7 +41,8 @@ struct BoundaryEditorView: View {
                 selectedBoundary: selectedBoundary != nil ? $selectedBoundary : .constant(nil),
                 allBoundaries: $screenTime.boundariesSet,
                 modifiedBoundaries: $modifiedBoundaries,
-                isPresented: $showViewScreen
+                isPresented: $showViewScreen,
+                boundariesBeingDeleted: Binding.constant(boundaryIdsToDelete.map({ screenTime.getBoundaryById(id: $0) }))
             )
         }
         .customBackToolbar()
@@ -118,6 +119,8 @@ struct BoundaryEditorView: View {
                     .font(.system(size: 12))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 30)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
             }
             .padding(.top, 20)
         }
@@ -162,7 +165,7 @@ struct BoundaryEditorView: View {
                      self.selectedBoundary = boundary
                      self.showViewScreen = true
                  } label: {
-                     Label("", systemImage: "pencil")
+                     Label("", systemImage: "square.and.pencil")
                  }
              }
              .tint(.blue)

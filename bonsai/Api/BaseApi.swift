@@ -7,16 +7,10 @@
 import Foundation
 
 class BaseApi {
-    // Change this to your network IP for the wifi that your testing device and mac are connected to
-    let hostName = "192.168.2.24"
+    let apiBaseUrl: String = "https://bonsai-tp5h.onrender.com"
     
-    let apiBaseUrl: String
     var endpointControllerName: String {
         fatalError("Subclasses must override extensionName")
-    }
-
-    init() {
-        self.apiBaseUrl = "http://\(hostName):8080"
     }
     
     func getBaseUrl(endpoint: String) -> URL {

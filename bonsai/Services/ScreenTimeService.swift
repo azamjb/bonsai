@@ -150,11 +150,9 @@ public class ScreenTimeService: ObservableObject {
                 let activeCodeModel = try JSONDecoder().decode([SentExtensionCodeModel].self, from: data)
                 return activeCodeModel
             } catch {
-                print("failed to decode")
                 return []
             }
         } else {
-            print("non")
             return []
         }
     }
@@ -202,7 +200,10 @@ public class ScreenTimeService: ObservableObject {
                 let dailyExtensionsModels  = try JSONDecoder().decode([DailyBoundaryExtensionsModel].self, from: dailyExtensionsData)
                 return dailyExtensionsModels
             } catch {
-                sharedDefaults?.removeObject(forKey: DAILY_BOUNDARY_EXTENSIONS_STRING)
+                let emptyArr: [DailyBoundaryExtensionsModel] = []
+                
+                let encoded = try! JSONEncoder().encode(emptyArr)
+                sharedDefaults?.set(encoded, forKey: DAILY_BOUNDARY_EXTENSIONS_STRING)
                 return []
             }
         } else {
@@ -382,7 +383,7 @@ public class ScreenTimeService: ObservableObject {
             } else {
                 return ("Deleted Boundary", sentCode.sentDateTimeUtc)
             }
-        }).sorted(by: { $0.1 < $1.1 })
+        }).sorted(by: { $0.1 > $1.1 })
         
         return tuple
     }

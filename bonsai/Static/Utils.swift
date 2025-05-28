@@ -49,7 +49,6 @@ func DeepCopy<T:Codable>(_ object:T) -> T?{
        return try JSONDecoder().decode(T.self, from: json)
    }
    catch let error{
-       print(error)
        return nil
    }
 }
@@ -71,7 +70,6 @@ public func timeInUserTimeZone12hour(date: Date) -> String {
 }
 
 public func mediumDateTimeFormat(date: Date) -> String {
-    print(date)
     let fmtr = DateFormatter()
     fmtr.dateFormat = "MMM d, yyyy h:mm a"
     fmtr.timeZone = TimeZone.current

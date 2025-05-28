@@ -26,11 +26,14 @@ struct bonsaiApp: App {
 
     var body: some Scene {
         WindowGroup {
-            RootView()
-                .environmentObject(screenTime)
-                .environmentObject(quoteViewModel)
-                .environmentObject(notificationHandler)
-            //ContentView()
+            ZStack {
+                RootView()
+                    .environmentObject(screenTime)
+                    .environmentObject(quoteViewModel)
+                    .environmentObject(notificationHandler)
+                    .environmentObject(DeviceReportsManager.shared)
+                //ContentView()
+            }
         }
     }
 

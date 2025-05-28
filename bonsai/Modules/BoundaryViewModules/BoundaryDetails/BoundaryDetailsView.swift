@@ -14,6 +14,7 @@ struct BoundaryDetailsView: View {
     @Binding var allBoundaries: [Boundary]
     @Binding var modifiedBoundaries: [Boundary]
     @Binding var isPresented: Bool
+    @Binding var boundariesBeingDeleted: [Boundary?]
     
     @Environment(\.presentationMode) var presentationMode
     
@@ -30,12 +31,14 @@ struct BoundaryDetailsView: View {
     init(selectedBoundary: Binding<Boundary?>,
          allBoundaries: Binding<[Boundary]>,
          modifiedBoundaries: Binding<[Boundary]>,
-         isPresented: Binding<Bool>
+         isPresented: Binding<Bool>,
+         boundariesBeingDeleted: Binding<[Boundary?]>
     ) {
         self._selectedBoundary = selectedBoundary
         self._allBoundaries = allBoundaries
         self._modifiedBoundaries = modifiedBoundaries
         self._isPresented = isPresented
+        self._boundariesBeingDeleted = boundariesBeingDeleted
         
         let defaultBoundary = Boundary(
             id: UUID(),
@@ -255,7 +258,7 @@ struct BoundaryDetailsView: View {
     }
     
     private func selectedTokensAreUnique() -> Bool {
-        return screenTime.boundariesSet.filter({ boundary in boundary.id != boundaryToUse.id }).contains(where: { boundary in
+        return screenTime.boundariesSet.filter({ boundary in boundary.id != boundaryToUse.id && !boundariesBeingDeleted.map({ $0?.id }).contains(boundary.id) }).contains(where: { boundary in
             let hasMatchingAppTokens = !$activitySelection.applicationTokens.wrappedValue.isDisjoint(with: boundary.appTokens)
             let hasMatchingCategoryTokens = !$activitySelection.categoryTokens.wrappedValue.isDisjoint(with: Set(boundary.categoryTokens))
             let hasMatchingWebDomainTokens = !$activitySelection.webDomainTokens.wrappedValue.isDisjoint(with: Set(boundary.webDomainTokens))
@@ -443,7 +446,7 @@ private struct DaysActiveEditor: View {
                     )
                     .frame(width: 24, height: 24)
                 
-                Text(day.label)
+                Text(day.fullName)
                     .font(.body)
                     .foregroundColor(.primary)
                 
@@ -473,6 +476,7 @@ private struct DaysActiveEditor: View {
 private struct TimeBoundaryEditor: View {
     @Binding var boundary: Boundary
     @Environment(\.presentationMode) var presentationMode
+    @State private var pickerMinutes: Int = 0
     
     var body: some View {
         VStack(spacing: 0) {
@@ -517,32 +521,24 @@ private struct TimeBoundaryEditor: View {
                 .background(Color(UIColor.systemGray5))
             
             HStack {
-                Text("HOURS")
-                    .fontWeight(.medium)
-                    .foregroundColor(.gray)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                
-                Text("MINUTES")
-                    .fontWeight(.medium)
-                    .foregroundColor(.gray)
-                    .frame(maxWidth: .infinity, alignment: .center)
-            }
-            .padding(.horizontal, 20)
-            .padding(.top, 10)
-            
-            HStack {
                 Picker("", selection: $boundary.hours){
                     ForEach(0..<8, id: \.self) { i in
                         Text("\(i) hours").tag(i)
                     }
-                }.pickerStyle(WheelPickerStyle())
+                }
+                .pickerStyle(WheelPickerStyle())
                 
                 Picker("", selection: $boundary.minutes){
                     ForEach(0..<60, id: \.self) { i in
-                        Text("\(i) min").tag(i)
+                        Text("\(i) mins").tag(i)
                     }
                 }
                 .pickerStyle(WheelPickerStyle())
+                // This should smoothly scroll to the new minutes value
+                .onChange(of: boundary.minutes) { _, newValue in
+                    boundary.minutes = 15
+                }
+                
             }.padding(.horizontal)        }
         .background(Color(UIColor.systemGray5))
         .cornerRadius(10)
@@ -582,7 +578,7 @@ private struct SelectedAppDisplay: View {
 struct BoundaryDetailsView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            BoundaryDetailsView(selectedBoundary: .constant(nil), allBoundaries: .constant([]), modifiedBoundaries: .constant([]), isPresented: .constant(true))
+            BoundaryDetailsView(selectedBoundary: .constant(nil), allBoundaries: .constant([]), modifiedBoundaries: .constant([]), isPresented: .constant(true), boundariesBeingDeleted: .constant([]))
         }
     }
 }

@@ -26,7 +26,7 @@ struct BoundaryExtensionRequestView: View {
                         NoteSection(requestNote: $requestNote, isFieldFocused: _isFieldFocused)
                         SendCodeButton(viewModel: viewModel, userViewModel: UserViewModel, requestNote: $requestNote, checkedItems: $checkedItems, showErrorMessage: $showNoBoundariesSelectedError)
                         EnterCodeSection(pin: $pin, checkedItems: checkedItems, viewModel: viewModel, screenTime: screenTime)
-                        SentRequestCodesSection(sentExtensionRequestsThisWeek: screenTime.getSentExtensionCodesAsBoundaryNameAndDateDict())
+                        SentRequestCodesSection(sentExtensionRequests: screenTime.getSentExtensionCodesAsBoundaryNameAndDateDict())
                     }
                     .padding(.horizontal, 40)
                 }
@@ -195,7 +195,7 @@ struct SendCodeButton: View {
 }
 
 struct SentRequestCodesSection: View {
-    var sentExtensionRequestsThisWeek: [(String, Date)]
+    var sentExtensionRequests: [(String, Date)]
     
     var body: some View {
         VStack {
@@ -213,28 +213,30 @@ struct SentRequestCodesSection: View {
                     .foregroundStyle(.primary)
                 
                 VStack {
-                    if sentExtensionRequestsThisWeek.count == 0 {
+                    if sentExtensionRequests.count == 0 {
                         Text("You haven't sent your partner any codes yet.")
                             .font(.system(size: 15))
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .foregroundColor(.secondary)
                             .padding(.bottom, 20)
                     } else {
-                        ForEach(0..<sentExtensionRequestsThisWeek.count, id: \.self) { index in
-                            let (name, date) = sentExtensionRequestsThisWeek[index]
-                            VStack(alignment: .leading) {
-                                Text(name)
-                                    .bold()
-                                
-                                Text(mediumDateTimeFormat(date: date))
-                                    .foregroundStyle(.secondary)
+                        ScrollView {
+                            ForEach(0..<sentExtensionRequests.count, id: \.self) { index in
+                                let (name, date) = sentExtensionRequests[index]
+                                VStack(alignment: .leading) {
+                                    Text(name)
+                                        .bold()
+                                    
+                                    Text(mediumDateTimeFormat(date: date))
+                                        .foregroundStyle(.secondary)
+                                }
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.bottom, 10)
                             }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.bottom, 10)
                         }
+                        .frame(maxHeight: 300)
                     }
                 }
-                .frame(maxHeight: 300)
             }
         }
     }

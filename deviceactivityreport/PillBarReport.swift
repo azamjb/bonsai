@@ -191,7 +191,7 @@ struct PillBarView: View {
                         
                         Spacer()
                         
-                        Text("\(formatTime(group.elapsedTime)) / \(formatTime(group.totalAllowedTime))")
+                        Text("\(formatTime(min(group.elapsedTime, group.totalAllowedTime))) / \(formatTime(group.totalAllowedTime))")
                             .font(.system(size: 15))
                             .foregroundColor(.primary)
                     }
