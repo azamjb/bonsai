@@ -7,6 +7,14 @@
 
 import SwiftUI
 
+struct FeedbackRequest : Encodable {
+    let Email, Message, Subject: String
+}
+
+struct FeedbackResponse : Decodable {
+    let Id: String
+}
+
 struct FeedbackFormView: View {
     
     @StateObject var viewModel: ProfileViewModel = ProfileViewModel()

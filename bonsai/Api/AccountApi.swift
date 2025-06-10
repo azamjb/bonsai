@@ -8,19 +8,19 @@
 import Foundation
 
 class AccountApi : BaseApi {
-    override var endpointControllerName: String { "api" }
+    override var endpointControllerName: String { "user" }
     
     override init() {
         super.init()
     }
     
-    func connectionPrompt() async throws -> LoginResponse { // only serves purpose of prompting network access
+    func connectionPrompt() async throws { // only serves purpose of prompting network access
             let (responseData, httpResponse) = try await self.makePOSTRequest(url: getBaseUrl(endpoint: "abcd"), bodyObject: "null")
             
             if let error = checkForErrorFromResponse(responseData: responseData!, httpResponse: httpResponse) {
                 throw error
             } else {
-                return try! JSONDecoder().decode(LoginResponse.self, from: responseData!)
+                print(responseData)
             }
         }
 
@@ -32,40 +32,28 @@ class AccountApi : BaseApi {
         } 
     }
     
-    func login(request: LoginRequest) async throws -> LoginResponse {
-        let (responseData, httpResponse) = try await self.makePOSTRequest(url: getBaseUrl(endpoint: "login"), bodyObject: request)
-        
-        if let error = checkForErrorFromResponse(responseData: responseData!, httpResponse: httpResponse) {
-            throw error
-        } else {
-            return try! JSONDecoder().decode(LoginResponse.self, from: responseData!)
-        }
-    }
-    
-    
     func addUser(request: RegisterUser) async throws -> AddUserResponse {
-        let (responseData, httpResponse) = try await self.makePOSTRequest(url: getBaseUrl(endpoint: "user"), bodyObject: request)
+        let (responseData, httpResponse) = try await self.makePOSTRequest(url: getBaseUrl(endpoint: ""), bodyObject: request)
         
         if let error = checkForErrorFromResponse(responseData: responseData!, httpResponse: httpResponse) {
             throw error
         }
         
-        let response = try JSONDecoder().decode(AddUserResponse.self, from: responseData!)
+        let response = try! JSONDecoder().decode(AddUserResponse.self, from: responseData!)
         return response
     }
     
     func deleteUser(request: DeleteUser) async throws {
-        let (responseData, httpResponse) = try await self.makePOSTRequest(url: getBaseUrl(endpoint: "user/deleteUser"), bodyObject: request)
+        let (responseData, httpResponse) = try await self.makePOSTRequest(url: getBaseUrl(endpoint: "deleteUser"), bodyObject: request)
         
         if let error = checkForErrorFromResponse(responseData: responseData!, httpResponse: httpResponse) {
             throw error
         }
-        
     }
     
     
     func addAccountabilityPartner(request: AddAccountabilityPartner) async throws {
-        let (responseData, httpResponse) = try await self.makePOSTRequest(url: getBaseUrl(endpoint: "user/addAccountabilityPartner"), bodyObject: request)
+        let (responseData, httpResponse) = try await self.makePOSTRequest(url: getBaseUrl(endpoint: "addAccountabilityPartner"), bodyObject: request)
 
         if let error = checkForErrorFromResponse(responseData: responseData!, httpResponse: httpResponse) {
             throw error
@@ -75,7 +63,7 @@ class AccountApi : BaseApi {
     }
     
     func retrieveAccountabilityPartner(request: checkAccountabilityPartner) async throws {
-        let (responseData, httpResponse) = try await self.makePOSTRequest(url: getBaseUrl(endpoint: "user/retrieveAccountabilityPartner"), bodyObject: request)
+        let (responseData, httpResponse) = try await self.makePOSTRequest(url: getBaseUrl(endpoint: "retrieveAccountabilityPartner"), bodyObject: request)
 
         if let error = checkForErrorFromResponse(responseData: responseData!, httpResponse: httpResponse) {
             throw error

@@ -7,7 +7,7 @@
 import Foundation
 
 class BaseApi {
-    let apiBaseUrl: String = "https://bonsai-tp5h.onrender.com"
+    let apiBaseUrl: String = "https://bonsai-tp5h.onrender.com/api"
     
     var endpointControllerName: String {
         fatalError("Subclasses must override extensionName")
@@ -22,6 +22,7 @@ class BaseApi {
 
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
+        request.addValue("rnd_6TnbnpZFz1UNi2j6VpzC2ac0dQZq", forHTTPHeaderField: "x-api-key")
         
         do {
             let (data, httpResponse) = try await URLSession.shared.data(for: request)
@@ -37,7 +38,9 @@ class BaseApi {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.httpBody = try! JSONEncoder().encode(bodyObject)
-        
+        request.addValue("rnd_6TnbnpZFz1UNi2j6VpzC2ac0dQZq", forHTTPHeaderField: "x-api-key")
+
+        print(request)
         do {
             let (data, httpResponse) = try await URLSession.shared.data(for: request)
             return (data, httpResponse as! HTTPURLResponse)

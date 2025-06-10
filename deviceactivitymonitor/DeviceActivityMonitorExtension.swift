@@ -32,9 +32,12 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
         super.eventDidReachThreshold(event, activity: activity)
         
         if let data = sharedDefaults!.data(forKey: BOUNDARIES_STRING) {
+            print("abt to decode")
             var boundaries = try! JSONDecoder().decode([Boundary].self, from: data)
-            
+            print("bounadry limi reacehd", activity.rawValue)
+
             if var boundary = boundaries.first(where: { $0.id == UUID(uuidString: activity.rawValue) }) {
+                print(boundary)
                 boundary.isBlocked = true
                 
                 boundary.appTokens.forEach { token in handleThresholdReached(appToken: token) }
@@ -46,6 +49,8 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
                 
                 sharedDefaults?.set(try! JSONEncoder().encode(boundaries), forKey: BOUNDARIES_STRING)
             }
+        } else {
+            print("bad key")
         }
     }
     
@@ -59,6 +64,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     }
     
     private func handleThresholdReached(categoryToken: ActivityCategoryToken) {
+        print("\n\n\(categoryToken)")
         if let categories = store.shield.applicationCategories {
             switch categories {
             case .none:
@@ -68,6 +74,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
             case .specific(var specificCategories, let exceptions):
                 // If categories are specific, add the new category.
                 specificCategories.insert(categoryToken)
+                print(specificCategories, exceptions)
                 store.shield.applicationCategories = .specific(specificCategories, except: exceptions)
                 
             case .all(_): break

@@ -5,7 +5,6 @@
 //  Created by Brayden O on 2024-12-31.
 //
 
-let BEARER_STRING = "bearer"
 let USER_ID_STRING = "userId"
 let ACCOUNTABILITY_PARTNER_NUMBER = "AccountabilityPartnerNumber"
 let REMAINING_BOUNDARY_EXTENSIONS_STRING = "remainingBoundaryExtensions"

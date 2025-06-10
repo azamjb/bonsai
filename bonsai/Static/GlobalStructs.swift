@@ -28,7 +28,7 @@ public enum Weekday: Int, CaseIterable, Codable {
     static var today: Weekday {
         let today = Date()
         let calendar = Calendar.current
-        return Weekday(rawValue: calendar.component(.weekday, from: today))!
+        return Weekday(rawValue: calendar.component(.weekday, from: today) - 1)!
     }
     
     var fullName: String {

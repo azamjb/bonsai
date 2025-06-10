@@ -208,6 +208,7 @@ struct BoundaryDetailsView: View {
                                     if allBoundaries.contains(where: { $0.id == boundaryToUse.id }) {
                                         boundaryToUse.id = UUID() // Create a new UUID if there's a conflict
                                     }
+                                    
                                     allBoundaries.append(boundaryToUse)
                                 }
                                 

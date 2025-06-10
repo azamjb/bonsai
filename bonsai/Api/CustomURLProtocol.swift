@@ -23,16 +23,7 @@ class CustomURLProtocol: URLProtocol {
         newRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         newRequest.setValue("*/*", forHTTPHeaderField: "Accept")
         
-        let bearer = UserDefaults.standard.string(forKey: BEARER_STRING)
         let userId = UserDefaults.standard.string(forKey: USER_ID_STRING)
-        
-        if(bearer != nil) {
-            newRequest.setValue("Bearer \(bearer!)", forHTTPHeaderField: "Authorization")
-        }
-        
-        if(userId != nil) {
-            newRequest.setValue(userId, forHTTPHeaderField: "X-User-Id")
-        }
                          
         let session = URLSession(configuration: .default)
         let dataTask = session.dataTask(with: newRequest) { data, response, error in

@@ -24,7 +24,6 @@ public class ScreenTimeService: ObservableObject {
     @Published public var pinError: String? = nil
     @Published public var timeRequestErrorMessage: String = ""
 
-    public var activitySelection = FamilyActivitySelection()
     private let settingsStore = ManagedSettingsStore()
     private let activityMonitor = DeviceActivityMonitor()
     private let activityCenter = DeviceActivityCenter()
@@ -76,6 +75,7 @@ public class ScreenTimeService: ObservableObject {
     
     public func startMonitoring(boundary: Boundary) {
         if boundariesSet.contains(where: { $0.id == boundary.id }) {
+            print ("removing existing boundary")
             removeBoundaryById(id: boundary.id)
         }
         
@@ -88,19 +88,21 @@ public class ScreenTimeService: ObservableObject {
         addBoundaryToUserDefaults(boundary: boundary)
         
         if boundary.weekdays.contains(Weekday.today) {
+            print(boundary)
             try! center.startMonitoring(
                 DeviceActivityName(boundary.id.uuidString),
                 during: schedule,
                 events: [DeviceActivityEvent.Name("Boundary"): DeviceActivityEvent (
-                    applications: activitySelection.applicationTokens,
-                    categories: activitySelection.categoryTokens,
-                    webDomains: activitySelection.webDomainTokens,
-                    threshold: DateComponents(hour: boundary.hours, second: boundary.minutes)
+                    applications: boundary.appTokens,
+                    categories: boundary.categoryTokens,
+                    webDomains: boundary.webDomainTokens,
+                    threshold: DateComponents(hour: boundary.hours, minute: boundary.minutes)
                 )]
             )
+        } else {
+            print("doesnt contain weekday")
         }
         
-        resetSelectedBoundary()
         monitoringStarted = true
         
         setGroupDisplays()
@@ -214,10 +216,6 @@ public class ScreenTimeService: ObservableObject {
             
             return []
         }
-    }
-
-    public func resetSelectedBoundary() {
-        activitySelection = FamilyActivitySelection()
     }
 
     // This removes everything. Blocked apps, active monitoring sessions, and set boundaries. Basically a fresh start for testing + unbricks phone.
