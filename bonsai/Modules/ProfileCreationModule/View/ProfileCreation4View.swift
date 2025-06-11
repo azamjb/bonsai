@@ -36,25 +36,29 @@ struct ProfileCreation4View: View {
                                 .frame(alignment: .leading)
                         }
                     }
-                    .padding(.bottom, 40)
+                    .padding(.bottom, 20)
 
-                    VStack(spacing: 16) {
+                    VStack(spacing: 10) {
                         Group {
-                            TextField("", text: $accountabilityPartnerName)
-                                .modifier(CustomTextFieldStyle(placeholder: "Enter partner name:"))
+                            TextField("Enter partner name:", text: $accountabilityPartnerName)
+                                .modifier(CustomTextFieldStyle(placeholder: ""))
                                 .frame(minHeight: 50)
 
-                            TextField("", text: $accountabilityPartnerPhone)
+                            TextField("Enter partner phone number:", text: $accountabilityPartnerPhone)
                                 .keyboardType(.phonePad)
-                                .modifier(CustomTextFieldStyle(placeholder: "Enter partner phone #:"))
+                                .modifier(CustomTextFieldStyle(placeholder: ""))
                                 .frame(minHeight: 50)
+                                .onChange(of: accountabilityPartnerPhone) { newValue in
+                                    let digits = newValue.filter { $0.isNumber }.prefix(10)
+                                    accountabilityPartnerPhone = String(digits)
+                                }
                         }
                         .focused($isFieldFocused)
                     }
                     .padding(.horizontal, 30)
+                    .padding(.bottom, 30)
 
-                    Spacer()
-
+                    
                     Button(action: {
                                 if isProfileCreated {
                                     dismiss() // just go back
@@ -87,9 +91,9 @@ struct ProfileCreation4View: View {
                             UserDefaults.standard.set(accountabilityPartnerPhone, forKey: "tempAccountabilityPartnerNumber")
                             UserDefaults.standard.set(accountabilityPartnerName, forKey: "tempAccountabilityPartnerName")
                         }
-                    })
-
-                    Spacer()
+                    }) .padding(.horizontal, 20)
+                           Spacer()
+                           Spacer()
 
 
                     Button(action: {

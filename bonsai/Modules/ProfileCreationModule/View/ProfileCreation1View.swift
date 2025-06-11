@@ -18,14 +18,20 @@ struct ProfileCreation1View: View {
                 VStack(spacing: 20) {
                     Spacer()
                     
-                    Image("BonsaiLogo_grey")
-                        .padding(.bottom, 25)
                                         
-                    VStack(spacing: 16) {
+                    VStack(spacing: 8) {
+                        
+                        Text("Account Setup")
+                            .padding(.horizontal, 10)
+                            .font(.system(size: 29))
+                            .frame(alignment: .leading)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .fontWeight(.bold)
+                            
                         Group {
                             HStack(alignment: .center) {
-                                TextField("", text: $name)
-                                    .modifier(CustomTextFieldStyle(placeholder: "Enter name:"))
+                                TextField("Enter name:", text: $name)
+                                    .modifier(CustomTextFieldStyle(placeholder: " "))
                                     .frame(height: 40)
                                     .focused($isFieldFocused)
                                     .background(
@@ -36,9 +42,9 @@ struct ProfileCreation1View: View {
                                     .animation(isShaking ? .default.repeatCount(3, autoreverses: true) : .default, value: isShaking)
 
                                 let forwardButton = Image(systemName: "chevron.right")
-                                    .font(.system(size: 18))
+                                    .font(.system(size: 19))
                                     .foregroundColor(.white)
-                                    .padding(12)
+                                    .padding(15)
                                     .background(Color.primary)
                                     .clipShape(Circle())
 
@@ -69,15 +75,20 @@ struct ProfileCreation1View: View {
                     
                     Spacer()
                     Spacer()
+                    
+                    NavigationLink(
+                        destination: ProfileCreation2View(name: name),
+                        isActive: $isNavigating
+                    ) {
+                        EmptyView()
+                    }
+                    .hidden()
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .padding()
             }
             .onTapGesture {
                 hideKeyboard()
-            }
-            .navigationDestination(isPresented: $isNavigating) {
-                ProfileCreation2View(name: name)
             }
             .navigationBarBackButtonHidden(true)
         }
@@ -103,7 +114,7 @@ struct CustomTextFieldStyle: ViewModifier {
                 .font(.body)
                 .padding(.leading, 10)
             content
-                .padding(.vertical, 8)
+                .padding(.vertical, 13)
                 .padding(.horizontal, 12)
                 .background(Color.gray.opacity(0.2))
                 .cornerRadius(20)

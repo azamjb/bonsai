@@ -14,19 +14,20 @@ struct DailyScreenTimeView: View {
             VStack {
                 Text("What is your daily average screen time?")
                     .padding(.top, 130)
+                    .font(.system(size: 25))
+                    .padding(.bottom, 50)
                     
-                Spacer()
-                screenTimeButton(title: "1-2 hours", color: "#81CEB7")
-                screenTimeButton(title: "2-4 hours", color: "#31B788")
-                screenTimeButton(title: "4-6 hours", color: "#148E63")
-                screenTimeButton(title: "7+ hours", color: "#0E7362")
-
-                Spacer()
+                
+                screenTimeButton(title: "1-2 hours", color: "#db6552")
+                screenTimeButton(title: "2-4 hours", color: "#9d3b6a")
+                screenTimeButton(title: "4-6 hours", color: "#454380")
+                screenTimeButton(title: "7+  hours", color: "#1e2368")
+                    .padding(.bottom, 30)
                 
                 let forwardButton = Image(systemName: "chevron.right")
-                    .font(.system(size: 18))
+                    .font(.system(size: 20))
                     .foregroundColor(.white)
-                    .padding(12)
+                    .padding(20)
                     .background(Color.primary)
                     .clipShape(Circle())
 
@@ -47,8 +48,8 @@ struct DailyScreenTimeView: View {
             screenTime = title
         }) {
             Text(title)
-                .padding(.horizontal, 80)
-                .padding(.vertical, 8)
+                .padding(.horizontal, 95)
+                .padding(.vertical, 14)
                 .background(Color(hex: color))
                 .foregroundColor(.white)
                 .cornerRadius(20)
