@@ -4,7 +4,7 @@ struct ProfileCreation2View: View {
 
     @StateObject var viewModel: ProfileCreationViewModel = ProfileCreationViewModel()
     @State var name: String
-    @State var phoneNumber: String = ""
+    @State private var rawPhoneNumber: String = ""
     @FocusState var isFieldFocused: Bool
     @State private var isShaking = false
     @State private var isNavigating = false
@@ -13,69 +13,80 @@ struct ProfileCreation2View: View {
         NavigationStack {
             ZStack {
                 Color.white.ignoresSafeArea()
-                
+
                 VStack(spacing: 20) {
-                    // Logo and Header
                     Spacer()
-                    
-                    Image("BonsaiLogo_grey")
-                        .padding(.bottom, 25)
-                                        
-                    // Input Fields
-                    VStack(spacing: 16) {
-                        Group {
-                            HStack(alignment: .center) {
-                                TextField("", text: $phoneNumber)
-                                    .keyboardType(.numberPad)
-                                    .modifier(CustomTextFieldStyle(placeholder: "Enter phone number:"))
-                                    .frame(height: 40)
-                                    .focused($isFieldFocused)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 20)
-                                            .stroke( Color.clear, lineWidth: 2)
-                                    )
-                                    .offset(x: isShaking ? -10 : 0) // Shake effect
-                                    .animation(isShaking ? .default.repeatCount(3, autoreverses: true) : .default, value: isShaking)
-                                    .onChange(of: phoneNumber) { newValue in
-                                        phoneNumber = formatPhoneNumber(newValue)
+
+                    VStack(spacing: 8) {
+                        
+                        Text("Account Setup")
+                            .padding(.horizontal, 10)
+                            .font(.system(size: 29))
+                            .frame(alignment: .leading)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .fontWeight(.bold)
+
+                        HStack(alignment: .center) {
+                            TextField("Enter Phone Number", text: $rawPhoneNumber)
+                                .keyboardType(.numberPad)
+                                .modifier(CustomTextFieldStyle(placeholder: " "))
+                                .frame(height: 40)
+                                .focused($isFieldFocused)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 20)
+                                        .stroke(Color.clear, lineWidth: 2)
+                                )
+                                .offset(x: isShaking ? -10 : 0)
+                                .animation(isShaking ? .default.repeatCount(3, autoreverses: true) : .default, value: isShaking)
+                                .onChange(of: rawPhoneNumber) { newValue in
+                                        let digits = newValue.filter { $0.isNumber }.prefix(10)
+                                        rawPhoneNumber = String(digits)
                                     }
-                                
-                                let forwardButton = Image(systemName: "chevron.right")
-                                    .font(.system(size: 18))
-                                    .foregroundColor(.white)
-                                    .padding(12)
-                                    .background(Color.primary)
-                                    .clipShape(Circle())
-                                
-                                Button(action: {
-                                    if phoneNumber.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                                        isShaking = true
-                                        
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                            isShaking = false
-                                        }
-                                    } else {
-                                        // Navigate if valid
-                                        isNavigating = true
-                                        
-                                        Task {
-                                            // only save name and phone number, this won't overwrite the other stuff
-                                            await viewModel.saveProfileFields(name: name, phoneNumber: phoneNumber, hobbies: nil, termsAccepted: nil)
-                                        }
+
+                            let forwardButton = Image(systemName: "chevron.right")
+                                .font(.system(size: 19))
+                                .foregroundColor(.white)
+                                .padding(15)
+                                .background(Color.primary)
+                                .clipShape(Circle())
+
+                            Button(action: {
+                                if rawPhoneNumber.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                                    isShaking = true
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                        isShaking = false
                                     }
-                                }) {
-                                    forwardButton
+                                } else {
+                                    let formatted = formatPhoneNumber(rawPhoneNumber)
+                                    isNavigating = true
+                                    Task {
+                                        await viewModel.saveProfileFields(
+                                            name: name,
+                                            phoneNumber: formatted,
+                                            hobbies: nil,
+                                            termsAccepted: nil
+                                        )
+                                    }
                                 }
-                                .padding(.top, 24)
-                                
+                            }) {
+                                forwardButton
                             }
-                            .frame(height: 50)
+                            .padding(.top, 24)
                         }
+                        .frame(height: 50)
                     }
                     .padding(.horizontal, 16)
-                    
+
                     Spacer()
                     Spacer()
+
+                    NavigationLink(
+                        destination: DailyScreenTimeView(name: name, phoneNumber: formatPhoneNumber(rawPhoneNumber)),
+                        isActive: $isNavigating
+                    ) {
+                        EmptyView()
+                    }
+                    .hidden()
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .padding()
@@ -84,27 +95,20 @@ struct ProfileCreation2View: View {
                 hideKeyboard()
                 isFieldFocused = false
             }
-            .navigationDestination(isPresented: $isNavigating) {
-                DailyScreenTimeView(name: name, phoneNumber: phoneNumber)
-            }
-            .navigationBarBackButtonHidden(true)
         }
         .preferredColorScheme(.light)
-        .onTapGesture {
-            hideKeyboard()
-            isFieldFocused = false
-        }
+        .navigationBarHidden(true)
     }
-    
+
     private func formatPhoneNumber(_ number: String) -> String {
-        let digits = number.filter { $0.isNumber }
-        
+        let digits = number.filter { $0.isNumber }.prefix(10)
+
         let areaCode = digits.prefix(3)
         let prefix = digits.dropFirst(3).prefix(3)
         let lineNumber = digits.dropFirst(6).prefix(4)
-        
+
         var formatted = ""
-        
+
         if !areaCode.isEmpty {
             formatted += "(\(areaCode)) "
         }
@@ -114,10 +118,11 @@ struct ProfileCreation2View: View {
         if !lineNumber.isEmpty {
             formatted += "\(lineNumber)"
         }
-        
+
         return formatted
     }
 }
+
 
 #Preview {
     ProfileCreation2View(name: "azam")

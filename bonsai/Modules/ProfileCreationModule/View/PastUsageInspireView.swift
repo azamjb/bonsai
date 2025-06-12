@@ -17,56 +17,53 @@ struct PastUsageInspireView: View {
     @State private var navigateToNextView = false
     
     var texts: [AnyView] {
-           return [
-               AnyView(Text("At your current pace, you're on track to spend")),
-               AnyView(
-                   HStack {
-                       Text("\(calculateUsage(screenTime: screenTime))")
-                           .font(.system(size: 50, weight: .bold))
-                           .frame(alignment: .leading)
-
-                       Text("years of your life, staring at your screen")
-                               .font(.body)
-                               .multilineTextAlignment(.leading)
-                   }
-               ),
-               AnyView(Text("But starting today, you choose differently")),
-               AnyView(
+        return [
+            AnyView(Text("At your current pace, you're on track to spend")),
+            AnyView(
+                HStack {
+                    Text("\(calculateUsage(screenTime: screenTime))")
+                        .font(.system(size: 50, weight: .bold))
+                        .frame(alignment: .leading)
                     
-                       Text("Starting today, you make the commitment to reclaim your time")
-                           
-                   
-               )
-           ]
-       }
+                    Text("years of your life, staring at your screen")
+                        .font(.body)
+                        .multilineTextAlignment(.leading)
+                }
+            ),
+            AnyView(Text("But starting today, you choose differently")),
+            AnyView(Text("Starting today, you make the commitment to reclaim your time"))
+        ]
+    }
 
-
-    
     var body: some View {
         NavigationStack {
-            
-            Spacer()
-            
             VStack(spacing: 20) {
+                Spacer()
                 
-                if currentStep < texts.count {
-                    texts[currentStep]
-                        .multilineTextAlignment(.center)
-                        .padding()
-                        .opacity(showText ? 1 : 0)
-                        .animation(.easeInOut(duration: 1), value: showText)
-                            }
-            }
-            .padding()
-            .navigationDestination(isPresented: $navigateToNextView) {
-                ProfileCreation4View()
+                VStack(spacing: 20) {
+                    if currentStep < texts.count {
+                        texts[currentStep]
+                            .multilineTextAlignment(.center)
+                            .padding()
+                            .opacity(showText ? 1 : 0)
+                            .animation(.easeInOut(duration: 1), value: showText)
+                    }
+                    
+                    // ✅ Hidden NavigationLink for correct forward animation
+                    NavigationLink(
+                        destination: ProfileCreation4View(),
+                        isActive: $navigateToNextView
+                    ) {
+                        EmptyView()
+                    }
+                    .hidden()
+                }
+                .padding()
+                
+                Spacer()
+                Spacer()
             }
             .navigationBarBackButtonHidden(true)
-            
-            Spacer()
-            Spacer()
-            
-            
         }
         .preferredColorScheme(.light)
         .onAppear {
@@ -75,33 +72,41 @@ struct PastUsageInspireView: View {
     }
     
     func showTextSequentially() {
-        for i in 0..<texts.count {
-            DispatchQueue.main.asyncAfter(deadline: .now() + Double(i * 4)) { // Wait before showing
+        let displayDuration = 1.5
+        let fadeDuration = 0.5
+        let totalStepDuration = displayDuration + fadeDuration + 0.5
+
+        func showNextStep(index: Int) {
+            guard index < texts.count else {
+                // Transition after the last text
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    navigateToNextView = true
+                }
+                return
+            }
+
+            withAnimation {
+                showText = true
+            }
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + displayDuration) {
                 withAnimation {
-                    showText = true
-                }
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2) { // Wait before fading out
-                    withAnimation {
-                        showText = false
-                    }
-                }
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + 3) { // Move to next text after fade-out
-                    if i == texts.count - 1 {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                            navigateToNextView = true // Trigger navigation after the last text fades
-                        }
-                    } else {
-                        currentStep += 1
-                    }
+                    showText = false
                 }
             }
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + totalStepDuration) {
+                currentStep = index + 1
+                showNextStep(index: index + 1)
+            }
         }
+
+        showNextStep(index: 0)
     }
 }
 
-// Helper function for formatting hobbies
+// MARK: - Helper Functions
+
 func hobbiesOutput(hobbies: [String]) -> String {
     switch hobbies.count {
     case 1:
@@ -115,7 +120,6 @@ func hobbiesOutput(hobbies: [String]) -> String {
     }
 }
 
-// Function to calculate usage in years
 func calculateUsage(screenTime: String) -> Int {
     switch screenTime {
     case "1-2 hours":
@@ -133,14 +137,12 @@ func calculateUsage(screenTime: String) -> Int {
     default:
         return 0
     }
-    
 }
 
 func saveHoursPerDay(hours: Double) {
     var sharedDefaults: UserDefaults? {
         UserDefaults(suiteName: "group.com.bonsai")
     }
-    
     sharedDefaults?.set(try! JSONEncoder().encode(hours), forKey: HOURS_PER_DAY_STRING)
 }
 

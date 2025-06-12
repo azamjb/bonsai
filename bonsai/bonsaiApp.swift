@@ -60,7 +60,7 @@ struct RootView: View {
                 if isProfileCreated {
                     ContentView()
                 } else {
-                    InspireView()
+                    EducateView() // no longer going to inspire view
                 }
             }
         }

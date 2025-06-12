@@ -16,31 +16,34 @@ struct EducateView: View {
             ScrollView {
                 VStack {
                     
-                    Text("Welcome To")
-                        .font(.headline)
-                        .font(.system(size: 30, weight: .bold))
-                        .padding(.top, 60)
-
-                    VStack(spacing: -115) {
-                        Text("BO")
-                            .font(.system(size: 245, weight: .black))
-                            .italic()
-                            .fixedSize(horizontal: false, vertical: true)
-                            .multilineTextAlignment(.center)
+                    VStack(spacing: -33) {
                         
-                        Text("NS")
-                            .font(.system(size: 245, weight: .black))
-                            .italic()
-                            .fixedSize(horizontal: false, vertical: true)
-                            .multilineTextAlignment(.center)
+                        Text("Welcome To")
+                            .font(.system(size: 45, weight: .bold))
+                            .padding(.top, 60)
+                        
+                        VStack(spacing: -115) {
+                            Text("BO")
+                                .font(.system(size: 245, weight: .black))
+                                .italic()
+                                .fixedSize(horizontal: false, vertical: true)
+                                .multilineTextAlignment(.center)
+                            
+                            Text("NS")
+                                .font(.system(size: 245, weight: .black))
+                                .italic()
+                                .fixedSize(horizontal: false, vertical: true)
+                                .multilineTextAlignment(.center)
 
-                        Text("AI.")
-                            .font(.system(size: 245, weight: .black))
-                            .italic()
-                            .fixedSize(horizontal: false, vertical: true)
-                            .multilineTextAlignment(.center)
+                            Text("AI.")
+                                .font(.system(size: 245, weight: .black))
+                                .italic()
+                                .fixedSize(horizontal: false, vertical: true)
+                                .multilineTextAlignment(.center)
+                        }
+                        .padding(.bottom, 50)
+                        
                     }
-                    .padding(.bottom, 50)
 
                     
                     VStack(alignment: .leading) {
@@ -52,16 +55,18 @@ struct EducateView: View {
                         
                         Text("Pick the apps you want to track")
                             .font(.caption)
+                            .padding(.bottom, 2)
                         
                         Text("Set screen time goals")
                             .font(.caption)
+                            .padding(.bottom, 2)
                         
                         Text("Stay focused and in control")
                             .font(.caption)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.leading, 5)
-                    .padding(.bottom, 160)
+                    .padding(.bottom, 120)
                     
                     
                     
@@ -78,11 +83,13 @@ struct EducateView: View {
                             .font(.caption)
                             .lineLimit(1)
                             .truncationMode(.tail)
+                            .padding(.bottom, 2)
                         
                         Text("When you reach a limit, your apps get blocked")
                             .font(.caption)
                             .lineLimit(1)
                             .truncationMode(.tail)
+                            .padding(.bottom, 2)
                         
                         Text("Need more time? Your partner can grant you access")
                             .font(.caption)
@@ -91,7 +98,7 @@ struct EducateView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .trailing)
                     .padding(.trailing, 5)
-                    .padding(.bottom, 160)
+                    .padding(.bottom, 120)
 
                     
                     
@@ -100,16 +107,16 @@ struct EducateView: View {
                         Text("OWN YOUR TIME")
                             .font(.title2)
                             .fontWeight(.bold)
-                        
-                        Text("Track. Grow. Balance.")
-                            .font(.title3)
                             .padding(.bottom, 5)
+                        
                         
                         Text("Check your dashboard")
                             .font(.caption)
+                            .padding(.bottom, 2)
                         
                         Text("See your progress")
                             .font(.caption)
+                            .padding(.bottom, 2)
                         
                         Text("Create space for what matters")
                             .font(.caption)
@@ -117,16 +124,8 @@ struct EducateView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.leading, 5)
-                    .padding(.bottom, 140)
+                    .padding(.bottom, 120)
                     
-                    
-        
-                    Image("tagline")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 270)
-                        .padding(.bottom,70)
-                        
                     
                     NavigationLink(destination: ProfileCreation1View()) {
                         HStack {
@@ -134,7 +133,7 @@ struct EducateView: View {
                                 .font(.system(size: 18))
                                 .foregroundColor(.black)
                                 .padding(.vertical, 10)
-                                .padding(.horizontal, 70)
+                                .padding(.horizontal, 90)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 20)
                                         .stroke(Color.black, lineWidth: 1)
