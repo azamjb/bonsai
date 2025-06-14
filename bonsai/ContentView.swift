@@ -67,7 +67,7 @@ struct CustomTabBar: View {
             .padding(.bottom, 40)
             .padding(.horizontal, 30)
         }
-        .background(Color.white.ignoresSafeArea(edges: .bottom))
+        .background(Color(.systemBackground).ignoresSafeArea(edges: .bottom))
     }
 }
 
@@ -87,7 +87,7 @@ struct TabBarButton: View {
                     ? .system(size: 24, weight: .bold) // Bigger font just for "B."
                     : .system(size: 14, weight: .bold)
                 )
-                .foregroundColor(selectedTab == tag ? .black : .gray)
+                .foregroundColor(selectedTab == tag ? .primary : .gray)
         }
     }
 }

@@ -40,7 +40,6 @@ class BaseApi {
         request.httpBody = try! JSONEncoder().encode(bodyObject)
         request.addValue("rnd_6TnbnpZFz1UNi2j6VpzC2ac0dQZq", forHTTPHeaderField: "x-api-key")
 
-        print(request)
         do {
             let (data, httpResponse) = try await URLSession.shared.data(for: request)
             return (data, httpResponse as! HTTPURLResponse)
