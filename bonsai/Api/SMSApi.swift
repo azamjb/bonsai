@@ -23,6 +23,15 @@ class SMSApi : BaseApi {
     }
     // Send invite to accountability partner ^
     
+    func introduction(request: SMSInvite) async throws {
+        let (responseData, httpResponse) = try await self.makePOSTRequest(url: getBaseUrl(endpoint: "introduction"), bodyObject: request)
+        
+        if let error = checkForErrorFromResponse(responseData: responseData!, httpResponse: httpResponse) {
+            throw error
+        }
+    }
+    // Send initial message to accountability partner once partnership has been confirmed ^
+    
     func timeRequest(request: SMSRequest) async throws {
         let (responseData, httpResponse) = try await self.makePOSTRequest(url: getBaseUrl(endpoint: "request"), bodyObject: request)
         
@@ -39,5 +48,15 @@ class SMSApi : BaseApi {
             throw error
         }
     }
+    // Notify accountability partner they have been removed ^
+    
+    func SelfRemovalNotif(request: SMSInvite) async throws {
+        let (responseData, httpResponse) = try await self.makePOSTRequest(url: getBaseUrl(endpoint: "AccountabilityPartnerRemove"), bodyObject: request)
+        
+        if let error = checkForErrorFromResponse(responseData: responseData!, httpResponse: httpResponse) {
+            throw error
+        }
+    }
+    // Notify user accountability partner has removed themself ^
    
 }

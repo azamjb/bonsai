@@ -11,6 +11,7 @@ struct ContentView: View {
     
     var AccountabilityPartner = ""
     let accountApi = AccountApi()
+    let smsApi = SMSApi()
     @State private var tabSelection = 1
     @StateObject var viewModel: ProfileViewModel = ProfileViewModel()
     @EnvironmentObject var notificationHandler: NotificationHandler
@@ -48,24 +49,32 @@ struct ContentView: View {
         .onAppear { // Removing accountability partner locally if it has been removed from the database, check is made every time the app is opened
             Task {
                 do {
+                    
+                    
                     let hasPartner = UserDefaults.standard.bool(forKey: "hasAccountabilityPartner")
                     
                     if hasPartner {
                         
+                        let SMSInvite = SMSInvite(
+                            number: viewModel.userProfile.phoneNumber ?? "",
+                            username: viewModel.userProfile.name ?? "",
+                            accountabilityPartnerName: viewModel.accountabilityPartner.name ?? "", code: ""
+                        )
+                        
                         let idString = UserDefaults.standard.string(forKey: ProfileKey.id.rawValue)
                         let request = checkAccountabilityPartner(Id: idString ?? "")
                         let phoneNumber = try await accountApi.retrieveAccountabilityPartner(request: request)
-                        print("skibbbbbb")
-
+                        
                         if phoneNumber == "" {
                             
-                        print("testttttttttttttt")
                             viewModel.accountabilityPartner.name = nil
                             viewModel.accountabilityPartner.phoneNumber = nil
                             screenTime.clearAllRestrictions()
                             screenTime.boundariesSet.removeAll()
                             UserDefaults.standard.set(false, forKey: "hasAccountabilityPartner")
                             UserDefaults.standard.set(false, forKey: "invitedAccountabilityPartner")
+                            
+                            try await smsApi.SelfRemovalNotif(request: SMSInvite)
                             
                         }
 

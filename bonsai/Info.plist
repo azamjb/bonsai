@@ -11,5 +11,9 @@ NSLocalNetworkUsageDescription</key>
 		<string>com.bonsai.weeklyOperation</string>
 		<string>com.bonsai.unshieldApps</string>
 	</array>
+	<key>UIAppFonts</key>
+	<array>
+		<string>DancingScript-Regular.otf</string>
+	</array>
 </dict>
 </plist>

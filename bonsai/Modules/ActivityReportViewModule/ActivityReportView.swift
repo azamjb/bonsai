@@ -226,11 +226,12 @@ struct ActivityReportView: View {
                             }
                             
 
-                            BonsaiButtonSmall(buttonText: "override all boundaries (testing only)") {
-                                screenTime.clearShieldedApps()
-                            }
-                            .padding(.bottom, 50)
+//                            BonsaiButtonSmall(buttonText: "override all boundaries (testing only)") {
+//                                screenTime.clearShieldedApps()
+//                            }
+//                            .padding(.bottom, 50)
                         }
+                        .padding(.horizontal, 18)
                     }
 
 
