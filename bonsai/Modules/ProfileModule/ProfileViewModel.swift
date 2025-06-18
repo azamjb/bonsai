@@ -147,7 +147,7 @@ class ProfileViewModel: ObservableObject {
             
             let daysWithExtensions = daysWithExtensionsSet.count
             
-            return totalDays - daysWithExtensions
+            return min(0, totalDays - daysWithExtensions)
         } else {
             sharedDefaults!.set(try! JSONEncoder().encode(Date()), forKey: SIGN_UP_DATE_STRING)
             return 0
