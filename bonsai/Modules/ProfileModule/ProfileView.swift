@@ -87,12 +87,22 @@ struct ProfileView: View {
                     }
                     .padding(.horizontal, 18)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    
-                    NavigationStack {
-                        BonsaiNavLinkSmall(buttonText: "edit profile", destination: ProfileEditView(viewModel: viewModel))
-                            .padding(.bottom, 30)
+
+                    NavigationLink(destination: ProfileEditView(viewModel: viewModel)) {
+                        HStack {
+                            Text("edit profile")
+                                .font(.system(size: 15))
+                                .foregroundColor(.primary)
+                                .padding(.vertical, 5)
+                                .padding(.horizontal, 20)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 20)
+                                        .stroke(Color.primary, lineWidth: 1)
+                                )
+                        }
                     }
+                    .padding(.bottom, 20)
+                    .padding(.top, 10)
 
                     Divider()
                         .frame(height: 1)
@@ -178,11 +188,24 @@ struct ProfileView: View {
                                 Text(viewModel.phoneNumberFormatter.string(for: viewModel.accountabilityPartner.phoneNumber) ?? "")
                                     .font(.system(size: 14))
 
-                                BonsaiButtonSmall(buttonText: "remove accountability partner") {
-                                    showRemoveConfirmation = true
+
+                                Button(action: {
+                                    showRemoveConfirmation = true // show alert first
+                                }) {
+                                    HStack {
+                                        Text("remove partner")
+                                            .font(.system(size: 15))
+                                            .foregroundColor(.primary)
+                                            .padding(.vertical, 5)
+                                            .padding(.horizontal, 20)
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 20)
+                                                    .stroke(Color.primary, lineWidth: 1)
+                                            )
+                                    }
                                 }
-                                .padding(.vertical, 5)
-                                .padding(.horizontal, 20)
+                                .padding(.top, 10)
+                                .padding(.bottom, 30)
                                 .alert(removePartnerMessage, isPresented: $showRemoveConfirmation) {
                                     Button("Remove", role: .destructive) {
                                         removeAccountabilityPartner()
@@ -269,6 +292,33 @@ struct ProfileView: View {
                 try await accountApi.addAccountabilityPartner(request: request)
 
                 try await smsApi.removalNotif(request: SMSInvite)
+
+                await MainActor.run {
+
+                    viewModel.accountabilityPartner.phoneNumber = nil
+                    viewModel.accountabilityPartner.name = nil
+                    screenTime.clearAllRestrictions()
+                    screenTime.boundariesSet.removeAll()
+                    invitedPartnerShouldBeFalse = true
+                    shouldSetHasPartnerFalse = true
+                    showPartnerSection = false
+                }
+
+            } catch {
+                print("Failed to remove accountability partner: \(error)")
+            }
+
+
+
+        }
+    }
+    
+    func removeAccountabilityPartnerLocal() {
+
+        Task {
+
+            do {
+
 
                 await MainActor.run {
 

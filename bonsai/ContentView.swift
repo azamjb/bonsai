@@ -8,9 +8,16 @@ import SwiftUI
 import ManagedSettings
 
 struct ContentView: View {
+    
+    var AccountabilityPartner = ""
+    let accountApi = AccountApi()
     @State private var tabSelection = 1
     @StateObject var viewModel: ProfileViewModel = ProfileViewModel()
     @EnvironmentObject var notificationHandler: NotificationHandler
+    @StateObject var screenTime = ScreenTimeService()
+    @AppStorage("invitedAccountabilityPartner") private var invitedAccountabilityPartnerStorage: Bool = false
+    @AppStorage("hasAccountabilityPartner") private var hasPartnerStorage: Bool = false
+    
 
     var body: some View {
         VStack(spacing: 0) {
@@ -33,9 +40,42 @@ struct ContentView: View {
                     Text("Unknown Tab")
                 }
             }
+            
             .frame(maxWidth: .infinity, maxHeight: .infinity)
 
             CustomTabBar(selectedTab: $tabSelection)
+        }
+        .onAppear { // Removing accountability partner locally if it has been removed from the database, check is made every time the app is opened
+            Task {
+                do {
+                    let hasPartner = UserDefaults.standard.bool(forKey: "hasAccountabilityPartner")
+                    
+                    if hasPartner {
+                        
+                        let idString = UserDefaults.standard.string(forKey: ProfileKey.id.rawValue)
+                        let request = checkAccountabilityPartner(Id: idString ?? "")
+                        let phoneNumber = try await accountApi.retrieveAccountabilityPartner(request: request)
+                        print("skibbbbbb")
+
+                        if phoneNumber == "" {
+                            
+                        print("testttttttttttttt")
+                            viewModel.accountabilityPartner.name = nil
+                            viewModel.accountabilityPartner.phoneNumber = nil
+                            screenTime.clearAllRestrictions()
+                            screenTime.boundariesSet.removeAll()
+                            UserDefaults.standard.set(false, forKey: "hasAccountabilityPartner")
+                            UserDefaults.standard.set(false, forKey: "invitedAccountabilityPartner")
+                            
+                        }
+
+                    }
+                    
+
+                } catch {
+                    print("Failed to retrieve accountability partner: \(error)")
+                }
+            }
         }
         .edgesIgnoringSafeArea(.bottom)
         .sheet(isPresented: $notificationHandler.showExtensionRequest) {
@@ -43,6 +83,7 @@ struct ContentView: View {
         }
     }
 }
+    
 
 struct CustomTabBar: View {
     @Binding var selectedTab: Int
