@@ -74,7 +74,7 @@ struct FeedbackFormView: View {
                     }
                     
                     VStack {
-                        Button(action: {
+                        BonsaiButtonSmall(buttonText: "Send", onClick: {
                             let feedback = FeedbackRequest(Email: email, Message: message, Subject: selectedOption)
                             Task {
                                 do {
@@ -96,20 +96,8 @@ struct FeedbackFormView: View {
                                     print("Error sending feedback: \(error)")
                                 }
                             }
-                        }) {
-                            Rectangle()
-                                .foregroundColor(.clear)
-                                .frame(width: 160, height: 45)
-                                .cornerRadius(30)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 30)
-                                        .stroke(Color.primary, lineWidth: 1)
-                                )
-                                .overlay(
-                                    Text("Submit")
-                                        .foregroundColor(.primary)
-                                )
-                        }
+                        })
+                        
                     }
                     .padding(.bottom, 30)
                     .padding(.top, 30)

@@ -18,7 +18,7 @@ struct SettingsView: View {
                     .font(.system(size: 25))
                     .fontWeight(.bold)
                     .padding(.top, 15)
-                    .padding(.bottom, 55)
+                    .padding(.bottom, 45)
                 
                 NavigationLink(destination: FeedbackFormView()) {
                     VStack(alignment: .leading) {
@@ -59,6 +59,18 @@ struct SettingsView: View {
                 NavigationLink(destination: FreqAskedQuestionsView()) {
                     VStack(alignment: .leading) {
                         Text("Frequently asked Questions")
+                            .font(.system(size: 16))
+                            .foregroundColor(.primary)
+                        Rectangle()
+                            .frame(height: 1)
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(.bottom, 55)
+                }
+                
+                NavigationLink(destination: ProfileEditView(viewModel: viewModel)) {
+                    VStack(alignment: .leading) {
+                        Text("Edit my Account")
                             .font(.system(size: 16))
                             .foregroundColor(.primary)
                         Rectangle()

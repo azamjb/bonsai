@@ -105,6 +105,7 @@ struct OverrideBoundaryView: View {
             }
             .padding(.horizontal, 45)
         }
+        .customBackToolbar()
         .sheet(isPresented: $isPaymentSheetPresented) {
             PurchaseTokenBottomSheetView()
                 .presentationDetents([.fraction(0.60)])

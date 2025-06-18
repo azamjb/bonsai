@@ -131,7 +131,7 @@ func calculateUsage(screenTime: String) -> Int {
     case "4-6 hours":
         saveHoursPerDay(hours: 5)
         return 18
-    case "7+ hours":
+    case "7+  hours":
         saveHoursPerDay(hours: 8)
         return 23
     default:

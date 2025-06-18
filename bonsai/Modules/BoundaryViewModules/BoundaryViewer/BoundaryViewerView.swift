@@ -237,7 +237,7 @@ private struct noAccountabilityPartnerView: View {
     @State private var wrongCodeEntered = false
     @State private var navigateToProfileCreation4 = false
     @State private var triggerSuccess = false // 👈 New
-
+    let smsApi = SMSApi()
     @ObservedObject var viewModel: ProfileCreationViewModel = ProfileCreationViewModel()
     @AppStorage("invitedAccountabilityPartner") var invitedAccountabilityPartner: Bool = false
     @Binding var hasAccountabilityPartner: Bool
@@ -335,6 +335,14 @@ private struct noAccountabilityPartnerView: View {
                 DispatchQueue.main.async {
                     triggerSuccess = true
                 }
+                
+                let SMSInvite = SMSInvite(
+                    number: viewModel.accountabilityPartner.phoneNumber ?? "",
+                    username: viewModel.userProfile.name ?? "",
+                    accountabilityPartnerName: viewModel.accountabilityPartner.name ?? "", code: ""
+                )
+                
+                try await smsApi.introduction(request: SMSInvite)
             }
         } else {
             print("wrongggggg")

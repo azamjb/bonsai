@@ -17,6 +17,13 @@ struct ProfileCreation4View: View {
     var body: some View {
         NavigationStack {
             ZStack {
+                
+                Color.clear
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        hideKeyboard()
+                    }
+                
                 VStack {
                     Spacer()
 

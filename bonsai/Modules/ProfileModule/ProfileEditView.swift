@@ -59,7 +59,7 @@ struct ProfileEditView: View {
 
                     Rectangle()
                         .frame(height: 1)
-                        .foregroundColor(nameChanged ? .blue : .black)
+                        .foregroundColor(nameChanged ? .blue : .primary)
                 }
                 .padding(.bottom, 30)
 
@@ -82,7 +82,7 @@ struct ProfileEditView: View {
 
                     Rectangle()
                         .frame(height: 1)
-                        .foregroundColor(phoneChanged ? .blue : .black)
+                        .foregroundColor(phoneChanged ? .blue : .primary)
                 }
                 .padding(.bottom, 30)
 
