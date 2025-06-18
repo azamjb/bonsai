@@ -87,22 +87,12 @@ struct ProfileView: View {
                     }
                     .padding(.horizontal, 18)
                     .frame(maxWidth: .infinity, alignment: .leading)
-
-                    NavigationLink(destination: ProfileEditView(viewModel: viewModel)) {
-                        HStack {
-                            Text("edit profile")
-                                .font(.system(size: 15))
-                                .foregroundColor(.primary)
-                                .padding(.vertical, 5)
-                                .padding(.horizontal, 20)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 20)
-                                        .stroke(Color.primary, lineWidth: 1)
-                                )
-                        }
+                    
+                    
+                    NavigationStack {
+                        BonsaiNavLinkSmall(buttonText: "edit profile", destination: ProfileEditView(viewModel: viewModel))
+                            .padding(.bottom, 30)
                     }
-                    .padding(.bottom, 20)
-                    .padding(.top, 10)
 
                     Divider()
                         .frame(height: 1)
@@ -188,24 +178,11 @@ struct ProfileView: View {
                                 Text(viewModel.phoneNumberFormatter.string(for: viewModel.accountabilityPartner.phoneNumber) ?? "")
                                     .font(.system(size: 14))
 
-
-                                Button(action: {
-                                    showRemoveConfirmation = true // show alert first
-                                }) {
-                                    HStack {
-                                        Text("remove partner")
-                                            .font(.system(size: 15))
-                                            .foregroundColor(.primary)
-                                            .padding(.vertical, 5)
-                                            .padding(.horizontal, 20)
-                                            .overlay(
-                                                RoundedRectangle(cornerRadius: 20)
-                                                    .stroke(Color.primary, lineWidth: 1)
-                                            )
-                                    }
+                                BonsaiButtonSmall(buttonText: "remove accountability partner") {
+                                    showRemoveConfirmation = true
                                 }
-                                .padding(.top, 10)
-                                .padding(.bottom, 30)
+                                .padding(.vertical, 5)
+                                .padding(.horizontal, 20)
                                 .alert(removePartnerMessage, isPresented: $showRemoveConfirmation) {
                                     Button("Remove", role: .destructive) {
                                         removeAccountabilityPartner()
