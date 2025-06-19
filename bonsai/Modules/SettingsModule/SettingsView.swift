@@ -58,7 +58,7 @@ struct SettingsView: View {
                 
                 NavigationLink(destination: FreqAskedQuestionsView()) {
                     VStack(alignment: .leading) {
-                        Text("Frequently asked Questions")
+                        Text("Frequently Asked Questions")
                             .font(.system(size: 16))
                             .foregroundColor(.primary)
                         Rectangle()
@@ -70,7 +70,7 @@ struct SettingsView: View {
                 
                 NavigationLink(destination: ProfileEditView(viewModel: viewModel)) {
                     VStack(alignment: .leading) {
-                        Text("Edit my Account")
+                        Text("Edit My Account")
                             .font(.system(size: 16))
                             .foregroundColor(.primary)
                         Rectangle()
@@ -84,7 +84,7 @@ struct SettingsView: View {
                     Button(action: {
                         showRemoveConfirmation = true
                     }) {
-                        Text("Delete my Account")
+                        Text("Delete My Account")
                             .font(.system(size: 16))
                             .foregroundColor(.primary)
                             .frame(maxWidth: .infinity, alignment: .leading)
