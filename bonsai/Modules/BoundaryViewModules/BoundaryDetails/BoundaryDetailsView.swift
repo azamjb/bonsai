@@ -189,7 +189,7 @@ struct BoundaryDetailsView: View {
                     .frame(height: 40)
                     .padding(.horizontal, 45)
                     
-                    VStack {
+                    VStack(spacing: 15) {
                         BonsaiButtonRegular(buttonText: "save") {
                             submitAttempted = true
                             

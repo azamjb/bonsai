@@ -12,7 +12,7 @@ struct ContentView: View {
     var AccountabilityPartner = ""
     let accountApi = AccountApi()
     let smsApi = SMSApi()
-    @State private var tabSelection = 1
+    @State private var tabSelection = 2
     @StateObject var viewModel: ProfileViewModel = ProfileViewModel()
     @EnvironmentObject var notificationHandler: NotificationHandler
     @StateObject var screenTime = ScreenTimeService()

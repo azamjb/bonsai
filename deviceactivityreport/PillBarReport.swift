@@ -39,6 +39,11 @@ struct TimeLimitSliderView: View {
     let totalTime: TimeInterval
     let boundaryId: UUID
     
+    // Cache these computations
+    @State private var boundaryExtended: Bool = false
+    @State private var extensionCodeSent: Bool = false
+    @State private var boundaryReached: Bool = false
+    
     // Calculate progress as a value between 0.0 and 1.0.
     private var progress: Double {
         totalTime > 0 ? min(1.0, elapsedTime / totalTime) : 0.0
@@ -50,47 +55,6 @@ struct TimeLimitSliderView: View {
         let minutes = (Int(time) % 3600) / 60
         return "\(hours)h \(minutes)m"
     }
-    
-    private func hasBoundaryBeenExtendedToday(id: UUID) -> Bool {
-        if let dailyExtensionsData = sharedDefaults!.data(forKey: DAILY_BOUNDARY_EXTENSIONS_STRING) {
-            do {
-                let dailyExtensionsModels = try JSONDecoder().decode([DailyBoundaryExtensionsModel].self, from: dailyExtensionsData)
-                return dailyExtensionsModels.contains(where: { areDatesSameDay(date1: $0.extendedDateTimeUtc, date2: Date()) && $0.boundaryId == id })
-            } catch {
-                return false
-            }
-        } else {
-            return false
-        }
-    }
-    
-    private func hasExtensionCodeBeenSentForBoundary(id: UUID) -> Bool {
-        if let activeCodesData = sharedDefaults!.data(forKey: SENT_EXTENSION_CODES_STRING) {
-            do {
-                let activeCodeModels = try JSONDecoder().decode([SentExtensionCodeModel].self, from: activeCodesData)
-                return activeCodeModels.contains(where: { areDatesSameDay(date1: $0.sentDateTimeUtc, date2: Date()) && $0.boundaryId == id })
-            } catch {
-                return false
-            }
-        } else {
-            return false
-        }
-    }
-    
-    private func hasBoundaryBeenReached(id: UUID) -> Bool {
-        if let boundariesData = sharedDefaults!.data(forKey: BOUNDARIES_STRING) {
-            do {
-                let boundaries = try JSONDecoder().decode([Boundary].self, from: boundariesData)
-                let boundary = boundaries.first(where: { $0.id == id })
-                
-                return boundary?.isBlocked ?? false
-            } catch {
-                return false
-            }
-        } else {
-            return false
-        }
-    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -100,7 +64,7 @@ struct TimeLimitSliderView: View {
                         .fill(Color.gray.opacity(0.2))
                         .frame(height: 10)
                     
-                    if hasBoundaryBeenExtendedToday(id: boundaryId) {
+                    if boundaryExtended {
                         ZStack(alignment: .leading) {
                             LinearGradient(
                                 gradient: Gradient(stops: [Gradient.Stop(color: Color.primary, location: 0.0)]),
@@ -119,7 +83,7 @@ struct TimeLimitSliderView: View {
                             .font(Font.system(size: 10))
                             .bold()
                             .frame(width: geometry.size.width, height: 12, alignment: .center)
-                    } else if hasBoundaryBeenReached(id: boundaryId) {
+                    } else if boundaryReached {
                         ZStack(alignment: .leading) {
                             LinearGradient(
                                 gradient: Gradient(stops: [Gradient.Stop(color: Color.primary, location: 0.0)]),
@@ -140,7 +104,7 @@ struct TimeLimitSliderView: View {
                             .frame(width: geometry.size.width, height: 12, alignment: .center)
                         
                     }
-                    else if hasExtensionCodeBeenSentForBoundary(id: boundaryId) {
+                    else if extensionCodeSent {
                         ZStack(alignment: .leading) {
                             LinearGradient(
                                 gradient: Gradient(stops: [
@@ -192,6 +156,33 @@ struct TimeLimitSliderView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
+        }
+        .onAppear {
+            // Load boundary states once on appear
+            updateBoundaryStates()
+        }
+    }
+    
+    private func updateBoundaryStates() {
+        guard let defaults = sharedDefaults else { return }
+        
+        if let dailyExtensionsData = defaults.data(forKey: DAILY_BOUNDARY_EXTENSIONS_STRING),
+           let dailyExtensionsModels = try? JSONDecoder().decode([DailyBoundaryExtensionsModel].self, from: dailyExtensionsData) {
+            boundaryExtended = dailyExtensionsModels.contains(where: {
+                areDatesSameDay(date1: $0.extendedDateTimeUtc, date2: Date()) && $0.boundaryId == boundaryId
+            })
+        }
+        
+        if let activeCodesData = defaults.data(forKey: SENT_EXTENSION_CODES_STRING),
+           let activeCodeModels = try? JSONDecoder().decode([SentExtensionCodeModel].self, from: activeCodesData) {
+            extensionCodeSent = activeCodeModels.contains(where: {
+                areDatesSameDay(date1: $0.sentDateTimeUtc, date2: Date()) && $0.boundaryId == boundaryId
+            })
+        }
+        
+        if let boundariesData = defaults.data(forKey: BOUNDARIES_STRING),
+           let boundaries = try? JSONDecoder().decode([Boundary].self, from: boundariesData) {
+            boundaryReached = boundaries.first(where: { $0.id == boundaryId })?.isBlocked ?? false
         }
     }
 }
@@ -255,72 +246,102 @@ extension Color {
     }
 }
 
-// MARK: - PillBarReport Scene
+// MARK: - Optimized PillBarReport Scene
 struct PillBarReport: DeviceActivityReportScene {
-    // Use the custom context for the pill bar report.
     let context: DeviceActivityReport.Context = .pillBar
     
     typealias Configuration = PillBarViewConfiguration
     typealias Content = PillBarView
     
     private func getBoundaries() -> [Boundary] {
-        let encoded = sharedDefaults!.data(forKey: BOUNDARIES_STRING)
-        
-        if encoded != nil {
-            return try! JSONDecoder().decode([Boundary].self, from: encoded!)
-        } else {
+        guard let defaults = sharedDefaults,
+              let encoded = defaults.data(forKey: BOUNDARIES_STRING),
+              let boundaries = try? JSONDecoder().decode([Boundary].self, from: encoded) else {
             return []
         }
+        return boundaries
     }
     
     func makeConfiguration(representing data: DeviceActivityResults<DeviceActivityData>) async -> Configuration {
-        var usageGroups: [UsageGroup] = []
         let boundaries = getBoundaries()
-
+        
+        // Early return if no boundaries
+        guard !boundaries.isEmpty else {
+            return PillBarViewConfiguration(usageGroups: [])
+        }
+        
+        // Create lookup structures for O(1) access
+        var boundaryLookup: [UUID: Boundary] = [:]
+        var categoryToBoundaries: [ActivityCategoryToken: Set<UUID>] = [:]
+        var appToBoundaries: [ApplicationToken: Set<UUID>] = [:]
+        var webToBoundaries: [WebDomainToken: Set<UUID>] = [:]
+        
+        // Build lookup tables
         for boundary in boundaries {
-            var elapsedTime = TimeInterval(0)
+            boundaryLookup[boundary.id] = boundary
             
-            for await activityData in data {
-                for try await segment in activityData.activitySegments {
-                    for try await segmentCategory in segment.categories {
-                        if boundary.categoryTokens.contains(where: { $0 == segmentCategory.category.token }) {
-                            elapsedTime += segmentCategory.totalActivityDuration
-                            
-                            // If the whole category exists in the limit, skip to the next iteration since we use the category to check its containing apps.
-                            continue
+            for token in boundary.categoryTokens {
+                categoryToBoundaries[token, default: []].insert(boundary.id)
+            }
+            
+            for token in boundary.appTokens {
+                appToBoundaries[token, default: []].insert(boundary.id)
+            }
+            
+            for token in boundary.webDomainTokens {
+                webToBoundaries[token, default: []].insert(boundary.id)
+            }
+        }
+        
+        var usageByBoundary: [UUID: TimeInterval] = [:]
+        
+        for await activityData in data {
+            for await segment in activityData.activitySegments {
+                for await category in segment.categories {
+                    let categoryToken = category.category.token
+                    
+                    if let boundaryIds = categoryToBoundaries[categoryToken!] {
+                        for boundaryId in boundaryIds {
+                            usageByBoundary[boundaryId, default: 0] += category.totalActivityDuration
                         }
-                        
-                        // Go through each app where the app exists in the User's limits
-                        for try await application in segmentCategory.applications {
-                            if boundary.appTokens.contains(where: { $0 == application.application.token }) {
-                                elapsedTime += application.totalActivityDuration
+                    }
+                    
+                    for await app in category.applications {
+                        if let boundaryIds = appToBoundaries[app.application.token!] {
+                            for boundaryId in boundaryIds {
+                                usageByBoundary[boundaryId, default: 0] += app.totalActivityDuration
                             }
                         }
-                        
-                        // Go through each web domain where the app exists in the User's limits
-                        for try await webDomain in segmentCategory.webDomains {
-                            if boundary.webDomainTokens.contains(where: { $0 == webDomain.webDomain.token }) {
-                                elapsedTime += webDomain.totalActivityDuration
+                    }
+                    
+                    for await webDomain in category.webDomains {
+                        if let boundaryIds = webToBoundaries[webDomain.webDomain.token!] {
+                            for boundaryId in boundaryIds {
+                                usageByBoundary[boundaryId, default: 0] += webDomain.totalActivityDuration
                             }
                         }
                     }
                 }
             }
+        }
+        
+        var usageGroups: [UsageGroup] = []
+        for boundary in boundaries {
+            let elapsedTime = usageByBoundary[boundary.id] ?? 0
+            let totalTime = TimeInterval(boundary.hours * 3600 + boundary.minutes * 60)
             
-            usageGroups.insert(
+            usageGroups.append(
                 UsageGroup(
                     id: boundary.id,
                     groupName: boundary.givenName,
                     elapsedTime: elapsedTime,
-                    totalAllowedTime: TimeInterval(boundary.hours * 3600 + boundary.minutes * 60)
-                ),
-                at: 0
+                    totalAllowedTime: totalTime
+                )
             )
         }
         
         return PillBarViewConfiguration(usageGroups: usageGroups)
     }
-    
     
     var content: (Configuration) -> Content {
         return { configuration in

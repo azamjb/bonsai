@@ -93,11 +93,6 @@ struct BoundaryViewerView: View {
                                     .multilineTextAlignment(.center)
                                     .padding(.top, 40)
 
-                                Text("\"It is not that we have a short time to live, but that we waste a lot of it.\" - Seneca")
-                                    .font(.system(size: 12))
-                                    .multilineTextAlignment(.center)
-                                    .padding(.horizontal, 30)
-
                                 if !screenTime.boundariesSet.isEmpty {
                                     List {
                                         ForEach(screenTime.boundariesSet) { boundary in

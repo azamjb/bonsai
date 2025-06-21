@@ -27,7 +27,7 @@ public struct BonsaiButtonRegular: View {
         }) {
             Rectangle()
                 .foregroundColor(.clear)
-                .frame(width: 300, height: 50)
+                .frame(width: 300, height: 40)
                 .cornerRadius(30)
                 .overlay(
                     RoundedRectangle(cornerRadius: 30)

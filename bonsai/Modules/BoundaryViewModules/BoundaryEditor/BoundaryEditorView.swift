@@ -114,13 +114,6 @@ struct BoundaryEditorView: View {
                     .bold()
                     .font(.system(size: 30))
                     .multilineTextAlignment(.center)
-                
-                Text("\"It is not that we have a short time to live, but that we waste a lot of it.\" - Seneca")
-                    .font(.system(size: 12))
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 30)
-                    .lineLimit(nil)
-                    .fixedSize(horizontal: false, vertical: true)
             }
             .padding(.top, 20)
         }
