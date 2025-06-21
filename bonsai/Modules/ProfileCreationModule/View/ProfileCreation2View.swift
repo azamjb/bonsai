@@ -27,21 +27,23 @@ struct ProfileCreation2View: View {
                             .fontWeight(.bold)
 
                         HStack(alignment: .center) {
-                            TextField("Enter Phone Number", text: $rawPhoneNumber)
-                                .keyboardType(.numberPad)
-                                .modifier(CustomTextFieldStyle(placeholder: " "))
-                                .frame(height: 40)
-                                .focused($isFieldFocused)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 20)
-                                        .stroke(Color.clear, lineWidth: 2)
-                                )
-                                .offset(x: isShaking ? -10 : 0)
-                                .animation(isShaking ? .default.repeatCount(3, autoreverses: true) : .default, value: isShaking)
-                                .onChange(of: rawPhoneNumber) { newValue in
-                                        let digits = newValue.filter { $0.isNumber }.prefix(10)
-                                        rawPhoneNumber = String(digits)
-                                    }
+                            BonsaiPhoneNumberField(binding: $rawPhoneNumber, placeholder: "Enter Phone Number")
+                            
+//                            TextField("Enter Phone Number", text: $rawPhoneNumber)
+//                                .keyboardType(.numberPad)
+//                                .modifier(CustomTextFieldStyle(placeholder: " "))
+//                                .frame(height: 40)
+//                                .focused($isFieldFocused)
+//                                .background(
+//                                    RoundedRectangle(cornerRadius: 20)
+//                                        .stroke(Color.clear, lineWidth: 2)
+//                                )
+//                                .offset(x: isShaking ? -10 : 0)
+//                                .animation(isShaking ? .default.repeatCount(3, autoreverses: true) : .default, value: isShaking)
+//                                .onChange(of: rawPhoneNumber) { newValue in
+//                                        let digits = newValue.filter { $0.isNumber }.prefix(10)
+//                                        rawPhoneNumber = String(digits)
+//                                    }
 
                             let forwardButton = Image(systemName: "chevron.right")
                                 .font(.system(size: 19))
@@ -57,12 +59,12 @@ struct ProfileCreation2View: View {
                                         isShaking = false
                                     }
                                 } else {
-                                    let formatted = formatPhoneNumber(rawPhoneNumber)
+                                    //let formatted = formatPhoneNumber(rawPhoneNumber)
                                     isNavigating = true
                                     Task {
                                         await viewModel.saveProfileFields(
                                             name: name,
-                                            phoneNumber: formatted,
+                                            phoneNumber: rawPhoneNumber,
                                             hobbies: nil,
                                             termsAccepted: nil
                                         )
@@ -71,7 +73,6 @@ struct ProfileCreation2View: View {
                             }) {
                                 forwardButton
                             }
-                            .padding(.top, 24)
                         }
                         .frame(height: 50)
                     }

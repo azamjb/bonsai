@@ -41,48 +41,12 @@ struct ProfileEditView: View {
                     .padding(.bottom, 45)
 
                 VStack(alignment: .leading) {
-                    HStack {
-                        Text("NAME")
-                            .font(.system(size: 12))
-                            .foregroundColor(.gray)
-
-                        if nameChanged {
-                            Image(systemName: "pencil.circle.fill")
-                                .foregroundColor(.blue)
-                                .font(.system(size: 12))
-                        }
-                    }
-
-                    TextField(originalName, text: $editedName)
-                        .padding(.bottom, 5)
-                        .textFieldStyle(PlainTextFieldStyle())
-
-                    Rectangle()
-                        .frame(height: 1)
-                        .foregroundColor(nameChanged ? .blue : .primary)
+                    BonsaiTextField(binding: $editedName, existingValue: originalName, title: "NAME", showEditIndicator: true)
                 }
                 .padding(.bottom, 30)
 
                 VStack(alignment: .leading) {
-                    HStack {
-                        Text("PHONE")
-                            .font(.system(size: 12))
-                            .foregroundColor(.gray)
-
-                        if phoneChanged {
-                            Image(systemName: "pencil.circle.fill")
-                                .foregroundColor(.blue)
-                                .font(.system(size: 12))
-                        }
-                    }
-
-                    TextField(originalPhone, text: $editedPhone)
-                        .padding(.bottom, 5)
-                        .textFieldStyle(PlainTextFieldStyle())
-
-                    Rectangle()
-                        .frame(height: 1)
-                        .foregroundColor(phoneChanged ? .blue : .primary)
+                    BonsaiPhoneNumberField(binding: $editedPhone, existingValue: originalPhone, title: "PHONE", showEditIndicator: true)
                 }
                 .padding(.bottom, 30)
 
@@ -140,14 +104,14 @@ struct ProfileEditView: View {
                                 phoneNumber: editedPhone,
                                 hobbies: editedHobbies,
                                 termsAccepted: nil)
+
+                            isSaved = true
                         }
 
                         // Update original values to match edited values
                         originalName = editedName
                         originalPhone = editedPhone
                         originalHobbies = editedHobbies
-
-                        isSaved = true
                     }
                     .font(.system(size: 15))
                     .foregroundColor(.white)

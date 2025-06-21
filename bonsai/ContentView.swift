@@ -27,11 +27,11 @@ struct ContentView: View {
                 switch tabSelection {
                 case 1:
                     NavigationStack {
-                        ActivityReportView(tabSelection: $tabSelection)
+                        BoundaryViewerView(tabSelection: $tabSelection)
                     }
                 case 2:
                     NavigationStack {
-                        BoundaryViewerView(tabSelection: $tabSelection)
+                        ActivityReportView(tabSelection: $tabSelection)
                     }
                 case 3:
                     NavigationStack {
@@ -106,15 +106,15 @@ struct CustomTabBar: View {
                 .padding(.horizontal, 30)
 
             HStack(spacing: 0) {
+                TabBarButton(title: "BOUNDARIES", tag: 1, selectedTab: $selectedTab)
+                    .frame(maxWidth: .infinity)
+                TabBarButton(title: "B.", tag: 2, selectedTab: $selectedTab)
+                    .frame(maxWidth: .infinity)
                 TabBarButton(title: "PROFILE", tag: 3, selectedTab: $selectedTab)
-                    .frame(maxWidth: .infinity)
-                TabBarButton(title: "B.", tag: 1, selectedTab: $selectedTab)
-                    .frame(maxWidth: .infinity)
-                TabBarButton(title: "BOUNDARIES", tag: 2, selectedTab: $selectedTab)
                     .frame(maxWidth: .infinity)
             }
             .padding(.top, 20)
-            .padding(.bottom, 40)
+            .padding(.bottom, 35)
             .padding(.horizontal, 30)
         }
         .background(Color(.systemBackground).ignoresSafeArea(edges: .bottom))

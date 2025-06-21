@@ -36,20 +36,7 @@ struct AccountabilityPartnerView: View {
                             .padding(.top, 16)
                         
                         // Phone Number Input
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.gray.opacity(0.4), lineWidth: 1)
-                            .frame(height: 50)
-                            .background(
-                                HStack {
-                                    Image(systemName: "phone.fill")
-                                        .foregroundColor(.blue)
-
-                                    iPhoneNumberField("Phone Number", text: $viewModel.phoneNumber)
-                                        .keyboardType(.phonePad)
-                                        .padding(.leading, 4)
-                                }
-                                .padding(.horizontal)
-                            )
+                        BonsaiPhoneNumberField(binding: $viewModel.phoneNumber, title: "Phone Number")
                         
                         // Submit button
                         Button(action: {

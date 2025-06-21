@@ -108,7 +108,7 @@ struct BoundaryViewerView: View {
                                         }
                                     }
                                     .listStyle(PlainListStyle())
-                                    .frame(minHeight: 175 * CGFloat(screenTime.boundariesSet.count))
+                                    .frame(maxHeight: 450)
                                 }
                             }
                         }
@@ -304,7 +304,7 @@ private struct noAccountabilityPartnerView: View {
         .navigationDestination(isPresented: $navigateToProfileCreation4) {
             ProfileCreation4View()
         }
-        .onChange(of: triggerSuccess) { newValue in
+        .onChange(of: triggerSuccess) { _, newValue in
             if newValue {
                 hasAccountabilityPartner = true
             }

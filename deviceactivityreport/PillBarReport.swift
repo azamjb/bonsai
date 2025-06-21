@@ -76,6 +76,21 @@ struct TimeLimitSliderView: View {
             return false
         }
     }
+    
+    private func hasBoundaryBeenReached(id: UUID) -> Bool {
+        if let boundariesData = sharedDefaults!.data(forKey: BOUNDARIES_STRING) {
+            do {
+                let boundaries = try JSONDecoder().decode([Boundary].self, from: boundariesData)
+                let boundary = boundaries.first(where: { $0.id == id })
+                
+                return boundary?.isBlocked ?? false
+            } catch {
+                return false
+            }
+        } else {
+            return false
+        }
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -99,13 +114,33 @@ struct TimeLimitSliderView: View {
                                 .path(in: CGRect(x: 0, y: 0, width: geometry.size.width, height: 12))
                         )
                         
-                        Text("BOUNDARY EXTENDED")
+                        Text("BOUNDARY EXTENDED +")
+                            .foregroundStyle(Color.white)
+                            .font(Font.system(size: 10))
+                            .bold()
+                            .frame(width: geometry.size.width, height: 12, alignment: .center)
+                    } else if hasBoundaryBeenReached(id: boundaryId) {
+                        ZStack(alignment: .leading) {
+                            LinearGradient(
+                                gradient: Gradient(stops: [Gradient.Stop(color: Color.primary, location: 0.0)]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                            .frame(width: geometry.size.width, height: 12)
+                        }
+                        .clipShape(
+                            Capsule()
+                                .path(in: CGRect(x: 0, y: 0, width: geometry.size.width, height: 12))
+                        )
+                        
+                        Text("BOUNDARY REACHED")
                             .foregroundStyle(Color.white)
                             .font(Font.system(size: 10))
                             .bold()
                             .frame(width: geometry.size.width, height: 12, alignment: .center)
                         
-                    } else if hasExtensionCodeBeenSentForBoundary(id: boundaryId) {
+                    }
+                    else if hasExtensionCodeBeenSentForBoundary(id: boundaryId) {
                         ZStack(alignment: .leading) {
                             LinearGradient(
                                 gradient: Gradient(stops: [

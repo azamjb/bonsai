@@ -32,7 +32,7 @@ struct BoundaryEditorView: View {
                 .layoutPriority(1)
             
             buttonContent
-                .padding(.bottom, 100)
+                .padding(.bottom, 30)
         }
         
         .edgesIgnoringSafeArea(.bottom)

@@ -149,8 +149,8 @@ public class ScreenTimeService: ObservableObject {
     public func getSentExtensionCodes() -> [SentExtensionCodeModel] {
         if let data = sharedDefaults!.data(forKey: SENT_EXTENSION_CODES_STRING) {
             do {
-                let activeCodeModel = try JSONDecoder().decode([SentExtensionCodeModel].self, from: data)
-                return activeCodeModel
+                let activeCodeModels = try JSONDecoder().decode([SentExtensionCodeModel].self, from: data)
+                return activeCodeModels.sorted(by: { $0.sentDateTimeUtc > $1.sentDateTimeUtc })
             } catch {
                 return []
             }

@@ -120,18 +120,18 @@ import ManagedSettings
         isSendingTimeRequest = false
     }
     
-    public func validateVerificationCode(pin: String) -> Bool { // validate if the code entered by the user is correct or incorrect
-        let foundExtensionCodeModel = screenTime.getSentExtensionCodes().first { model in
-            return model.isCodeValid && model.code == pin
-        }
+    public func validateVerificationCode(pin: String) -> Bool {
+        let foundExtensionCodeModels = screenTime.getSentExtensionCodes().filter() { model in model.code == pin && model.isCodeValid }
         
-        if let model = foundExtensionCodeModel {
-            screenTime.extendBlockedBoundary(boundaryId: model.boundaryId)
-            screenTime.setGroupDisplays()
+        if foundExtensionCodeModels.isEmpty {
+            return false
+        } else {
+            foundExtensionCodeModels.forEach { model in
+                screenTime.extendBlockedBoundary(boundaryId: model.boundaryId)
+                screenTime.setGroupDisplays()
+            }
             
             return true
-        } else {
-            return false
         }
     }
 

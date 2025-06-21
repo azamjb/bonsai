@@ -7,6 +7,7 @@ struct BoundaryExtensionRequestView: View {
     @State private var isRememberMeChecked = false
     @EnvironmentObject var screenTime: ScreenTimeService
     @State public var checkedItems: [Boundary : Bool] = [:] // dictionary to track which of the boundaries have been 'checked' to be extended
+    @State var isRequestSent: Bool = false
 
     @State private var requestNote: String = ""
     @State private var pin: String = ""
@@ -24,8 +25,8 @@ struct BoundaryExtensionRequestView: View {
                         HeaderView()
                         SelectAppsSection(screenTime: screenTime, checkedItems: $checkedItems, showErrorMessage: $showNoBoundariesSelectedError)
                         NoteSection(requestNote: $requestNote, isFieldFocused: _isFieldFocused)
-                        SendCodeButton(viewModel: viewModel, userViewModel: UserViewModel, requestNote: $requestNote, checkedItems: $checkedItems, showErrorMessage: $showNoBoundariesSelectedError)
-                        EnterCodeSection(pin: $pin, checkedItems: checkedItems, viewModel: viewModel, screenTime: screenTime)
+                        SendCodeButton(viewModel: viewModel, userViewModel: UserViewModel, requestNote: $requestNote, checkedItems: $checkedItems, showErrorMessage: $showNoBoundariesSelectedError, isRequestSent: $isRequestSent)
+                        EnterCodeSection(pin: $pin, checkedItems: $checkedItems, viewModel: viewModel, screenTime: screenTime, isRequestSent: $isRequestSent)
                         SentRequestCodesSection(sentExtensionRequests: screenTime.getSentExtensionCodesAsBoundaryNameAndDateDict())
                     }
                     .padding(.horizontal, 40)
@@ -151,13 +152,16 @@ struct SendCodeButton: View {
     @Binding var requestNote: String
     @Binding var checkedItems: [Boundary: Bool]
     @Binding var showErrorMessage: Bool
+    @Binding var isRequestSent: Bool
     
     var body: some View {
         VStack {
             Button {
                 if checkedItems.filter({ $0.value }).isEmpty {
                     showErrorMessage = true
+                    isRequestSent = false
                 } else {
+                    isRequestSent = false
                     showErrorMessage = false
                     
                     Task {
@@ -169,6 +173,7 @@ struct SendCodeButton: View {
                             boundaries: checkedItems.filter({ $0.value == true }).map({ $0.key })
                         )
                         
+                        isRequestSent = true
                         requestNote = ""
                     }
                 }
@@ -189,6 +194,11 @@ struct SendCodeButton: View {
             if showErrorMessage {
                 Text("Please select at least one boundary.")
                     .foregroundColor(.red)
+            }
+            
+            if isRequestSent {
+                Text("Extension code has been sent")
+                    .foregroundColor(.green)
             }
         }
     }
@@ -244,11 +254,12 @@ struct SentRequestCodesSection: View {
 
 struct EnterCodeSection: View {
     @Binding var pin: String
-    let checkedItems: [Boundary: Bool]
+    @Binding var checkedItems: [Boundary: Bool]
     @State private var showSuccessAlert = false
     @State private var showFailureAlert = false
     @ObservedObject var viewModel: AccountabilityPartnerViewModel
     @ObservedObject var screenTime: ScreenTimeService
+    @Binding var isRequestSent: Bool
 
     var body: some View {
         VStack {
@@ -302,6 +313,17 @@ struct EnterCodeSection: View {
             if validated {
                 pin = ""
                 showSuccessAlert = true
+                isRequestSent = false
+                
+                let keysToRemove = checkedItems.compactMap { $0.value ? $0.key : nil }
+                
+                keysToRemove.forEach { key in
+                    checkedItems.removeValue(forKey: key)
+                }
+                
+                screenTime.boundariesReached.removeAll { boundary in
+                    keysToRemove.contains(boundary)
+                }
             } else {
                 print("invalid code")
                 showFailureAlert = true
@@ -310,41 +332,6 @@ struct EnterCodeSection: View {
     }
 }
 
-struct PinEntryView: View {
-    @Binding var pin: String
-    @FocusState private var isPinFocused: Bool
-
-    private let pinLength = 6
-
-    var body: some View {
-        HStack(spacing: 10) {
-            ForEach(0..<pinLength, id: \.self) { index in
-                ZStack {
-                    Text(pin.count > index ? String(pin[pin.index(pin.startIndex, offsetBy: index)]) : "")
-                        .font(.title)
-                        .foregroundColor(.primary)
-
-                    Rectangle()
-                        .frame(width: 30, height: 2)
-                        .foregroundColor(.primary)
-                        .offset(y: 20)
-                }
-            }
-        }
-        .contentShape(Rectangle())
-        .onTapGesture {
-            isPinFocused = true
-        }
-        .background(
-            TextField("", text: $pin)
-                .keyboardType(.numberPad)
-                .textContentType(.oneTimeCode)
-                .frame(width: 0, height: 0)
-                .opacity(0)
-                .focused($isPinFocused)
-        )
-    }
-}
 
 struct CheckboxView: View {
     @Binding var isChecked: Bool

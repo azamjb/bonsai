@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import SwiftUICore
 
 extension String {
     func shorted(to symbols: Int) -> String {
@@ -114,5 +115,11 @@ extension Array {
         }
 
         return arrayOrdered
+    }
+}
+
+extension UIApplication {
+    func endEditing() {
+        sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }

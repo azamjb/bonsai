@@ -335,34 +335,37 @@ private struct BoundaryLabelEditor: View {
     }
     
     private func inputFieldView() -> some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("BOUNDARY NAME")
-                .foregroundColor(.primary)
-                .padding(.horizontal, 20)
-                .padding(.top, 18)
-                .padding(.bottom, 15)
+//        VStack(alignment: .leading, spacing: 10) {
+//            Text("BOUNDARY NAME")
+//                .foregroundColor(.primary)
+//                .padding(.horizontal, 20)
+//                .padding(.top, 18)
+//                .padding(.bottom, 15)
             
-            HStack {
-                TextField("", text: $boundary.givenName)
-                    .focused($isFocused)
-                    .foregroundStyle(Color.primary)
-                    .padding(.vertical, 15)
-                
-                Button(action: {
-                    boundary.givenName = ""
-                    isFocused = true
-                }) {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(Color.secondary)
-                        .padding(.trailing, 8)
-                }
-            }
+        BonsaiTextField(binding: $boundary.givenName, placeholder: "Unnamed Boundary", title: "BOUNDARY NAME")
             .padding(.horizontal, 20)
-            .background(Color(UIColor.systemGray5))
-        }
-        .background(Color(UIColor.systemGray5))
-        .cornerRadius(10)
-        .padding(.horizontal, 20)
+            .padding(.vertical, 20)
+//            HStack {
+//                TextField("", text: $boundary.givenName)
+//                    .focused($isFocused)
+//                    .foregroundStyle(Color.primary)
+//                    .padding(.vertical, 15)
+//                
+//                Button(action: {
+//                    boundary.givenName = ""
+//                    isFocused = true
+//                }) {
+//                    Image(systemName: "xmark.circle.fill")
+//                        .foregroundColor(Color.secondary)
+//                        .padding(.trailing, 8)
+//                }
+//            }
+//            .padding(.horizontal, 20)
+//            .background(Color(UIColor.systemGray5))
+//        }
+//        .background(Color(UIColor.systemGray5))
+//        .cornerRadius(10)
+//        .padding(.horizontal, 20)
     }
 }
 
