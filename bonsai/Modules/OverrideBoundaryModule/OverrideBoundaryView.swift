@@ -52,7 +52,7 @@ struct OverrideBoundaryView: View {
                      
                     Text("Override tokens will override all set boundaries until 12:00 am. ")
                         .font(.system(size: 12))
-                        .padding(.bottom, 6)
+                        .padding(.bottom, 12)
                     
                     BonsaiButtonSmall(buttonText: " override limits ") {
                         Task {
@@ -72,13 +72,11 @@ struct OverrideBoundaryView: View {
                     .frame(maxWidth: .infinity, alignment: .center)
                     
                     NavigationLink(destination: FreqAskedQuestionsView(scrollToID: "manual_token_use")) {
-                        VStack(alignment: .leading) {
-                            Text("why tokens")
-                                .font(.system(size: 12))
-                                .underline()
-                                .foregroundColor(Color(red: 0, green: 0.1, blue: 0.54))
-                                .frame(maxWidth: .infinity, alignment: .center)
-                        }
+                        Text("why tokens")
+                            .font(.system(size: 12))
+                            .underline()
+                            .foregroundColor(Color(red: 0, green: 0.1, blue: 0.54))
+                            .frame(maxWidth: .infinity, alignment: .center)
                     }
                 }
                 .padding(.vertical, 30)
@@ -89,11 +87,12 @@ struct OverrideBoundaryView: View {
                         .font(.system(size: 12))
                     Rectangle()
                         .foregroundColor(.clear)
-                        .frame(width: 277.00723, height: 1)
+                        .frame(height: 1)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
                         .background(.black)
                 }
                 
-                // Inject the token service view here to prevent weird nesting issues
                 TokenServiceView(viewModel)
                 
                 // TODO: TURN THIS INTO A BUTTON EVENTUALLY
@@ -205,7 +204,7 @@ struct TokenServiceView: View {
 
                             }
                             Divider()
-                                .frame(width: 277, height: 1)
+                                .frame(maxWidth: .infinity, alignment: .leading)
                                 .background(Color(red: 0.67, green: 0.67, blue: 0.67))
                         }
                         
@@ -220,7 +219,7 @@ struct TokenServiceView: View {
             
             
         }
-        .frame(width: 277)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.top, 5)
         .onAppear {
             viewModel.loadData()
