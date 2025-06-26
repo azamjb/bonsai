@@ -75,8 +75,9 @@ struct OverrideBoundaryView: View {
                         Text("why tokens")
                             .font(.system(size: 12))
                             .underline()
-                            .foregroundColor(Color(red: 0, green: 0.1, blue: 0.54))
+                            .foregroundColor(.blue)
                             .frame(maxWidth: .infinity, alignment: .center)
+                            .padding(.top, 5)
                     }
                 }
                 .padding(.vertical, 30)
@@ -94,13 +95,14 @@ struct OverrideBoundaryView: View {
                 }
                 
                 TokenServiceView(viewModel)
+                    .padding(.bottom, 20)
                 
                 // TODO: TURN THIS INTO A BUTTON EVENTUALLY
-                Text("where is my money going?")
-                    .font(.system(size: 12))
-                    .underline(true, pattern: .solid)
-                    .foregroundColor(Color(red: 0, green: 0.04, blue: 0.54))
-                    .frame(width: 165, alignment: .topLeading)
+//                Text("where is my money going?")
+//                    .font(.system(size: 12))
+//                    .underline(true, pattern: .solid)
+//                    .foregroundColor(Color(red: 0, green: 0.04, blue: 0.54))
+//                    .frame(width: 165, alignment: .topLeading)
             }
             .padding(.horizontal, 45)
         }

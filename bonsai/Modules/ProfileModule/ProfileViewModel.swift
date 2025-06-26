@@ -13,20 +13,32 @@ class PhoneNumberFormatter: Formatter {
     override func string(for obj: Any?) -> String? {
         guard let phoneNumber = obj as? String else { return nil }
 
-        // Remove any non-digit characters
-        let cleaned = phoneNumber.filter { "0123456789".contains($0) }
+        // Remove non-digit characters, but keep '+' if it's at the start
+        var cleaned = phoneNumber.trimmingCharacters(in: .whitespacesAndNewlines)
+        let hasPlus = cleaned.hasPrefix("+")
+        cleaned = cleaned.filter { "0123456789".contains($0) }
 
-        // Ensure there are enough characters
-        guard cleaned.count == 10 else { return phoneNumber }
+        // If the number has a +1 country code, format accordingly
+        if cleaned.count == 11 && cleaned.hasPrefix("1") {
+            let areaCode = cleaned.dropFirst(1).prefix(3)
+            let mid = cleaned.dropFirst(4).prefix(3)
+            let last = cleaned.suffix(4)
+            return "+1 (\(areaCode)) \(mid)-\(last)"
+        }
 
-        // Format the phone number as (XXX) XXX-XXXX
-        let areaCode = cleaned.prefix(3)
-        let midSection = cleaned.dropFirst(3).prefix(3)
-        let lastSection = cleaned.dropFirst(6).prefix(4)
+        // If the number has exactly 10 digits
+        if cleaned.count == 10 {
+            let areaCode = cleaned.prefix(3)
+            let mid = cleaned.dropFirst(3).prefix(3)
+            let last = cleaned.suffix(4)
+            return "(\(areaCode)) \(mid)-\(last)"
+        }
 
-        return "(\(areaCode)) \(midSection)-\(lastSection)"
+        // Fallback
+        return phoneNumber
     }
 }
+
 
 class ProfileViewModel: ObservableObject {
     private let appGroupID = "group.com.bonsai"

@@ -248,6 +248,7 @@ struct SentRequestCodesSection: View {
                     }
                 }
             }
+            .padding(.bottom, 20)
         }
     }
 }

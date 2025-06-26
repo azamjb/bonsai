@@ -144,6 +144,7 @@ struct ActivityReportView: View {
                             Text("BOUNDARIES")
                                 .padding(.horizontal, 18)
                                 .padding(.bottom, 20)
+                                .fontWeight(.bold)
 
                             if isAuthorized {
                                 ZStack {
@@ -272,6 +273,7 @@ struct ActivityReportView: View {
                             .frame(height: 1)
                             .background(Color.primary)
                             .padding(.bottom, 20)
+                            .padding(.top, 10)
 
                         Text("EXTEND BOUNDARIES")
                             .padding(.bottom, 30)
@@ -282,7 +284,7 @@ struct ActivityReportView: View {
                                 .padding(.bottom, 30)
                             
                             BonsaiNavLinkSmall(buttonText: "override boundaries", destination: OverrideBoundaryView(screenTime))
-                                .padding(.bottom, 30)
+                                .padding(.bottom, 40)
                         }
                     }
                     .padding(.horizontal, 18)

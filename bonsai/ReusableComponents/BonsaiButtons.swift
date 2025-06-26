@@ -73,6 +73,35 @@ public struct BonsaiButtonSmall: View {
     }
 }
 
+public struct BonsaiHalfButton: View {
+    var buttonText: String
+    var onClick: () -> Void
+    
+    @State private var isPressed = false
+    
+    public var body: some View {
+        Button(action: {
+            withAnimation(.easeInOut(duration: 0.2)) {
+                isPressed = true
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                isPressed = false
+                onClick()
+            }
+        }) {
+            Text(buttonText)
+                .font(.system(size: 15))
+                .foregroundColor(.primary)
+                .padding(.vertical, 8)
+                .padding(.horizontal, 25)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(Color.primary, lineWidth: 1)
+                )
+                .scaleEffect(isPressed ? 0.95 : 1.0)
+        }
+    }
+}
 
 public struct BonsaiNavLinkSmall<Destination: View>: View {
     var buttonText: String

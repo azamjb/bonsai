@@ -68,17 +68,17 @@ struct SettingsView: View {
                     .padding(.bottom, 55)
                 }
                 
-                NavigationLink(destination: ProfileEditView(viewModel: viewModel)) {
-                    VStack(alignment: .leading) {
-                        Text("Edit My Account")
-                            .font(.system(size: 16))
-                            .foregroundColor(.primary)
-                        Rectangle()
-                            .frame(height: 1)
-                            .foregroundColor(.secondary)
-                    }
-                    .padding(.bottom, 55)
-                }
+//                NavigationLink(destination: ProfileEditView(viewModel: viewModel)) { // Removed for now as its not working
+//                    VStack(alignment: .leading) {
+//                        Text("Edit My Account")
+//                            .font(.system(size: 16))
+//                            .foregroundColor(.primary)
+//                        Rectangle()
+//                            .frame(height: 1)
+//                            .foregroundColor(.secondary)
+//                    }
+//                    .padding(.bottom, 55)
+//                }
                 
                 VStack(alignment: .leading) {
                     Button(action: {

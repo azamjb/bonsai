@@ -189,26 +189,22 @@ struct ProfileView: View {
                                 Text(viewModel.accountabilityPartner.name ?? "can't fetch name")
                                     .fontWeight(.bold)
 
-                                Text(viewModel.phoneNumberFormatter.string(for: viewModel.accountabilityPartner.phoneNumber) ?? "")
-                                    .font(.system(size: 14))
+                                Text(
+                                    viewModel.phoneNumberFormatter.string(
+                                        for: viewModel.accountabilityPartner.phoneNumber ?? ""
+                                    ) ?? ""
+                                )
+                                .font(.system(size: 14))
                             }
                             .padding(.horizontal, 18)
                             .frame(maxWidth: .infinity, alignment: .leading)
 
                             VStack {
-
-                                Button(action: {
-                                    showRemoveConfirmation = true // show alert first
-                                }) {
-                                    Text("remove")
-                                        .font(.system(size: 15))
-                                        .foregroundColor(.primary)
-                                        .padding(.vertical, 8)
-                                        .padding(.horizontal, 25)
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 20)
-                                                .stroke(Color.primary, lineWidth: 1)
-                                        )
+                                
+                                BonsaiHalfButton(buttonText: "Remove") {
+                                    Task {
+                                        showRemoveConfirmation = true // show alert first
+                                    }
                                 }
                                 .alert(removePartnerMessage, isPresented: $showRemoveConfirmation) {
                                     Button("Remove", role: .destructive) {
