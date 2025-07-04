@@ -11,7 +11,8 @@ struct OverrideBoundaryView: View {
     @StateObject var viewModel: OverrideBoundaryViewModel = OverrideBoundaryViewModel()
     @ObservedObject var screenTime: ScreenTimeService
     @State private var isPaymentSheetPresented = false
-    
+    @State private var showTokenAlert = false
+
     init(_ screenTime: ScreenTimeService) {
         self.screenTime = screenTime
     }
@@ -59,6 +60,8 @@ struct OverrideBoundaryView: View {
                             let successfulSpend = await viewModel.spendToken(tokenSpendAmount: 1)
                             if successfulSpend {
                                 screenTime.clearShieldedApps()
+                            } else {
+                                showTokenAlert = true
                             }
                         }
                     }
@@ -115,6 +118,9 @@ struct OverrideBoundaryView: View {
             if !isPaymentSheetPresented {
                 viewModel.loadData()
             }
+        }
+        .alert("Insufficient tokens", isPresented: $showTokenAlert) {
+            Button("OK", role: .cancel) { }
         }
         
         
