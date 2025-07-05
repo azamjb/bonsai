@@ -562,27 +562,77 @@ private struct SelectedAppDisplay: View {
     @Binding var appTokens: Set<ApplicationToken>
     @Binding var categoryTokens: Set<ActivityCategoryToken>
     @Binding var webDomainTokens: Set<WebDomainToken>
+    
+    private var allTokens: [Any] {
+        let apps = Array(appTokens)
+        let domains = Array(webDomainTokens)
+        let categories = Array(categoryTokens)
+        return apps + domains + categories
+    }
+    
+    private var totalCount: Int {
+        allTokens.count
+    }
+    
+    private var maxDisplayCount: Int {
+       8
+    }
+    
+    private var shouldShowEllipses: Bool {
+        totalCount > maxDisplayCount
+    }
+    
+    private var tokensToShow: [Any] {
+        shouldShowEllipses ? Array(allTokens.prefix(maxDisplayCount)) : allTokens
+    }
 
     var body: some View {
         HStack(spacing: -5) {
-            ForEach(Array(appTokens), id: \.self) { token in
-                Label(token)
-                    .labelStyle(.iconOnly)
-                    .scaleEffect(1.7)
+            ForEach(tokensToShow.indices, id: \.self) { index in
+                tokenView(for: tokensToShow[index])
             }
-
-            ForEach(Array(webDomainTokens), id: \.self) { token in
-                Label(token)
-                    .labelStyle(.iconOnly)
-                    .scaleEffect(1.7)
-            }
-
-            ForEach(Array(categoryTokens), id: \.self) { token in
-                Label(token)
-                    .labelStyle(.iconOnly)
-                    .scaleEffect(1.2) // For some reason category tokens are slightly larger
+            
+            if shouldShowEllipses {
+                ellipsesView
             }
         }
+    }
+    
+    @ViewBuilder
+    private func tokenView(for token: Any) -> some View {
+        if let appToken = token as? ApplicationToken {
+            appTokenView(appToken)
+        } else if let webToken = token as? WebDomainToken {
+            webTokenView(webToken)
+        } else if let categoryToken = token as? ActivityCategoryToken {
+            categoryTokenView(categoryToken)
+        }
+    }
+    
+    private func appTokenView(_ token: ApplicationToken) -> some View {
+        Label(token)
+            .labelStyle(.iconOnly)
+            .scaleEffect(1.7)
+    }
+    
+    private func webTokenView(_ token: WebDomainToken) -> some View {
+        Label(token)
+            .labelStyle(.iconOnly)
+            .scaleEffect(1.2)
+    }
+    
+    private func categoryTokenView(_ token: ActivityCategoryToken) -> some View {
+        Label(token)
+            .labelStyle(.iconOnly)
+            .scaleEffect(1.2) // For some reason category tokens are slightly larger
+    }
+    
+    private var ellipsesView: some View {
+        Text("...")
+            .foregroundColor(.secondary)
+            .bold()
+            .padding(.leading, 10)
+            .padding(.top, 10)
     }
 }
 
