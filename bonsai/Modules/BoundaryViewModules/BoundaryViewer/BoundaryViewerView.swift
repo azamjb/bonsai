@@ -47,7 +47,7 @@ struct BoundaryViewerView: View {
                                     .bold()
                                     .font(.system(size: 30))
                                     .multilineTextAlignment(.center)
-                                    .padding(.top, 40)
+                                    .padding(.top, 20)
                                 
                                 Spacer()
 
@@ -91,7 +91,7 @@ struct BoundaryViewerView: View {
                                     .bold()
                                     .font(.system(size: 30))
                                     .multilineTextAlignment(.center)
-                                    .padding(.top, 40)
+                                    .padding(.top, 20)
 
                                 if !screenTime.boundariesSet.isEmpty {
                                     List {

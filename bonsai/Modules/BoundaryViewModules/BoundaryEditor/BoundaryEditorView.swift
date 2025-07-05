@@ -130,21 +130,25 @@ struct BoundaryEditorView: View {
     }
     
     private var boundariesListView: some View {
-         let uniqueBoundaries = screenTime.boundariesSet.filter { boundary in
-             !modifiedBoundaries.contains(where: { $0.id == boundary.id }) && !boundaryIdsToDelete.contains(boundary.id)
-         }
+        let uniqueBoundaries = screenTime.boundariesSet.filter { boundary in
+            !modifiedBoundaries.contains(where: { $0.id == boundary.id }) && !boundaryIdsToDelete.contains(boundary.id)
+        }
         
-         return List {
-             ForEach(uniqueBoundaries) { boundary in
-                 boundaryRowView(for: boundary)
-             }
-             
-             ForEach(modifiedBoundaries) { boundary in
-                 boundaryRowView(for: boundary)
-             }
-         }
-         .listStyle(PlainListStyle())
-     }
+        let visibleModifiedBoundaries = modifiedBoundaries.filter { boundary in
+            !boundaryIdsToDelete.contains(boundary.id)
+        }
+        
+        return List {
+            ForEach(uniqueBoundaries) { boundary in
+                boundaryRowView(for: boundary)
+            }
+            
+            ForEach(visibleModifiedBoundaries) { boundary in
+                boundaryRowView(for: boundary)
+            }
+        }
+        .listStyle(PlainListStyle())
+    }
      
      private func boundaryRowView(for boundary: Boundary) -> some View {
          BoundaryRow(boundary: boundary)

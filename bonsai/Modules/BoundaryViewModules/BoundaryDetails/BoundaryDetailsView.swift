@@ -516,37 +516,44 @@ private struct TimeBoundaryEditor: View {
     }
     
     private func boundarySelectorView() -> some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("DAILY LIMIT")
-                .foregroundColor(.primary)
-                .padding(.horizontal, 20)
-                .padding(.top, 18)
-                .padding(.bottom, 15)
-                .background(Color(UIColor.systemGray5))
+        VStack {
+            VStack(alignment: .leading, spacing: 10) {
+                Text("DAILY LIMIT")
+                    .foregroundColor(.primary)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 18)
+                    .padding(.bottom, 15)
+                    .background(Color(UIColor.systemGray5))
+                
+                HStack {
+                    Picker("", selection: $boundary.hours){
+                        ForEach(0..<8, id: \.self) { i in
+                            Text("\(i) hours").tag(i)
+                        }
+                    }
+                    .pickerStyle(WheelPickerStyle())
+                    
+                    Picker("", selection: $boundary.minutes){
+                        ForEach(0..<60, id: \.self) { i in
+                            Text("\(i) mins")
+                                .tag(i)
+                                .foregroundColor(boundary.hours == 0 && i < 15 ? .gray : .primary)
+                        }
+                    }
+                    .pickerStyle(WheelPickerStyle())
+                }
+                .padding(.horizontal)
+            }
+            .background(Color(UIColor.systemGray5))
+            .cornerRadius(10)
+            .padding(.horizontal, 20)
             
-            HStack {
-                Picker("", selection: $boundary.hours){
-                    ForEach(0..<8, id: \.self) { i in
-                        Text("\(i) hours").tag(i)
-                    }
-                }
-                .pickerStyle(WheelPickerStyle())
-                
-                Picker("", selection: $boundary.minutes){
-                    ForEach(0..<60, id: \.self) { i in
-                        Text("\(i) mins").tag(i)
-                    }
-                }
-                .pickerStyle(WheelPickerStyle())
-                // This should smoothly scroll to the new minutes value
-                .onChange(of: boundary.minutes) { _, newValue in
-                    boundary.minutes = 15
-                }
-                
-            }.padding(.horizontal)        }
-        .background(Color(UIColor.systemGray5))
-        .cornerRadius(10)
-        .padding(.horizontal, 20)
+            if boundary.hours == 0 && boundary.minutes < 15 {
+                Text("Boundaries must be at least 15 minutes")
+                    .foregroundStyle(Color(UIColor.systemRed))
+                    .padding(5)
+            }
+        }
     }
 }
 
