@@ -47,14 +47,19 @@ class OverrideBoundaryViewModel: ObservableObject {
         }
     }
     
-    func grantTokens(_ amount: Int) async {
+    func grantTokens(_ amount: Int) async -> TokenResponseCode {
+        var result: TokenResponseCode
         do {
-            try await tokenService.grantTokens(forUserWithId: userId, amount: amount)
-            loadData()
+            result = try await tokenService.grantTokens(forUserWithId: userId, amount: amount)
+            if result == .success {
+                loadData()
+            }
+            return result
         } catch {
             DispatchQueue.main.async {
                 self.errorMessage = "Failed to grant tokens: \(error.localizedDescription)"
             }
+            return .serverError
         }
     }
     
@@ -76,19 +81,21 @@ class OverrideBoundaryViewModel: ObservableObject {
         }
     }
     
-    func spendToken(tokenSpendAmount: Int) async -> Bool{
+    func spendToken(tokenSpendAmount: Int) async -> TokenResponseCode{
+        var result: TokenResponseCode
         do {
-            var result = try await tokenService.spendToken(forUserWithId: userId, amount: tokenSpendAmount)
-            if result {
+            result = try await tokenService.spendToken(forUserWithId: userId, amount: tokenSpendAmount)
+            if result == .success {
+                // spend was successful and ViewModel values can be updated
                 loadData()
-                return result
             }
+            return result
         } catch {
             DispatchQueue.main.async {
                 self.errorMessage = "Failed to spend token: \(error.localizedDescription)"
             }
+            return .serverError
         }
-        return false
     }
 
     var currentDate: String {

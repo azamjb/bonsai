@@ -12,6 +12,7 @@ struct OverrideBoundaryView: View {
     @ObservedObject var screenTime: ScreenTimeService
     @State private var isPaymentSheetPresented = false
     @State private var showTokenAlert = false
+    @State private var alertMessage: String = "Error"
 
     init(_ screenTime: ScreenTimeService) {
         self.screenTime = screenTime
@@ -57,10 +58,22 @@ struct OverrideBoundaryView: View {
                     
                     BonsaiButtonSmall(buttonText: " override limits ") {
                         Task {
-                            let successfulSpend = await viewModel.spendToken(tokenSpendAmount: 1)
-                            if successfulSpend {
+                            let spendResult = await viewModel.spendToken(tokenSpendAmount: 1)
+                            
+                            switch spendResult{
+                            case .success:
                                 screenTime.clearShieldedApps()
-                            } else {
+
+                            case .insufficientTokenBalance:
+                                alertMessage = "Not enough tokens"
+                                showTokenAlert = true
+
+                            case .overrideLimitReached:
+                                alertMessage = "Daily override limit reached"
+                                showTokenAlert = true
+
+                            case .serverError:
+                                alertMessage = "Server error - please contact support if this persists"
                                 showTokenAlert = true
                             }
                         }
@@ -119,7 +132,7 @@ struct OverrideBoundaryView: View {
                 viewModel.loadData()
             }
         }
-        .alert("Insufficient tokens", isPresented: $showTokenAlert) {
+        .alert(alertMessage, isPresented: $showTokenAlert) {
             Button("OK", role: .cancel) { }
         }
         
