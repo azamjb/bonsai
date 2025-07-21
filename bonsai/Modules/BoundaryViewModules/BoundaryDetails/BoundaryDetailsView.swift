@@ -541,18 +541,17 @@ private struct TimeBoundaryEditor: View {
                         }
                     }
                     .pickerStyle(WheelPickerStyle())
+                    .onChange(of: boundary.minutes) { _, newValue in
+                        if boundary.hours == 0 && newValue < 15 {
+                            boundary.minutes = 15
+                        }
+                    }
                 }
                 .padding(.horizontal)
             }
             .background(Color(UIColor.systemGray5))
             .cornerRadius(10)
             .padding(.horizontal, 20)
-            
-            if boundary.hours == 0 && boundary.minutes < 15 {
-                Text("Boundaries must be at least 15 minutes")
-                    .foregroundStyle(Color(UIColor.systemRed))
-                    .padding(5)
-            }
         }
     }
 }

@@ -88,7 +88,6 @@ public class ScreenTimeService: ObservableObject {
         addBoundaryToUserDefaults(boundary: boundary)
         
         if boundary.weekdays.contains(Weekday.today) {
-            print(boundary)
             try! center.startMonitoring(
                 DeviceActivityName(boundary.id.uuidString),
                 during: schedule,
