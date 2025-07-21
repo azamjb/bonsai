@@ -1,15 +1,6 @@
 {
-  "originHash" : "ac1c6bd15fcabbebe13e9fefda7801b23212054256ee9ccc35e860d4f83360de",
+  "originHash" : "b12fd5de2f248b5fdf25897e41e5f342e8812b698f7ce809f05cb19b8c5bf400",
   "pins" : [
-    {
-      "identity" : "digitentryview",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/iAmrMohamed/DigitEntryView",
-      "state" : {
-        "revision" : "00a1d4aa08103e168155da05cc20f3c2c394155c",
-        "version" : "1.0.3"
-      }
-    },
     {
       "identity" : "grdb.swift",
       "kind" : "remoteSourceControl",

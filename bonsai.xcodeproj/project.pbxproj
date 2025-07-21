@@ -9,7 +9,8 @@
 /* Begin PBXBuildFile section */
 		242A1CD12D271CB300D5CD5E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B76F620D2D040EB40092DA9E /* UIKit.framework */; };
 		242A1FC52D274E8200D5CD5E /* iPhoneNumberField in Frameworks */ = {isa = PBXBuildFile; productRef = 242A1FC42D274E8200D5CD5E /* iPhoneNumberField */; };
-		249650312D345D0D0091B4F4 /* DigitEntryView in Frameworks */ = {isa = PBXBuildFile; productRef = 249650302D345D0D0091B4F4 /* DigitEntryView */; };
+		24D625782E2D6937006AE72E /* deviceactivityreport.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = B71551702CFABBF4000AFACB /* deviceactivityreport.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		24F94A602E2D4A1000EA6FF4 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71551012CF957FF000AFACB /* DeviceActivity.framework */; };
 		A78D2F1F2DC46B6E001375B1 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = A78D2F1E2DC46B6E001375B1 /* GRDB */; };
 		B71551412CF96667000AFACB /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71551012CF957FF000AFACB /* DeviceActivity.framework */; };
 		B71551492CF96667000AFACB /* deviceactivitymonitor.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B71551402CF96667000AFACB /* deviceactivitymonitor.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -19,7 +20,6 @@
 		B76F62082D03FFE20092DA9E /* shieldConfiguration.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B76F61FC2D03FFE20092DA9E /* shieldConfiguration.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B77B2DCE2DB9FAAC0018F685 /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B76F61FD2D03FFE20092DA9E /* ManagedSettings.framework */; };
 		B77B2DD62DB9FAAC0018F685 /* ShieldActionExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B77B2DCD2DB9FAAB0018F685 /* ShieldActionExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		B7D102742E0BA8180078E067 /* deviceactivityreport.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B71551702CFABBF4000AFACB /* deviceactivityreport.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,27 +70,27 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		B71550FA2CF952F5000AFACB /* Embed ExtensionKit Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 12;
 			dstPath = "$(EXTENSIONS_FOLDER_PATH)";
 			dstSubfolderSpec = 16;
 			files = (
+				24D625782E2D6937006AE72E /* deviceactivityreport.appex in Embed ExtensionKit Extensions */,
 			);
 			name = "Embed ExtensionKit Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B715510F2CF957FF000AFACB /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 8;
+			buildActionMask = 12;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				B7D102742E0BA8180078E067 /* deviceactivityreport.appex in Embed Foundation Extensions */,
 				B76F62082D03FFE20092DA9E /* shieldConfiguration.appex in Embed Foundation Extensions */,
 				B71551492CF96667000AFACB /* deviceactivitymonitor.appex in Embed Foundation Extensions */,
 				B77B2DD62DB9FAAC0018F685 /* ShieldActionExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -254,9 +254,6 @@
 			exceptions = (
 				B76F620B2D03FFE20092DA9E /* Exceptions for "shieldConfiguration" folder in "shieldConfiguration" target */,
 			);
-			explicitFileTypes = {
-				Info.plist = sourcecode.swift;
-			};
 			path = shieldConfiguration;
 			sourceTree = "<group>";
 		};
@@ -276,7 +273,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A78D2F1F2DC46B6E001375B1 /* GRDB in Frameworks */,
-				249650312D345D0D0091B4F4 /* DigitEntryView in Frameworks */,
 				242A1FC52D274E8200D5CD5E /* iPhoneNumberField in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -307,6 +303,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				24F94A602E2D4A1000EA6FF4 /* DeviceActivity.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -399,7 +396,6 @@
 			name = bonsai;
 			packageProductDependencies = (
 				242A1FC42D274E8200D5CD5E /* iPhoneNumberField */,
-				249650302D345D0D0091B4F4 /* DigitEntryView */,
 				A78D2F1E2DC46B6E001375B1 /* GRDB */,
 			);
 			productName = bonsaitest;
@@ -586,7 +582,6 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				242A1FC32D274E5200D5CD5E /* XCRemoteSwiftPackageReference "iPhoneNumberField" */,
-				2496502F2D345CB00091B4F4 /* XCRemoteSwiftPackageReference "DigitEntryView" */,
 				A78D2F1D2DC46B6E001375B1 /* XCRemoteSwiftPackageReference "GRDB" */,
 			);
 			preferredProjectObjectVersion = 77;
@@ -797,7 +792,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -855,7 +850,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -870,17 +865,17 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = bonsai/bonsai.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"bonsai/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = WNKZNZ5B7R;
+				DEVELOPMENT_TEAM = WNKZNZ5B7R;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = bonsai/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Bonsai;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "This app requires access to local network resources to communicate with nearby devices.";
 				INFOPLIST_KEY_NSNearbyInteractionUsageDescription = "This app requires access to local network resources to communicate with nearby devices.";
@@ -888,8 +883,6 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -899,14 +892,13 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.azamjb.bonsai;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = bonsai;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -915,17 +907,17 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = bonsai/bonsai.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"bonsai/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = WNKZNZ5B7R;
+				DEVELOPMENT_TEAM = WNKZNZ5B7R;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = bonsai/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Bonsai;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "This app requires access to local network resources to communicate with nearby devices.";
 				INFOPLIST_KEY_NSNearbyInteractionUsageDescription = "This app requires access to local network resources to communicate with nearby devices.";
@@ -933,8 +925,6 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -944,14 +934,13 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.azamjb.bonsai;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = bonsai;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -1049,11 +1038,9 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = deviceactivitymonitor/deviceactivitymonitor.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = WNKZNZ5B7R;
+				DEVELOPMENT_TEAM = WNKZNZ5B7R;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = deviceactivitymonitor/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = deviceactivitymonitor;
@@ -1067,7 +1054,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.azamjb.bonsai.deviceactivitymonitor;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "bonsai-deviceactivitymonitor";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -1080,11 +1066,9 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = deviceactivitymonitor/deviceactivitymonitor.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = WNKZNZ5B7R;
+				DEVELOPMENT_TEAM = WNKZNZ5B7R;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = deviceactivitymonitor/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = deviceactivitymonitor;
@@ -1098,7 +1082,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.azamjb.bonsai.deviceactivitymonitor;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "bonsai-deviceactivitymonitor";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -1111,11 +1094,9 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = deviceactivityreport/deviceactivityreport.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = WNKZNZ5B7R;
+				DEVELOPMENT_TEAM = WNKZNZ5B7R;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = deviceactivityreport/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = deviceactivityreport;
@@ -1129,7 +1110,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.azamjb.bonsai.deviceactivityreport;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "bonsai-deviceactivityreport";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -1142,11 +1122,9 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = deviceactivityreport/deviceactivityreport.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = WNKZNZ5B7R;
+				DEVELOPMENT_TEAM = WNKZNZ5B7R;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = deviceactivityreport/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = deviceactivityreport;
@@ -1160,7 +1138,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.azamjb.bonsai.deviceactivityreport;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "bonsai-deviceactivityreport";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -1173,11 +1150,9 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = shieldConfiguration/shieldConfiguration.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = WNKZNZ5B7R;
+				DEVELOPMENT_TEAM = WNKZNZ5B7R;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = shieldConfiguration/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = shieldConfiguration;
@@ -1191,7 +1166,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.azamjb.bonsai.shieldConfiguration;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "bonsai-shieldconfiggg";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -1204,11 +1178,9 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = shieldConfiguration/shieldConfiguration.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = WNKZNZ5B7R;
+				DEVELOPMENT_TEAM = WNKZNZ5B7R;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = shieldConfiguration/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = shieldConfiguration;
@@ -1222,7 +1194,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.azamjb.bonsai.shieldConfiguration;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "bonsai-shieldconfiggg";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -1235,11 +1206,9 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = ShieldActionExtension/ShieldActionExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = WNKZNZ5B7R;
+				DEVELOPMENT_TEAM = WNKZNZ5B7R;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ShieldActionExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = ShieldActionExtension;
@@ -1254,7 +1223,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.azamjb.bonsai.shieldActionExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "bonsai-shieldactionextension";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -1267,11 +1235,9 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = ShieldActionExtension/ShieldActionExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = WNKZNZ5B7R;
+				DEVELOPMENT_TEAM = WNKZNZ5B7R;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ShieldActionExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = ShieldActionExtension;
@@ -1286,7 +1252,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.azamjb.bonsai.shieldActionExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "bonsai-shieldactionextension";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -1380,14 +1345,6 @@
 				minimumVersion = 0.10.4;
 			};
 		};
-		2496502F2D345CB00091B4F4 /* XCRemoteSwiftPackageReference "DigitEntryView" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/iAmrMohamed/DigitEntryView";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.3;
-			};
-		};
 		A78D2F1D2DC46B6E001375B1 /* XCRemoteSwiftPackageReference "GRDB" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/groue/GRDB.swift";
@@ -1403,11 +1360,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 242A1FC32D274E5200D5CD5E /* XCRemoteSwiftPackageReference "iPhoneNumberField" */;
 			productName = iPhoneNumberField;
-		};
-		249650302D345D0D0091B4F4 /* DigitEntryView */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 2496502F2D345CB00091B4F4 /* XCRemoteSwiftPackageReference "DigitEntryView" */;
-			productName = DigitEntryView;
 		};
 		A78D2F1E2DC46B6E001375B1 /* GRDB */ = {
 			isa = XCSwiftPackageProductDependency;
