@@ -65,14 +65,6 @@ struct ProfileView: View {
                     .padding(.horizontal, 18)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
-                    HStack {
-                        Image("design")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 330, height: 330)
-                            .padding(.bottom, 20)
-                    }
-
 //                    Group {
 //                        HStack {
 //                            Text("PHONE")
