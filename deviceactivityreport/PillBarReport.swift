@@ -79,7 +79,7 @@ struct TimeLimitSliderView: View {
                         )
                         
                         Text("BOUNDARY EXTENDED +")
-                            .foregroundStyle(Color.white)
+                            .foregroundStyle(Color(UIColor.systemBackground))
                             .font(Font.system(size: 10))
                             .bold()
                             .frame(width: geometry.size.width, height: 12, alignment: .center)
@@ -98,7 +98,7 @@ struct TimeLimitSliderView: View {
                         )
                         
                         Text("BOUNDARY REACHED")
-                            .foregroundStyle(Color.white)
+                            .foregroundStyle(Color(UIColor.systemBackground))
                             .font(Font.system(size: 10))
                             .bold()
                             .frame(width: geometry.size.width, height: 12, alignment: .center)

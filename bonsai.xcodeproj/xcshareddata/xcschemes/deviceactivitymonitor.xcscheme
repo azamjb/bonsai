@@ -82,9 +82,9 @@
       allowLocationSimulation = "YES"
       launchAutomaticallySubstyle = "2">
       <RemoteRunnable
-         runnableDebuggingMode = "2"
-         BundleIdentifier = "com.apple.springboard"
-         RemotePath = "/Today">
+         runnableDebuggingMode = "0"
+         BundleIdentifier = "com.azamjb.bonsai"
+         RemotePath = "/var/containers/Bundle/Application/DBD64071-BAC9-4C56-A2D1-22EF5A9DD17E/bonsai.app">
       </RemoteRunnable>
       <MacroExpansion>
          <BuildableReference
