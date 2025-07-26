@@ -10,6 +10,7 @@
 		242A1CD12D271CB300D5CD5E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B76F620D2D040EB40092DA9E /* UIKit.framework */; };
 		242A1FC52D274E8200D5CD5E /* iPhoneNumberField in Frameworks */ = {isa = PBXBuildFile; productRef = 242A1FC42D274E8200D5CD5E /* iPhoneNumberField */; };
 		24D625782E2D6937006AE72E /* deviceactivityreport.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = B71551702CFABBF4000AFACB /* deviceactivityreport.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		24D629432E351C7A006AE72E /* ConfidentialKit in Frameworks */ = {isa = PBXBuildFile; productRef = 24D629422E351C7A006AE72E /* ConfidentialKit */; };
 		24F94A602E2D4A1000EA6FF4 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71551012CF957FF000AFACB /* DeviceActivity.framework */; };
 		A78D2F1F2DC46B6E001375B1 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = A78D2F1E2DC46B6E001375B1 /* GRDB */; };
 		B71551412CF96667000AFACB /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71551012CF957FF000AFACB /* DeviceActivity.framework */; };
@@ -272,6 +273,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				24D629432E351C7A006AE72E /* ConfidentialKit in Frameworks */,
 				A78D2F1F2DC46B6E001375B1 /* GRDB in Frameworks */,
 				242A1FC52D274E8200D5CD5E /* iPhoneNumberField in Frameworks */,
 			);
@@ -385,6 +387,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				24D629462E351CCD006AE72E /* PBXTargetDependency */,
 				B71551482CF96667000AFACB /* PBXTargetDependency */,
 				B715517B2CFABBF4000AFACB /* PBXTargetDependency */,
 				B76F62072D03FFE20092DA9E /* PBXTargetDependency */,
@@ -397,6 +400,7 @@
 			packageProductDependencies = (
 				242A1FC42D274E8200D5CD5E /* iPhoneNumberField */,
 				A78D2F1E2DC46B6E001375B1 /* GRDB */,
+				24D629422E351C7A006AE72E /* ConfidentialKit */,
 			);
 			productName = bonsaitest;
 			productReference = B71550B72CF9519F000AFACB /* bonsai.app */;
@@ -583,6 +587,8 @@
 			packageReferences = (
 				242A1FC32D274E5200D5CD5E /* XCRemoteSwiftPackageReference "iPhoneNumberField" */,
 				A78D2F1D2DC46B6E001375B1 /* XCRemoteSwiftPackageReference "GRDB" */,
+				24D629412E351C7A006AE72E /* XCRemoteSwiftPackageReference "swift-confidential" */,
+				24D629442E351CAA006AE72E /* XCRemoteSwiftPackageReference "swift-confidential-plugin" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B71550B82CF9519F000AFACB /* Products */;
@@ -706,6 +712,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		24D629462E351CCD006AE72E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 24D629452E351CCD006AE72E /* Confidential */;
+		};
 		B71550C92CF951A0000AFACB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B71550B62CF9519F000AFACB /* bonsai */;
@@ -1345,6 +1355,22 @@
 				minimumVersion = 0.10.4;
 			};
 		};
+		24D629412E351C7A006AE72E /* XCRemoteSwiftPackageReference "swift-confidential" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/securevale/swift-confidential";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.4.1;
+			};
+		};
+		24D629442E351CAA006AE72E /* XCRemoteSwiftPackageReference "swift-confidential-plugin" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/securevale/swift-confidential-plugin";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.4.1;
+			};
+		};
 		A78D2F1D2DC46B6E001375B1 /* XCRemoteSwiftPackageReference "GRDB" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/groue/GRDB.swift";
@@ -1360,6 +1386,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 242A1FC32D274E5200D5CD5E /* XCRemoteSwiftPackageReference "iPhoneNumberField" */;
 			productName = iPhoneNumberField;
+		};
+		24D629422E351C7A006AE72E /* ConfidentialKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 24D629412E351C7A006AE72E /* XCRemoteSwiftPackageReference "swift-confidential" */;
+			productName = ConfidentialKit;
+		};
+		24D629452E351CCD006AE72E /* Confidential */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 24D629442E351CAA006AE72E /* XCRemoteSwiftPackageReference "swift-confidential-plugin" */;
+			productName = "plugin:Confidential";
 		};
 		A78D2F1E2DC46B6E001375B1 /* GRDB */ = {
 			isa = XCSwiftPackageProductDependency;
