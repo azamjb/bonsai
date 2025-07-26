@@ -49,37 +49,7 @@ struct ProfileEditView: View {
                     BonsaiPhoneNumberField(binding: $editedPhone, existingValue: originalPhone, title: "PHONE", showEditIndicator: true)
                 }
                 .padding(.bottom, 30)
-
-//                NavigationLink(destination: EditHobbiesProfileView(hobbies: $editedHobbies)) {
-//                    VStack(alignment: .leading) {
-//                        HStack {
-//                            Text("OBJECTIVES")
-//                                .font(.system(size: 12))
-//                                .foregroundColor(.gray)
-//
-//                            if hobbiesChanged {
-//                                Image(systemName: "pencil.circle.fill")
-//                                    .foregroundColor(.blue)
-//                                    .font(.system(size: 12))
-//                            }
-//                        }
-//
-//                        Text(editedHobbies.isEmpty ? "Add hobbies..." : editedHobbies.joined(separator: ", "))
-//                            .foregroundColor(.black)
-//                            .lineLimit(nil)
-//                            .fixedSize(horizontal: false, vertical: true)
-//                            .multilineTextAlignment(.leading)
-//                            .padding(.bottom, 5)
-//                            .frame(maxWidth: .infinity, alignment: .leading)
-//                    }
-//
-//                    Spacer()
-//
-//                    Image(systemName: "chevron.right")
-//                        .foregroundColor(.gray)
-//                }
-//                .padding(.bottom, 40)
-
+                
                 HStack(spacing: 20) {
                     // Only show reset button if changes exist
                     if hasChanges {

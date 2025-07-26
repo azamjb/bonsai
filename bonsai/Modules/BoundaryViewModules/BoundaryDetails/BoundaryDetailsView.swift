@@ -335,37 +335,9 @@ private struct BoundaryLabelEditor: View {
     }
     
     private func inputFieldView() -> some View {
-//        VStack(alignment: .leading, spacing: 10) {
-//            Text("BOUNDARY NAME")
-//                .foregroundColor(.primary)
-//                .padding(.horizontal, 20)
-//                .padding(.top, 18)
-//                .padding(.bottom, 15)
-            
         BonsaiTextField(binding: $boundary.givenName, placeholder: "Unnamed Boundary", title: "BOUNDARY NAME")
             .padding(.horizontal, 20)
             .padding(.vertical, 20)
-//            HStack {
-//                TextField("", text: $boundary.givenName)
-//                    .focused($isFocused)
-//                    .foregroundStyle(Color.primary)
-//                    .padding(.vertical, 15)
-//                
-//                Button(action: {
-//                    boundary.givenName = ""
-//                    isFocused = true
-//                }) {
-//                    Image(systemName: "xmark.circle.fill")
-//                        .foregroundColor(Color.secondary)
-//                        .padding(.trailing, 8)
-//                }
-//            }
-//            .padding(.horizontal, 20)
-//            .background(Color(UIColor.systemGray5))
-//        }
-//        .background(Color(UIColor.systemGray5))
-//        .cornerRadius(10)
-//        .padding(.horizontal, 20)
     }
 }
 
@@ -562,10 +534,15 @@ private struct SelectedAppDisplay: View {
     @Binding var categoryTokens: Set<ActivityCategoryToken>
     @Binding var webDomainTokens: Set<WebDomainToken>
     
-    private var allTokens: [Any] {
-        let apps = Array(appTokens)
-        let domains = Array(webDomainTokens)
-        let categories = Array(categoryTokens)
+    private struct IdentifiableToken: Identifiable {
+        let id = UUID()
+        let token: Any
+    }
+    
+    private var allTokens: [IdentifiableToken] {
+        let apps = appTokens.map { IdentifiableToken(token: $0) }
+        let domains = webDomainTokens.map { IdentifiableToken(token: $0) }
+        let categories = categoryTokens.map { IdentifiableToken(token: $0) }
         return apps + domains + categories
     }
     
@@ -581,14 +558,14 @@ private struct SelectedAppDisplay: View {
         totalCount > maxDisplayCount
     }
     
-    private var tokensToShow: [Any] {
+    private var tokensToShow: [IdentifiableToken] {
         shouldShowEllipses ? Array(allTokens.prefix(maxDisplayCount)) : allTokens
     }
 
     var body: some View {
         HStack(spacing: -5) {
-            ForEach(tokensToShow.indices, id: \.self) { index in
-                tokenView(for: tokensToShow[index])
+            ForEach(tokensToShow) { identifiableToken in
+                tokenView(for: identifiableToken.token)
             }
             
             if shouldShowEllipses {

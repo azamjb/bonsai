@@ -48,21 +48,7 @@ struct ProfileCreation4View: View {
                     VStack(spacing: 10) {
                         Group {
                             BonsaiTextField(binding: $accountabilityPartnerName, title: "Enter Partner Name")
-                            
-//                            TextField("Enter partner name:", text: $accountabilityPartnerName)
-//                                .modifier(CustomTextFieldStyle(placeholder: ""))
-//                                .frame(minHeight: 50)
-
                             BonsaiPhoneNumberField(binding: $accountabilityPartnerPhone, title: "Enter Partner Phone Number")
-                            
-//                            TextField("Enter partner phone number:", text: $accountabilityPartnerPhone)
-//                                .keyboardType(.phonePad)
-//                                .modifier(CustomTextFieldStyle(placeholder: ""))
-//                                .frame(minHeight: 50)
-//                                .onChange(of: accountabilityPartnerPhone) { newValue in
-//                                    let digits = newValue.filter { $0.isNumber }.prefix(10)
-//                                    accountabilityPartnerPhone = String(digits)
-//                                }
                         }
                         .focused($isFieldFocused)
                     }

@@ -31,17 +31,6 @@ struct ProfileCreation1View: View {
                         Group {
                             HStack(alignment: .center) {
                                 BonsaiTextField(binding: $name, placeholder: "Enter Name")
-                                
-//                                TextField("Enter name:", text: $name)
-//                                    .modifier(CustomTextFieldStyle(placeholder: " "))
-//                                    .frame(height: 40)
-//                                    .focused($isFieldFocused)
-//                                    .background(
-//                                        RoundedRectangle(cornerRadius: 20)
-//                                            .stroke( Color.clear, lineWidth: 2)
-//                                    )
-//                                    .offset(x: isShaking ? -10 : 0) // Shake effect
-//                                    .animation(isShaking ? .default.repeatCount(3, autoreverses: true) : .default, value: isShaking)
 
                                 let forwardButton = Image(systemName: "chevron.right")
                                     .font(.system(size: 19))
