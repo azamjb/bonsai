@@ -196,7 +196,7 @@ private struct BoundaryRow: View {
             ForEach(Array(boundary.webDomainTokens), id: \.self) { token in
                 Label(token)
                     .labelStyle(.iconOnly)
-                    .scaleEffect(1.7)
+                    .scaleEffect(1.2)
             }
 
             ForEach(Array(boundary.categoryTokens), id: \.self) { token in

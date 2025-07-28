@@ -104,6 +104,7 @@ struct CustomTabBar: View {
                 .frame(height: 0.5)
                 .foregroundColor(.gray)
                 .padding(.horizontal, 30)
+                .padding(.top, 10)
 
             HStack(spacing: 0) {
                 TabBarButton(title: "BOUNDARIES", tag: 1, selectedTab: $selectedTab)

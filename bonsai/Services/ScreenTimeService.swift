@@ -75,7 +75,6 @@ public class ScreenTimeService: ObservableObject {
     
     public func startMonitoring(boundary: Boundary) {
         if boundariesSet.contains(where: { $0.id == boundary.id }) {
-            print ("removing existing boundary")
             removeBoundaryById(id: boundary.id)
         }
         

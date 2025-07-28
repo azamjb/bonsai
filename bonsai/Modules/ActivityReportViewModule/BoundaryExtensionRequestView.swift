@@ -23,13 +23,21 @@ struct BoundaryExtensionRequestView: View {
                     VStack(alignment: .leading) {
                         Spacer()
                         HeaderView()
-                        SelectAppsSection(screenTime: screenTime, checkedItems: $checkedItems, showErrorMessage: $showNoBoundariesSelectedError)
-                        NoteSection(requestNote: $requestNote, isFieldFocused: _isFieldFocused)
-                        SendCodeButton(viewModel: viewModel, userViewModel: UserViewModel, requestNote: $requestNote, checkedItems: $checkedItems, showErrorMessage: $showNoBoundariesSelectedError, isRequestSent: $isRequestSent)
-                        EnterCodeSection(pin: $pin, checkedItems: $checkedItems, viewModel: viewModel, screenTime: screenTime, isRequestSent: $isRequestSent)
-                        SentRequestCodesSection(sentExtensionRequests: screenTime.getSentExtensionCodesAsBoundaryNameAndDateDict())
+                            .padding(.horizontal, 40)
+                        ContentContainer {
+                            VStack {
+                                SelectAppsSection(screenTime: screenTime, checkedItems: $checkedItems, showErrorMessage: $showNoBoundariesSelectedError)
+                                NoteSection(requestNote: $requestNote, isFieldFocused: _isFieldFocused)
+                                SendCodeButton(viewModel: viewModel, userViewModel: UserViewModel, requestNote: $requestNote, checkedItems: $checkedItems, showErrorMessage: $showNoBoundariesSelectedError, isRequestSent: $isRequestSent)
+                            }
+                        }
+                        ContentContainer {
+                            EnterCodeSection(pin: $pin, checkedItems: $checkedItems, viewModel: viewModel, screenTime: screenTime, isRequestSent: $isRequestSent)
+                        }
+                        ContentContainer {
+                            SentRequestCodesSection(sentExtensionRequests: screenTime.getSentExtensionCodesAsBoundaryNameAndDateDict())
+                        }
                     }
-                    .padding(.horizontal, 40)
                 }
                 .onTapGesture {
                     hideKeyboard()
@@ -83,7 +91,6 @@ struct HeaderView: View {
                 .font(.title2)
                 .foregroundStyle(.primary)
         }
-        .padding(.bottom, 40)
     }
 }
 
@@ -182,13 +189,11 @@ struct SendCodeButton: View {
                     .font(.system(size: 15))
                     .foregroundColor(.primary)
                     .padding(.vertical, 15)
-                    .padding(.horizontal, 80)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .frame(maxWidth: .infinity, alignment: .center)
                     .overlay(
                         RoundedRectangle(cornerRadius: 20)
                             .stroke(Color.primary, lineWidth: 1)
                     )
-                    .padding(.bottom, 30)
             }
             
             if showErrorMessage {
@@ -209,46 +214,43 @@ struct SentRequestCodesSection: View {
     
     var body: some View {
         VStack {
-            Divider()
-                .frame(height: 1)
-                .background(Color.primary)
-                .padding(.top, 10)
-                .padding(.bottom, 10)
+//            Divider()
+//                .frame(height: 1)
+//                .background(Color.primary)
+//                .padding(.top, 10)
+//                .padding(.bottom, 10)
 
+            Text("SENT REQUEST CODES")
+                .font(.system(size: 15))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.bottom, 12)
+                .foregroundStyle(.primary)
+            
             VStack {
-                Text("SENT REQUEST CODES")
-                    .font(.system(size: 15))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.bottom, 12)
-                    .foregroundStyle(.primary)
-                
-                VStack {
-                    if sentExtensionRequests.count == 0 {
-                        Text("You haven't sent your partner any codes yet.")
-                            .font(.system(size: 15))
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .foregroundColor(.secondary)
-                            .padding(.bottom, 20)
-                    } else {
-                        ScrollView {
-                            ForEach(0..<sentExtensionRequests.count, id: \.self) { index in
-                                let (name, date) = sentExtensionRequests[index]
-                                VStack(alignment: .leading) {
-                                    Text(name)
-                                        .bold()
-                                    
-                                    Text(mediumDateTimeFormat(date: date))
-                                        .foregroundStyle(.secondary)
-                                }
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.bottom, 10)
+                if sentExtensionRequests.count == 0 {
+                    Text("You haven't sent your partner any codes yet.")
+                        .font(.system(size: 15))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .foregroundColor(.secondary)
+                        .padding(.bottom, 20)
+                } else {
+                    ScrollView {
+                        ForEach(0..<sentExtensionRequests.count, id: \.self) { index in
+                            let (name, date) = sentExtensionRequests[index]
+                            VStack(alignment: .leading) {
+                                Text(name)
+                                    .bold()
+                                
+                                Text(mediumDateTimeFormat(date: date))
+                                    .foregroundStyle(.secondary)
                             }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.bottom, 10)
                         }
-                        .frame(maxHeight: 300)
                     }
+                    .frame(maxHeight: 300)
                 }
             }
-            .padding(.bottom, 20)
         }
     }
 }
@@ -264,12 +266,6 @@ struct EnterCodeSection: View {
 
     var body: some View {
         VStack {
-            Divider()
-                .frame(height: 1)
-                .background(Color.primary)
-                .padding(.top, 10)
-                .padding(.bottom, 10)
-
             Text("ENTER REQUEST CODE")
                 .font(.system(size: 15))
                 .frame(maxWidth: .infinity, alignment: .leading)

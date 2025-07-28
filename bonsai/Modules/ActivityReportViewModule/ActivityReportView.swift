@@ -75,12 +75,11 @@ struct ActivityReportView: View {
     @State private var loadingTimers: [String: Timer] = [:]
     
     private let maxRetries = 3
-    private let loadingTimeout: TimeInterval = 5.0 // 5 seconds timeout
+    private let loadingTimeout: TimeInterval = 5.0 
     
     var body: some View {
         ScrollView {
             VStack {
-                // Add refresh button if any reports failed to load
                 HStack {
                     Spacer()
                     Button(action: {
@@ -92,206 +91,211 @@ struct ActivityReportView: View {
                             .font(.title2)
                             .foregroundColor(.secondary)
                     }
-                    .padding(.trailing, 10)
+                    .padding(.trailing, 18)
                     .padding(.top, 20)
                 }
-                
+               
                 // Total Screen Time Section - Always visible
-                Group {
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text("TOTAL")
-                                .foregroundColor(.secondary)
-                                .font(.system(size: 10))
-
-                            Text("SCREEN TIME")
-                                .foregroundColor(.secondary)
-                                .font(.system(size: 10))
-                        }
-
-                        Spacer()
-
-                        Text(mediumDateFormat(date: Date()))
-                            .multilineTextAlignment(.center)
-                            .foregroundStyle(.secondary)
-                            .font(.system(size: 11))
-                    }
-                    .padding(.horizontal, 75)
-
-                    if isAuthorized && isTotalActivityLoaded {
-                        DeviceActivityReport(.init(rawValue: "total_activity"), filter: dayFilter)
-                            .frame(height: 50)
-                            .transition(.opacity)
-                    } else {
-                        ProgressView()
-                            .frame(height: 50)
-                    }
-                }
-                .padding(.top, 10)
-
-                HStack {
-                    Image("koibois")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 350)
-                }
-                .padding(.bottom, 25)
-                .padding(.top, 25)
-
-                if hasAccountabilityPartner {
-                    Group {
-                        VStack(alignment: .leading) {
-                            Text("BOUNDARIES")
-                                .padding(.horizontal, 18)
-                                .padding(.bottom, 20)
-                                .fontWeight(.bold)
-
-                            if isAuthorized {
-                                ZStack {
-                                    if !isPillBarLoaded {
-                                        VStack {
-                                            ProgressView()
-                                            if pillBarRetries > 0 {
-                                                Text("Retrying... (\(pillBarRetries)/\(maxRetries))")
-                                                    .font(.caption)
-                                                    .foregroundColor(.secondary)
-                                            }
-                                        }
-                                        .frame(height: CGFloat(max(1, screenTime.boundariesSet.count)) * 90)
-                                    }
+                ContentContainer {
+                    VStack {
+                        Group {
+                            HStack {
+                                VStack(alignment: .leading) {
+                                    Text("TOTAL")
+                                        .foregroundColor(.secondary)
+                                        .font(.system(size: 10))
                                     
-                                    DeviceActivityReport(.init(rawValue: "pill_bar"), filter: dayFilter)
-                                        .frame(height: CGFloat(screenTime.boundariesSet.count) * 90)
-                                        .id("pillBar_\(screenTime.boundariesSet.count)_\(pillBarRetries)")
-                                        .opacity(isPillBarLoaded ? 1 : 0)
-                                        .animation(.easeInOut(duration: 0.3), value: isPillBarLoaded)
-                                }
-                                .padding(.horizontal, 18)
-                            } else {
-                                ProgressView()
-                                    .frame(height: CGFloat(max(1, screenTime.boundariesSet.count)) * 90)
-                                    .padding(.horizontal, 18)
-                            }
-
-                            Text("BOUNDARY EXTENSIONS")
-                                .padding(.horizontal, 18)
-                                .padding(.top, 10)
-                                .font(.system(size: 10))
-                        }
-
-                        dailyBoundaryExtensionsView(models: screenTime.getDailyBoundaryExtensionsModels())
-                            .padding(.bottom, 30)
-                    }
-                }
-
-                VStack(alignment: .leading) {
-                    Divider()
-                        .frame(height: 1)
-                        .background(Color.primary)
-                        .padding(.bottom, 20)
-
-                    VStack(alignment: .leading) {
-                        HStack {
-                            Text("ANALYTICS")
-                                .padding(.bottom, 5)
-
-                            Spacer()
-
-                            Menu {
-                                Button {
-                                    withAnimation(.easeInOut(duration: 0.2)) {
-                                        analyticsRange = .daily
-                                    }
-                                } label: {
-                                    Text("DAILY")
-                                        .foregroundStyle(Color.primary)
-                                }
-                                Button {
-                                    withAnimation(.easeInOut(duration: 0.2)) {
-                                        analyticsRange = .weekly
-                                    }
-                                } label: {
-                                    Text("WEEKLY")
-                                        .foregroundStyle(Color.primary)
-                                }
-                                Button {
-                                    withAnimation(.easeInOut(duration: 0.2)) {
-                                        analyticsRange = .monthly
-                                    }
-                                } label: {
-                                    Text("MONTHLY")
-                                        .foregroundStyle(Color.primary)
-                                }
-                            } label: {
-                                Label(analyticsRange.fullName, systemImage: "chevron.down")
-                                    .foregroundStyle(Color.primary)
-                            }
-                        }
-
-                        Text("Top 4 apps and daily usage")
-                            .font(.caption)
-                            .foregroundStyle(Color.secondary)
-
-                        Text(mediumDateFormat(date: Date.now))
-                            .font(.caption)
-                            .foregroundStyle(Color.secondary)
-
-                        if isAuthorized {
-                            ZStack {
-                                if !isAnalyticsLoaded {
-                                    ProgressView()
-                                        .frame(height: 120)
+                                    Text("SCREEN TIME")
+                                        .foregroundColor(.secondary)
+                                        .font(.system(size: 10))
                                 }
                                 
-                                // Use id modifier to force re-render when range changes
-                                Group {
-                                    switch analyticsRange {
-                                    case .daily:
-                                        DeviceActivityReport(.init(rawValue: "top_apps_daily_report"), filter: dayFilter)
-                                    case .weekly:
-                                        DeviceActivityReport(.init(rawValue: "top_apps_weekly_report"), filter: weekFilter)
-                                    case .monthly:
-                                        DeviceActivityReport(.init(rawValue: "top_apps_monthly_report"), filter: monthFilter)
-                                    }
-                                }
-                                .frame(height: 120)
-                                .id("\(analyticsRange.rawValue)")
-                                .opacity(isAnalyticsLoaded ? 1 : 0)
-                                .animation(.easeInOut(duration: 0.3), value: isAnalyticsLoaded)
+                                Spacer()
+                                
+                                Text(mediumDateFormat(date: Date()))
+                                    .multilineTextAlignment(.center)
+                                    .foregroundStyle(.secondary)
+                                    .font(.system(size: 11))
                             }
-                        } else {
-                            ProgressView()
-                                .frame(height: 120)
+                            .padding(.horizontal, 75)
+                            
+                            if isAuthorized && isTotalActivityLoaded {
+                                DeviceActivityReport(.init(rawValue: "total_activity"), filter: dayFilter)
+                                    .frame(height: 50)
+                                    .transition(.opacity)
+                            } else {
+                                ProgressView()
+                                    .frame(height: 50)
+                            }
+                        }
+                        .padding(.top, 10)
+                        
+                        HStack {
+                            Image("koibois")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 350)
+                        }
+                        .padding(.top, 25)
+                    }
+                }
+                .isVisible(false)
+
+                ContentContainer {
+                    if hasAccountabilityPartner {
+                        VStack(alignment: .leading) {
+                            VStack(alignment: .leading) {
+                                Text("BOUNDARIES")
+                                    .padding(.bottom, 10)
+                                    .fontWeight(.bold)
+                                
+                                if screenTime.getBoundariesFromUserDefaults().isEmpty {
+                                    Text("No boundaries set yet.")
+                                        .font(.system(size: 11))
+                                        .foregroundStyle(Color.secondary)
+                                        .padding(.bottom, 10)
+                                }
+                                
+                                if isAuthorized {
+                                    ZStack {
+                                        if !isPillBarLoaded {
+                                            VStack {
+                                                ProgressView()
+                                                if pillBarRetries > 0 {
+                                                    Text("Retrying... (\(pillBarRetries)/\(maxRetries))")
+                                                        .font(.caption)
+                                                        .foregroundColor(.secondary)
+                                                }
+                                            }
+                                            .frame(height: CGFloat(max(1, screenTime.boundariesSet.count)) * 90)
+                                        }
+                                        
+                                        DeviceActivityReport(.init(rawValue: "pill_bar"), filter: dayFilter)
+                                            .frame(height: CGFloat(screenTime.boundariesSet.count) * 70)
+                                            .id("pillBar_\(screenTime.boundariesSet.count)_\(pillBarRetries)")
+                                            .opacity(isPillBarLoaded ? 1 : 0)
+                                            .animation(.easeInOut(duration: 0.3), value: isPillBarLoaded)
+                                    }
+                                } else {
+                                    ProgressView()
+                                        .frame(height: CGFloat(max(1, screenTime.boundariesSet.count)) * 90)
+                                }
+                                
+                            }
+                            
+                            VStack(spacing: 20) {
+                                Text("BOUNDARY EXTENSIONS")
+                                    .font(.system(size: 13))
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                                dailyBoundaryExtensionsView(models: screenTime.getDailyBoundaryExtensionsModels())
+                            }
                         }
                     }
                 }
-                .padding(.horizontal, 18)
 
-                if hasAccountabilityPartner {
-                    Group {
-                        Divider()
-                            .frame(height: 1)
-                            .background(Color.primary)
-                            .padding(.bottom, 20)
-                            .padding(.top, 10)
+                ContentContainer {
+                    VStack(alignment: .leading) {
+                        VStack(alignment: .leading) {
+//                            Divider()
+//                                .frame(height: 1)
+//                                .background(Color.primary)
+//                                .padding(.bottom, 20)
 
-                        Text("EXTEND BOUNDARIES")
-                            .padding(.bottom, 30)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-
-                        NavigationStack {
-                            BonsaiNavLinkSmall(buttonText: "request boundary extension", destination: BoundaryExtensionRequestView())
-                                .padding(.bottom, 30)
+                            HStack {
+                                Text("ANALYTICS")
+                                    .padding(.bottom, 5)
+                                
+                                Spacer()
+                                
+                                Menu {
+                                    Button {
+                                        withAnimation(.easeInOut(duration: 0.2)) {
+                                            analyticsRange = .daily
+                                        }
+                                    } label: {
+                                        Text("DAILY")
+                                            .foregroundStyle(Color.primary)
+                                    }
+                                    Button {
+                                        withAnimation(.easeInOut(duration: 0.2)) {
+                                            analyticsRange = .weekly
+                                        }
+                                    } label: {
+                                        Text("WEEKLY")
+                                            .foregroundStyle(Color.primary)
+                                    }
+                                    Button {
+                                        withAnimation(.easeInOut(duration: 0.2)) {
+                                            analyticsRange = .monthly
+                                        }
+                                    } label: {
+                                        Text("MONTHLY")
+                                            .foregroundStyle(Color.primary)
+                                    }
+                                } label: {
+                                    Label(analyticsRange.fullName, systemImage: "chevron.down")
+                                        .foregroundStyle(Color.primary)
+                                }
+                            }
                             
-                            BonsaiNavLinkSmall(buttonText: "override boundaries", destination: OverrideBoundaryView(screenTime))
-                                .padding(.bottom, 40)
+                            Text("Top 4 apps and daily usage")
+                                .font(.caption)
+                                .foregroundStyle(Color.secondary)
+                            
+                            Text(mediumDateFormat(date: Date.now))
+                                .font(.caption)
+                                .foregroundStyle(Color.secondary)
+                            
+                            if isAuthorized {
+                                ZStack {
+                                    if !isAnalyticsLoaded {
+                                        ProgressView()
+                                            .frame(height: 120)
+                                    }
+                                    
+                                    Group {
+                                        switch analyticsRange {
+                                        case .daily:
+                                            DeviceActivityReport(.init(rawValue: "top_apps_daily_report"), filter: dayFilter)
+                                        case .weekly:
+                                            DeviceActivityReport(.init(rawValue: "top_apps_weekly_report"), filter: weekFilter)
+                                        case .monthly:
+                                            DeviceActivityReport(.init(rawValue: "top_apps_monthly_report"), filter: monthFilter)
+                                        }
+                                    }
+                                    .frame(height: 120)
+                                    .id("\(analyticsRange.rawValue)")
+                                    .opacity(isAnalyticsLoaded ? 1 : 0)
+                                    .animation(.easeInOut(duration: 0.3), value: isAnalyticsLoaded)
+                                }
+                            } else {
+                                ProgressView()
+                                    .frame(height: 120)
+                            }
                         }
                     }
-                    .padding(.horizontal, 18)
+                }
+
+                if hasAccountabilityPartner {
+                    ContentContainer {
+                        VStack(spacing: 30) {
+                            Text("EXTEND BOUNDARIES")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            
+                            VStack(spacing: 20) {
+                                NavigationStack {
+                                    BonsaiNavLinkSmall(buttonText: "request boundary extension", destination: BoundaryExtensionRequestView())
+                                        .padding(.bottom, 15)
+                                    BonsaiNavLinkSmall(buttonText: "override boundaries", destination: OverrideBoundaryView(screenTime))
+                                }
+                            }
+                            .frame(maxWidth: .infinity)
+                        }
+                    }
                 }
             }
             .navigationBarBackButtonHidden(true)
-            .padding(.horizontal, 18)
         }
         .onAppear {
             Task {
