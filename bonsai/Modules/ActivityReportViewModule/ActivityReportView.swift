@@ -145,6 +145,14 @@ struct ActivityReportView: View {
                                 .padding(.horizontal, 18)
                                 .padding(.bottom, 20)
                                 .fontWeight(.bold)
+                            
+                            if screenTime.getBoundariesFromUserDefaults().isEmpty {
+                                Text("No boundaries set yet.")
+                                    .font(.system(size: 11))
+                                    .foregroundStyle(Color.secondary)
+                                    .padding(.bottom, 10)
+                                    .padding(.horizontal, 20)
+                            }
 
                             if isAuthorized {
                                 ZStack {

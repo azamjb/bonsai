@@ -275,9 +275,8 @@ struct EnterCodeSection: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.bottom, 60)
 
-            PinEntryView(pin: $pin)
-                .frame(maxWidth: .infinity, alignment: .center)
-                .padding(.bottom, 50)
+            SixDigitCodeField(code: $pin)
+                .padding(.bottom, 30)
 
             Button {
                 handleCodeValidation()

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		242A1CD12D271CB300D5CD5E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B76F620D2D040EB40092DA9E /* UIKit.framework */; };
 		242A1FC52D274E8200D5CD5E /* iPhoneNumberField in Frameworks */ = {isa = PBXBuildFile; productRef = 242A1FC42D274E8200D5CD5E /* iPhoneNumberField */; };
+		24B643B32E37A67300438A37 /* OTPView in Frameworks */ = {isa = PBXBuildFile; productRef = 24B643B22E37A67300438A37 /* OTPView */; };
 		24D625782E2D6937006AE72E /* deviceactivityreport.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = B71551702CFABBF4000AFACB /* deviceactivityreport.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		24D629432E351C7A006AE72E /* ConfidentialKit in Frameworks */ = {isa = PBXBuildFile; productRef = 24D629422E351C7A006AE72E /* ConfidentialKit */; };
 		24F94A602E2D4A1000EA6FF4 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71551012CF957FF000AFACB /* DeviceActivity.framework */; };
@@ -274,6 +275,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				24D629432E351C7A006AE72E /* ConfidentialKit in Frameworks */,
+				24B643B32E37A67300438A37 /* OTPView in Frameworks */,
 				A78D2F1F2DC46B6E001375B1 /* GRDB in Frameworks */,
 				242A1FC52D274E8200D5CD5E /* iPhoneNumberField in Frameworks */,
 			);
@@ -401,6 +403,7 @@
 				242A1FC42D274E8200D5CD5E /* iPhoneNumberField */,
 				A78D2F1E2DC46B6E001375B1 /* GRDB */,
 				24D629422E351C7A006AE72E /* ConfidentialKit */,
+				24B643B22E37A67300438A37 /* OTPView */,
 			);
 			productName = bonsaitest;
 			productReference = B71550B72CF9519F000AFACB /* bonsai.app */;
@@ -589,6 +592,7 @@
 				A78D2F1D2DC46B6E001375B1 /* XCRemoteSwiftPackageReference "GRDB" */,
 				24D629412E351C7A006AE72E /* XCRemoteSwiftPackageReference "swift-confidential" */,
 				24D629442E351CAA006AE72E /* XCRemoteSwiftPackageReference "swift-confidential-plugin" */,
+				24B643B12E37A67300438A37 /* XCRemoteSwiftPackageReference "otpview-swiftui" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B71550B82CF9519F000AFACB /* Products */;
@@ -1355,6 +1359,14 @@
 				minimumVersion = 0.10.4;
 			};
 		};
+		24B643B12E37A67300438A37 /* XCRemoteSwiftPackageReference "otpview-swiftui" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/mukeshsolanki/otpview-swiftui";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 		24D629412E351C7A006AE72E /* XCRemoteSwiftPackageReference "swift-confidential" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/securevale/swift-confidential";
@@ -1386,6 +1398,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 242A1FC32D274E5200D5CD5E /* XCRemoteSwiftPackageReference "iPhoneNumberField" */;
 			productName = iPhoneNumberField;
+		};
+		24B643B22E37A67300438A37 /* OTPView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 24B643B12E37A67300438A37 /* XCRemoteSwiftPackageReference "otpview-swiftui" */;
+			productName = OTPView;
 		};
 		24D629422E351C7A006AE72E /* ConfidentialKit */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -7,6 +7,7 @@
 
 import SwiftUICore
 import SwiftUI
+import OTPView
 
 struct BoundaryViewerView: View {
     @Binding var tabSelection: Int
@@ -231,7 +232,8 @@ private struct noAccountabilityPartnerView: View {
     @State private var pin: String = ""
     @State private var wrongCodeEntered = false
     @State private var navigateToProfileCreation4 = false
-    @State private var triggerSuccess = false // 👈 New
+    @State private var triggerSuccess = false 
+
     let smsApi = SMSApi()
     @ObservedObject var viewModel: ProfileCreationViewModel = ProfileCreationViewModel()
     @AppStorage("invitedAccountabilityPartner") var invitedAccountabilityPartner: Bool = false
@@ -254,11 +256,10 @@ private struct noAccountabilityPartnerView: View {
                             .padding(.bottom, 40)
                             .multilineTextAlignment(.center)
                             .frame(maxWidth: .infinity, alignment: .center)
-
-                        PinEntryView(pin: $pin)
-                            .frame(maxWidth: .infinity, alignment: .center)
-                            .padding(.bottom, 50)
-
+                        
+                        SixDigitCodeField(code: $pin)
+                            .padding(.bottom, 30)
+                        
                         Button {
                             handleInviteCodeValidation(pin: pin)
                             pin = ""
