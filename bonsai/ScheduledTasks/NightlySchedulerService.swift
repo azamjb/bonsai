@@ -4,7 +4,7 @@ import ManagedSettings
 import DeviceActivity
 
 class NightlySchedulerService {
-    static let shared = NightlySchedulerService ()
+    static let shared = NightlySchedulerService()
     let screenTime = ScreenTimeService()
     
     let backgroundTaskIdentifier = "com.bonsai.unshieldApps"
