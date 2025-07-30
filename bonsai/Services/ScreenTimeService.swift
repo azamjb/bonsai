@@ -20,6 +20,7 @@ public class ScreenTimeService: ObservableObject {
     public var purchaseSuccessful: Bool = false
     
     @Published public var boundariesSet: [Boundary] = []
+    @Published public var boundariesSetToday: [Boundary] = []
     @Published public var boundariesReached: [Boundary] = []
     @Published public var pinError: String? = nil
     @Published public var timeRequestErrorMessage: String = ""
@@ -237,6 +238,7 @@ public class ScreenTimeService: ObservableObject {
 
     public func setGroupDisplays() {
         boundariesSet = getGroupDisplay(getBlockedOnly: false)
+        boundariesSetToday = getGroupDisplay(getBlockedOnly: false).filter({ $0.weekdays.contains(Weekday.today) })
         boundariesReached = getGroupDisplay(getBlockedOnly: true)
     }
     

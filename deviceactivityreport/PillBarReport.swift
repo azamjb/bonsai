@@ -259,7 +259,7 @@ struct PillBarReport: DeviceActivityReportScene {
               let boundaries = try? JSONDecoder().decode([Boundary].self, from: encoded) else {
             return []
         }
-        return boundaries
+        return boundaries.filter({ $0.weekdays.contains(Weekday.today) })
     }
     
     func makeConfiguration(representing data: DeviceActivityResults<DeviceActivityData>) async -> Configuration {

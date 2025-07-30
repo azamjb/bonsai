@@ -165,19 +165,19 @@ struct ActivityReportView: View {
                                                     .foregroundColor(.secondary)
                                             }
                                         }
-                                        .frame(height: CGFloat(max(1, screenTime.boundariesSet.count)) * 90)
+                                        .frame(height: CGFloat(max(1, screenTime.boundariesSetToday.count)) * 90)
                                     }
                                     
                                     DeviceActivityReport(.init(rawValue: "pill_bar"), filter: dayFilter)
-                                        .frame(height: CGFloat(screenTime.boundariesSet.count) * 90)
-                                        .id("pillBar_\(screenTime.boundariesSet.count)_\(pillBarRetries)")
+                                        .frame(height: CGFloat(screenTime.boundariesSetToday.count) * 90)
+                                        .id("pillBar_\(screenTime.boundariesSetToday.count)_\(pillBarRetries)")
                                         .opacity(isPillBarLoaded ? 1 : 0)
                                         .animation(.easeInOut(duration: 0.3), value: isPillBarLoaded)
                                 }
                                 .padding(.horizontal, 18)
                             } else {
                                 ProgressView()
-                                    .frame(height: CGFloat(max(1, screenTime.boundariesSet.count)) * 90)
+                                    .frame(height: CGFloat(max(1, screenTime.boundariesSetToday.count)) * 90)
                                     .padding(.horizontal, 18)
                             }
 
