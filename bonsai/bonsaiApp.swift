@@ -20,7 +20,6 @@ struct bonsaiApp: App {
     
     init() {
         NightlySchedulerService.shared.setupDailyUnshield()
-        WeeklySchedulerService.shared.setupWeeklySchedule()
         NotificationHandler.shared.requestAuthorization()
     }
 

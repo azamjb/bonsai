@@ -4,8 +4,11 @@
 <dict>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
-		<string>com.bonsai.weeklyOperation</string>
 		<string>com.bonsai.unshieldApps</string>
+	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>processing</string>
 	</array>
 </dict>
 </plist>

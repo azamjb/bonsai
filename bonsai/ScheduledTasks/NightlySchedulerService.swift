@@ -4,12 +4,11 @@ import ManagedSettings
 import DeviceActivity
 
 class NightlySchedulerService {
-    static let shared = NightlySchedulerService ()
+    static let shared = NightlySchedulerService()
     let screenTime = ScreenTimeService()
     
     let backgroundTaskIdentifier = "com.bonsai.unshieldApps"
     private let appGroupID = "group.com.bonsai"
-    private let lastScheduledKey = "lastScheduledUnshieldDate"
 
     private var sharedDefaults: UserDefaults? {
         UserDefaults(suiteName: appGroupID)
@@ -26,28 +25,26 @@ class NightlySchedulerService {
         
         // Schedule immediately to ensure we have one pending
         scheduleNextUnshield()
+        
+        BGTaskScheduler.shared.getPendingTaskRequests { requests in
+            print("After scheduling - Pending tasks: \(requests.map { $0.identifier })")
+            for request in requests {
+                print("Task \(request.identifier) scheduled for \(request.earliestBeginDate?.description ?? "nil")")
+            }
+        }
     }
     
     private func scheduleNextUnshield() {
         // Calculate next midnight
         let calendar = Calendar.current
-        guard let tomorrow = calendar.date(byAdding: .day, value: 1, to: Date()),
-              let nextMidnight = calendar.date(bySettingHour: 0, minute: 0, second: 0, of: tomorrow) else {
-            return
-        }
-        
-        // Check if we've already scheduled for this midnight
-        if let lastScheduled = sharedDefaults?.object(forKey: lastScheduledKey) as? Date,
-           calendar.isDate(lastScheduled, inSameDayAs: nextMidnight) {
-            return
-        }
+        let midnight = calendar.date(bySettingHour: 0, minute: 0, second: 0, of: calendar.date(byAdding: .day, value: 1, to: Date())!)!
         
         // First cancel any existing requests to avoid duplicates
         BGTaskScheduler.shared.cancel(taskRequestWithIdentifier: backgroundTaskIdentifier)
         
         // Schedule background task
         let request = BGProcessingTaskRequest(identifier: backgroundTaskIdentifier)
-        request.earliestBeginDate = nextMidnight
+        request.earliestBeginDate = midnight
         request.requiresNetworkConnectivity = false
         request.requiresExternalPower = false
         
@@ -55,61 +52,43 @@ class NightlySchedulerService {
             try BGTaskScheduler.shared.submit(request)
             
             // Save the scheduled date
-            sharedDefaults?.set(nextMidnight, forKey: lastScheduledKey)
+            sharedDefaults!.set(midnight, forKey: LAST_SCHEDULED_MIDNIGHT_UNSHIELD_STRING)
             
             // Request notification permissions if needed
             UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in }
+            
+            sendNotification(title: "Unshield scheduled for midnight", body: "\(midnight)")
         } catch {
             print("Could not schedule app unshield: \(error)")
         }
     }
     
     private func handleAppUnshield(task: BGProcessingTask) {
-        // Create a task group to handle all operations
-        let taskGroup = DispatchGroup()
+        print("got unshiled app request")
+
+        self.unshieldApps()
+        self.startMonitoringBoundariesForToday()
+        self.deactivateExtensionCodesForYesterday()
+
+        // Log successful execution
+        self.sharedDefaults!.set(Date(), forKey: LAST_SUCCESSFUL_UNSHIELD_STRING)
         
-        // Track success
-        var success = false
-        
-        taskGroup.enter()
-        DispatchQueue.global(qos: .userInitiated).async {
-            self.unshieldApps()
-            self.startMonitoringBoundariesForToday()
-            self.deactivateExtensionCodesForYesterday()
-            
-            // Log successful execution
-            self.sharedDefaults!.set(Date(), forKey: LAST_SUCCESSFUL_UNSHIELD_STRING)
-            
-            success = true
-            taskGroup.leave()
-        }
-        
-        // Set up expiration handler
-        task.expirationHandler = {
-            self.scheduleDebugNotification(for: Date(), message: "Unshield task expired")
-            taskGroup.leave() // Ensure we don't deadlock
-        }
-        
-        // Wait for task to complete
-        taskGroup.notify(queue: .main) {
-            // Schedule the next task regardless of success
-            self.scheduleNextUnshield()
-            task.setTaskCompleted(success: success)
-            
-            // Request background processing time one more time in case there were issues
-            let request = BGAppRefreshTaskRequest(identifier: self.backgroundTaskIdentifier)
-            request.earliestBeginDate = Date(timeIntervalSinceNow: 3600) // 1 hour later as backup
-            try? BGTaskScheduler.shared.submit(request)
-        }
+        self.scheduleNextUnshield()
+
+        task.setTaskCompleted(success: true)
     }
     
     private func unshieldApps() {
-        let settingStore = ManagedSettingsStore()
+        DispatchQueue.main.sync {
+            let settingStore = ManagedSettingsStore()
+            
+            settingStore.shield.applications = nil
+            settingStore.shield.webDomains = nil
+            settingStore.shield.applicationCategories = nil
+            settingStore.shield.webDomainCategories = nil
+        }
         
-        settingStore.shield.applicationCategories = nil
-        settingStore.shield.applications = nil
-        settingStore.shield.webDomains = nil
-        settingStore.shield.webDomainCategories = nil
+        print("apps unshielded")
     }
     
     private func startMonitoringBoundariesForToday() {
@@ -123,6 +102,7 @@ class NightlySchedulerService {
         )
         
         var allBoundaries = screenTime.getBoundariesFromUserDefaults()
+        
         let boundariesForToday = allBoundaries.filter({ $0.weekdays.contains(Weekday.today) })
 
         for boundary in boundariesForToday {
@@ -145,14 +125,16 @@ class NightlySchedulerService {
         }
         
         allBoundaries = allBoundaries.map { currentBoundary in
-            if let boundary = boundariesForToday.first(where: { $0.id == currentBoundary.id }) {
-                return boundary
-            } else {
-                return currentBoundary
-            }
+            print(currentBoundary)
+            var updatedBoundary = currentBoundary
+            updatedBoundary.isBlocked = false
+            return updatedBoundary
         }
         
+        print(allBoundaries)
+        
         self.sharedDefaults!.set(try! JSONEncoder().encode(allBoundaries), forKey: BOUNDARIES_STRING)
+        print("new boundaries monitored + saved")
     }
     
     private func deactivateExtensionCodesForYesterday() {
@@ -166,19 +148,7 @@ class NightlySchedulerService {
         }
         
         sharedDefaults!.set(try! JSONEncoder().encode(extensionCodes), forKey: SENT_EXTENSION_CODES_STRING)
-    }
-    
-    private func scheduleDebugNotification(for date: Date, message: String) {
-        let content = UNMutableNotificationContent()
-        content.title = "AppShield Debug"
-        content.body = message
-        content.sound = .default
         
-        let calendar = Calendar.current
-        let components = calendar.dateComponents([.hour, .minute, .second], from: date)
-        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
-        
-        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
-        UNUserNotificationCenter.current().add(request)
+        print("extension codes deaticated")
     }
 }

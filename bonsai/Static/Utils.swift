@@ -6,16 +6,13 @@
 //
 
 import Foundation
+import UserNotifications
 
 func isValidEmail(_ email: String) -> Bool {
     let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
 
     let emailPred = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
     return emailPred.evaluate(with: email)
-}
-
-func isValidPhoneNumber() {
-    
 }
 
 func areDatesSameDay(date1: Date, date2: Date) -> Bool {
@@ -48,7 +45,7 @@ func DeepCopy<T:Codable>(_ object:T) -> T?{
        let json = try JSONEncoder().encode(object)
        return try JSONDecoder().decode(T.self, from: json)
    }
-   catch let error{
+    catch _{
        return nil
    }
 }
@@ -75,4 +72,21 @@ public func mediumDateTimeFormat(date: Date) -> String {
     fmtr.timeZone = TimeZone.current
     
     return fmtr.string(from: date)
+}
+
+public func sendNotification(title: String, body: String) {
+    let content = UNMutableNotificationContent()
+    content.title = title
+    content.body = body
+    content.sound = .default
+    
+    let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0.1, repeats: false)
+    
+    let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+    
+    UNUserNotificationCenter.current().add(request) { error in
+        if let error = error {
+            print("Error sending notification: \(error.localizedDescription)")
+        }
+    }
 }
