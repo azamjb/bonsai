@@ -56,8 +56,6 @@ class NightlySchedulerService {
             
             // Request notification permissions if needed
             UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in }
-            
-            sendNotification(title: "Unshield scheduled for midnight", body: "\(midnight)")
         } catch {
             print("Could not schedule app unshield: \(error)")
         }
@@ -79,14 +77,12 @@ class NightlySchedulerService {
     }
     
     private func unshieldApps() {
-        DispatchQueue.main.sync {
-            let settingStore = ManagedSettingsStore()
-            
-            settingStore.shield.applications = nil
-            settingStore.shield.webDomains = nil
-            settingStore.shield.applicationCategories = nil
-            settingStore.shield.webDomainCategories = nil
-        }
+        let settingStore = ManagedSettingsStore()
+        
+        settingStore.shield.applications = nil
+        settingStore.shield.webDomains = nil
+        settingStore.shield.applicationCategories = nil
+        settingStore.shield.webDomainCategories = nil
         
         print("apps unshielded")
     }
