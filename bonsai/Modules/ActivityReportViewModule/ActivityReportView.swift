@@ -146,7 +146,7 @@ struct ActivityReportView: View {
                                 .padding(.bottom, 20)
                                 .fontWeight(.bold)
                             
-                            if screenTime.getBoundariesFromUserDefaults().isEmpty {
+                            if screenTime.boundariesSetToday.isEmpty {
                                 Text("No boundaries are active for today.")
                                     .font(.system(size: 11))
                                     .foregroundStyle(Color.secondary)
