@@ -27,12 +27,19 @@ struct TokenTransaction: Codable, FetchableRecord, PersistableRecord, Identifiab
     static let databaseTableName = "tokentransaction"
 }
 
+enum TokenResponseCode {
+    case success
+    case insufficientTokenBalance
+    case overrideLimitReached
+    case serverError
+}
+
 protocol TokenServiceProtocol {
     func fetchAllTokenTransactions(forUserWithId userId: String) async throws -> [TokenTransaction]
     func fetchTokenBalance(forUserWithId userId: String) async throws -> Int
-    func spendToken(forUserWithId userId: String, amount: Int) async throws -> Bool
-    func grantTokens(forUserWithId userId: String, amount: Int) async throws -> Bool
-    func purchaseTokens(forUserWithId userId: String, amount: Int, transactionId: String) async throws
+    func spendToken(forUserWithId userId: String, amount: Int) async throws -> TokenResponseCode
+    func grantTokens(forUserWithId userId: String, amount: Int) async throws -> TokenResponseCode
+    func purchaseTokens(forUserWithId userId: String, amount: Int, transactionId: String) async throws -> TokenResponseCode
 }
 
 class TokenService: TokenServiceProtocol {
@@ -58,27 +65,40 @@ class TokenService: TokenServiceProtocol {
         return 0
     }
 
-    func spendToken(forUserWithId userId: String, amount: Int) async throws -> Bool {
-        var tokenBalance = try await fetchTokenBalance(forUserWithId: userId)
-        if tokenBalance >= amount {
-            tokenBalance -= amount
-            let transaction = TokenTransaction(
-                id: UUID(),
-                userId: userId,
-                transactionId: nil,
-                timestamp: Date(),
-                netTokenChange: -amount,
-                balanceAfterChange: tokenBalance,
-                type: .spend
-            )
-            try storage.saveTokenTransaction(forUserId: userId, transaction)
-        } else {
-            return false
+    func spendToken(forUserWithId userId: String, amount: Int) async throws -> TokenResponseCode {
+        do {
+            let now = Date()
+            if let latestSpendTransactionDate = try storage.loadLatestOverrideTransaction(forUserId: userId)?.timestamp {
+                // Block if it's the same calendar day
+                if Calendar.current.isDate(latestSpendTransactionDate, inSameDayAs: now) {
+                    return .overrideLimitReached
+                }
+            }
+            
+            var tokenBalance = try await fetchTokenBalance(forUserWithId: userId)
+            if tokenBalance >= amount {
+                tokenBalance -= amount
+                let transaction = TokenTransaction(
+                    id: UUID(),
+                    userId: userId,
+                    transactionId: nil,
+                    timestamp: Date(),
+                    netTokenChange: -amount,
+                    balanceAfterChange: tokenBalance,
+                    type: .spend
+                )
+                try storage.saveTokenTransaction(forUserId: userId, transaction)
+                return .success
+            } else {
+                return .insufficientTokenBalance
+            }
+        } catch {
+            print("Error fetching token balance: \(error)")
+            return .serverError
         }
-        return true
     }
     
-    func grantTokens(forUserWithId userId: String, amount: Int) async throws -> Bool {
+    func grantTokens(forUserWithId userId: String, amount: Int) async throws -> TokenResponseCode {
         do {
             var tokenBalance = try await fetchTokenBalance(forUserWithId: userId)
             tokenBalance += amount
@@ -92,14 +112,14 @@ class TokenService: TokenServiceProtocol {
                 type: .grant
             )
             try storage.saveTokenTransaction(forUserId: userId, transaction)
+            return .success
         } catch {
             print("Failed to grant tokens to user: \(error.localizedDescription)")
-            return false
+            return .serverError
         }
-        return true
     }
     
-    func purchaseTokens(forUserWithId userId: String, amount: Int, transactionId: String) async throws {
+    func purchaseTokens(forUserWithId userId: String, amount: Int, transactionId: String) async throws -> TokenResponseCode{
         do {
             var tokenBalance = try await fetchTokenBalance(forUserWithId: userId)
             tokenBalance += amount
@@ -113,9 +133,10 @@ class TokenService: TokenServiceProtocol {
                 type: .purchase
             )
             try storage.saveTokenTransaction(forUserId: userId, transaction)
+            return .success
         } catch {
             print("Failed to purchase tokens to user: \(error.localizedDescription)")
-            throw error
+            return .serverError
         }
     }
 }
@@ -125,6 +146,7 @@ class TokenService: TokenServiceProtocol {
 protocol TokenStorageProtocol {
     func loadLatestTransaction(forUserId userId: String) throws -> TokenTransaction?
     func loadTokenTransactions(forUserId userId: String) throws -> [TokenTransaction]
+    func loadLatestOverrideTransaction(forUserId userid: String) throws -> TokenTransaction?
     func saveTokenTransaction(forUserId userId: String, _ transaction: TokenTransaction) throws
 }
 
@@ -141,6 +163,16 @@ class TokenStorageService: TokenStorageProtocol {
         try db.read { db in
             try TokenTransaction
                 .filter(Column("userId") == userId)
+                .order(Column("timestamp").desc)
+                .limit(1)
+                .fetchOne(db)
+        }
+    }
+    
+    func loadLatestOverrideTransaction(forUserId userId: String) throws -> TokenTransaction? {
+        try db.read { db in
+            try TokenTransaction
+                .filter(Column("userId") == userId && Column("type") == TokenTransactionType.spend.rawValue)
                 .order(Column("timestamp").desc)
                 .limit(1)
                 .fetchOne(db)
