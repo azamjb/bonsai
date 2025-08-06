@@ -22,6 +22,34 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
 
     override func intervalDidStart(for activity: DeviceActivityName) {
         super.intervalDidStart(for: activity)
+        
+        if activity.rawValue == "MidnightReset" {
+            unshieldApps()
+            sharedDefaults?.set(Date(), forKey: "lastMidnightReset")
+            sharedDefaults?.set(true, forKey: "needsMidnightProcessing")
+            resetBoundaryStates()
+        }
+    }
+    
+    private func unshieldApps() {
+        store.shield.applications = nil
+        store.shield.webDomains = nil
+        store.shield.applicationCategories = nil
+        store.shield.webDomainCategories = nil
+    }
+    
+    private func resetBoundaryStates() {
+        if let data = sharedDefaults?.data(forKey: BOUNDARIES_STRING),
+           var boundaries = try? JSONDecoder().decode([Boundary].self, from: data) {
+            
+            boundaries = boundaries.map { boundary in
+                var updated = boundary
+                updated.isBlocked = false
+                return updated
+            }
+            
+            sharedDefaults?.set(try? JSONEncoder().encode(boundaries), forKey: BOUNDARIES_STRING)
+        }
     }
     
     override func intervalDidEnd(for activity: DeviceActivityName) {

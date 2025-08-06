@@ -17,10 +17,12 @@ struct bonsaiApp: App {
     @StateObject private var screenTime = ScreenTimeService()
     @StateObject private var notificationHandler = NotificationHandler.shared
     @StateObject private var quoteViewModel = QuoteViewModel()
+    @Environment(\.scenePhase) private var scenePhase
     
     init() {
-        NightlySchedulerService.shared.setupDailyUnshield()
         NotificationHandler.shared.requestAuthorization()
+        MidnightResetService.shared.setupMidnightReset()
+        //MidnightResetService.shared.scheduleTestReset()
     }
 
     var body: some Scene {
@@ -31,7 +33,19 @@ struct bonsaiApp: App {
                     .environmentObject(quoteViewModel)
                     .environmentObject(notificationHandler)
                     .environmentObject(DeviceReportsManager.shared)
-                //ContentView()
+            }
+            .onChange(of: scenePhase) { _, newPhase in
+                switch newPhase {
+                case .active:
+                    MidnightResetService.shared.checkForPendingMidnightTasks()
+                    break
+                case .background:
+                    break
+                case .inactive:
+                    break
+                @unknown default:
+                    break
+                }
             }
         }
     }
