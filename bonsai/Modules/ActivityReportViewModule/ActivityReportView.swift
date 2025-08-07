@@ -30,7 +30,6 @@ struct ActivityReportView: View {
     let center = AuthorizationCenter.shared
 
     @AppStorage("hasAccountabilityPartner") var hasAccountabilityPartner: Bool = false
-    @EnvironmentObject var reportsManager: DeviceReportsManager
     @StateObject var viewModel: ActivityReportViewModel = ActivityReportViewModel()
     @EnvironmentObject var screenTime: ScreenTimeService
     @State private var isAuthorized = false

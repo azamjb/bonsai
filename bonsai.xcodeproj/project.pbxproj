@@ -115,6 +115,7 @@
 		247B0D7B2DC7DD9D001E772C /* Exceptions for "bonsai" folder in "bonsaiTests" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Static/DeviceActivityKeys.swift,
 				Static/Extensions.swift,
 				Static/GlobalStructs.swift,
 				Static/LocalStorageKeys.swift,
@@ -125,6 +126,7 @@
 		247B0D7C2DC7DD9D001E772C /* Exceptions for "bonsai" folder in "bonsaiUITests" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Static/DeviceActivityKeys.swift,
 				Static/Extensions.swift,
 				Static/GlobalStructs.swift,
 				Static/LocalStorageKeys.swift,
@@ -135,6 +137,7 @@
 		247B0D832DC7DE3F001E772C /* Exceptions for "bonsai" folder in "ShieldActionExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Static/DeviceActivityKeys.swift,
 				Static/Extensions.swift,
 				Static/GlobalStructs.swift,
 				Static/LocalStorageKeys.swift,
@@ -180,6 +183,7 @@
 		B7F0144C2D238F09002BB521 /* Exceptions for "bonsai" folder in "deviceactivitymonitor" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Static/DeviceActivityKeys.swift,
 				Static/Extensions.swift,
 				Static/GlobalStructs.swift,
 				Static/LocalStorageKeys.swift,
@@ -190,6 +194,7 @@
 		B7F0144D2D238F09002BB521 /* Exceptions for "bonsai" folder in "deviceactivityreport" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Static/DeviceActivityKeys.swift,
 				Static/Extensions.swift,
 				Static/GlobalStructs.swift,
 				Static/LocalStorageKeys.swift,
@@ -201,6 +206,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Assets.xcassets,
+				Static/DeviceActivityKeys.swift,
 				Static/Extensions.swift,
 				Static/GlobalStructs.swift,
 				Static/LocalStorageKeys.swift,

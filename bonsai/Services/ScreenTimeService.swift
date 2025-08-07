@@ -88,24 +88,25 @@ public class ScreenTimeService: ObservableObject {
         
         addBoundaryToUserDefaults(boundary: boundary)
         
-        if boundary.weekdays.contains(Weekday.today) {
-            try! center.startMonitoring(
+        do {
+            try center.startMonitoring(
                 DeviceActivityName(boundary.id.uuidString),
                 during: schedule,
-                events: [DeviceActivityEvent.Name("Boundary"): DeviceActivityEvent (
+                events: [DeviceActivityEvent.Name(BOUNDARY_STRING): DeviceActivityEvent (
                     applications: boundary.appTokens,
                     categories: boundary.categoryTokens,
                     webDomains: boundary.webDomainTokens,
                     threshold: DateComponents(hour: boundary.hours, minute: boundary.minutes)
                     //threshold: DateComponents(second: 1)
+                    
                 )]
             )
-        } else {
-            print("doesnt contain weekday")
+        } catch {
+            print("Failed to start monitoring boundaries")
         }
         
-        monitoringStarted = true
         
+        monitoringStarted = true
         setGroupDisplays()
         updateLeftoverWeeklySaves()
     }

@@ -17,12 +17,11 @@ struct bonsaiApp: App {
     @StateObject private var screenTime = ScreenTimeService()
     @StateObject private var notificationHandler = NotificationHandler.shared
     @StateObject private var quoteViewModel = QuoteViewModel()
-    @Environment(\.scenePhase) private var scenePhase
     
     init() {
         NotificationHandler.shared.requestAuthorization()
         MidnightResetService.shared.setupMidnightReset()
-        //MidnightResetService.shared.scheduleTestReset()
+        //MidnightResetService.shared.setupTESTReset(inMinutes: 10)
     }
 
     var body: some Scene {
@@ -32,24 +31,9 @@ struct bonsaiApp: App {
                     .environmentObject(screenTime)
                     .environmentObject(quoteViewModel)
                     .environmentObject(notificationHandler)
-                    .environmentObject(DeviceReportsManager.shared)
-            }
-            .onChange(of: scenePhase) { _, newPhase in
-                switch newPhase {
-                case .active:
-                    MidnightResetService.shared.checkForPendingMidnightTasks()
-                    break
-                case .background:
-                    break
-                case .inactive:
-                    break
-                @unknown default:
-                    break
-                }
             }
         }
     }
-
 }
 
 // Here we can set a way to display splash screen then profile creation or skip straight to ContentView()
@@ -64,7 +48,6 @@ struct RootView: View {
                     .onAppear {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                             withAnimation {
-                                // Switch to main app after 3 seconds
                                 isSplashScreenActive = false
                             }
                         }
@@ -73,7 +56,7 @@ struct RootView: View {
                 if isProfileCreated {
                     ContentView()
                 } else {
-                    EducateView() // no longer going to inspire view
+                    EducateView()
                 }
             }
         }

@@ -23,11 +23,10 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     override func intervalDidStart(for activity: DeviceActivityName) {
         super.intervalDidStart(for: activity)
         
-        if activity.rawValue == "MidnightReset" {
+        if activity.rawValue == MIDNIGHT_RESET_STRING {
             unshieldApps()
-            sharedDefaults?.set(Date(), forKey: "lastMidnightReset")
-            sharedDefaults?.set(true, forKey: "needsMidnightProcessing")
             resetBoundaryStates()
+            deactivateExtensionCodesForYesterday()
         }
     }
     
@@ -37,7 +36,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
         store.shield.applicationCategories = nil
         store.shield.webDomainCategories = nil
     }
-    
+
     private func resetBoundaryStates() {
         if let data = sharedDefaults?.data(forKey: BOUNDARIES_STRING),
            var boundaries = try? JSONDecoder().decode([Boundary].self, from: data) {
@@ -52,6 +51,28 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
         }
     }
     
+    private func deactivateExtensionCodesForYesterday() {
+        var extensionCodes = [SentExtensionCodeModel]()
+        if let data = sharedDefaults!.data(forKey: SENT_EXTENSION_CODES_STRING) {
+            do {
+                let activeCodeModels = try JSONDecoder().decode([SentExtensionCodeModel].self, from: data)
+                extensionCodes = activeCodeModels.sorted(by: { $0.sentDateTimeUtc > $1.sentDateTimeUtc })
+            } catch {
+                extensionCodes = []
+            }
+        }
+        
+        let yesterday = Date.yesterday
+        
+        extensionCodes = extensionCodes.filter({ areDatesSameDay(date1: yesterday, date2: $0.sentDateTimeUtc) }).map { code in
+            var updatedCode = code
+            updatedCode.isCodeValid = false
+            return updatedCode
+        }
+        
+        sharedDefaults!.set(try! JSONEncoder().encode(extensionCodes), forKey: SENT_EXTENSION_CODES_STRING)
+    }
+
     override func intervalDidEnd(for activity: DeviceActivityName) {
         super.intervalDidEnd(for: activity)
     }
@@ -59,26 +80,29 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     override func eventDidReachThreshold(_ event: DeviceActivityEvent.Name, activity: DeviceActivityName) {
         super.eventDidReachThreshold(event, activity: activity)
         
-        if let data = sharedDefaults!.data(forKey: BOUNDARIES_STRING) {
-            print("abt to decode")
-            var boundaries = try! JSONDecoder().decode([Boundary].self, from: data)
-            print("bounadry limi reacehd", activity.rawValue)
-
-            if var boundary = boundaries.first(where: { $0.id == UUID(uuidString: activity.rawValue) }) {
-                print(boundary)
-                boundary.isBlocked = true
-                
-                boundary.appTokens.forEach { token in handleThresholdReached(appToken: token) }
-                boundary.categoryTokens.forEach { token in handleThresholdReached(categoryToken: token) }
-                boundary.webDomainTokens.forEach { token in handleThresholdReached(webDomainToken: token) }
-                
-                boundaries.removeAll(where: { $0.id == boundary.id })
-                boundaries.append(boundary)
-                
-                sharedDefaults?.set(try! JSONEncoder().encode(boundaries), forKey: BOUNDARIES_STRING)
+        if event.rawValue != BOUNDARY_STRING { return }
+        
+        guard let data = sharedDefaults?.data(forKey: BOUNDARIES_STRING),
+              var boundaries = try? JSONDecoder().decode([Boundary].self, from: data) else {
+            return
+        }
+        
+        if var boundary = boundaries.first(where: { $0.id == UUID(uuidString: activity.rawValue) }) {
+            guard boundary.weekdays.contains(Weekday.today) else {
+                print("Boundary '\(boundary.givenName)' not active on \(Weekday.today)")
+                return
             }
-        } else {
-            print("bad key")
+            
+            boundary.isBlocked = true
+            
+            boundary.appTokens.forEach { token in handleThresholdReached(appToken: token) }
+            boundary.categoryTokens.forEach { token in handleThresholdReached(categoryToken: token) }
+            boundary.webDomainTokens.forEach { token in handleThresholdReached(webDomainToken: token) }
+            
+            boundaries.removeAll(where: { $0.id == boundary.id })
+            boundaries.append(boundary)
+            
+            sharedDefaults?.set(try? JSONEncoder().encode(boundaries), forKey: BOUNDARIES_STRING)
         }
     }
     
@@ -140,6 +164,4 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
         
         // Handle the warning before the event reaches its threshold.
     }
-    
-    
 }
