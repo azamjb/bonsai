@@ -10,35 +10,22 @@
 		242A1CD12D271CB300D5CD5E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B76F620D2D040EB40092DA9E /* UIKit.framework */; };
 		242A1FC52D274E8200D5CD5E /* iPhoneNumberField in Frameworks */ = {isa = PBXBuildFile; productRef = 242A1FC42D274E8200D5CD5E /* iPhoneNumberField */; };
 		24B643B32E37A67300438A37 /* OTPView in Frameworks */ = {isa = PBXBuildFile; productRef = 24B643B22E37A67300438A37 /* OTPView */; };
-		24D625782E2D6937006AE72E /* deviceactivityreport.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = B71551702CFABBF4000AFACB /* deviceactivityreport.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		24B64BF32E4777BF00438A37 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 24B64BF22E4777BF00438A37 /* StoreKit.framework */; };
+		24D625782E2D6937006AE72E /* DeviceActivityReport.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = B71551702CFABBF4000AFACB /* DeviceActivityReport.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		24D629432E351C7A006AE72E /* ConfidentialKit in Frameworks */ = {isa = PBXBuildFile; productRef = 24D629422E351C7A006AE72E /* ConfidentialKit */; };
 		24F94A602E2D4A1000EA6FF4 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71551012CF957FF000AFACB /* DeviceActivity.framework */; };
 		A78D2F1F2DC46B6E001375B1 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = A78D2F1E2DC46B6E001375B1 /* GRDB */; };
 		B71551412CF96667000AFACB /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71551012CF957FF000AFACB /* DeviceActivity.framework */; };
-		B71551492CF96667000AFACB /* deviceactivitymonitor.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B71551402CF96667000AFACB /* deviceactivitymonitor.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B71551492CF96667000AFACB /* DeviceActivityMonitor.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B71551402CF96667000AFACB /* DeviceActivityMonitor.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B7186B4D2D333920000723BE /* StoreKitConfig.storekit in Resources */ = {isa = PBXBuildFile; fileRef = B7186B4C2D333920000723BE /* StoreKitConfig.storekit */; };
 		B76F61FE2D03FFE20092DA9E /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B76F61FD2D03FFE20092DA9E /* ManagedSettings.framework */; };
 		B76F62002D03FFE20092DA9E /* ManagedSettingsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B76F61FF2D03FFE20092DA9E /* ManagedSettingsUI.framework */; };
-		B76F62082D03FFE20092DA9E /* shieldConfiguration.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B76F61FC2D03FFE20092DA9E /* shieldConfiguration.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B76F62082D03FFE20092DA9E /* ShieldConfiguration.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B76F61FC2D03FFE20092DA9E /* ShieldConfiguration.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B77B2DCE2DB9FAAC0018F685 /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B76F61FD2D03FFE20092DA9E /* ManagedSettings.framework */; };
 		B77B2DD62DB9FAAC0018F685 /* ShieldActionExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B77B2DCD2DB9FAAB0018F685 /* ShieldActionExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		B71550C82CF951A0000AFACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B71550AF2CF9519F000AFACB /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B71550B62CF9519F000AFACB;
-			remoteInfo = bonsaitest;
-		};
-		B71550D22CF951A0000AFACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B71550AF2CF9519F000AFACB /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B71550B62CF9519F000AFACB;
-			remoteInfo = bonsaitest;
-		};
 		B71551472CF96667000AFACB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B71550AF2CF9519F000AFACB /* Project object */;
@@ -76,7 +63,7 @@
 			dstPath = "$(EXTENSIONS_FOLDER_PATH)";
 			dstSubfolderSpec = 16;
 			files = (
-				24D625782E2D6937006AE72E /* deviceactivityreport.appex in Embed ExtensionKit Extensions */,
+				24D625782E2D6937006AE72E /* DeviceActivityReport.appex in Embed ExtensionKit Extensions */,
 			);
 			name = "Embed ExtensionKit Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -87,8 +74,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				B76F62082D03FFE20092DA9E /* shieldConfiguration.appex in Embed Foundation Extensions */,
-				B71551492CF96667000AFACB /* deviceactivitymonitor.appex in Embed Foundation Extensions */,
+				B76F62082D03FFE20092DA9E /* ShieldConfiguration.appex in Embed Foundation Extensions */,
+				B71551492CF96667000AFACB /* DeviceActivityMonitor.appex in Embed Foundation Extensions */,
 				B77B2DD62DB9FAAC0018F685 /* ShieldActionExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
@@ -97,14 +84,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		B71550B72CF9519F000AFACB /* bonsai.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = bonsai.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		B71550C72CF951A0000AFACB /* bonsaiTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bonsaiTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		B71550D12CF951A0000AFACB /* bonsaiUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bonsaiUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		24B64BF22E4777BF00438A37 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		B71550B72CF9519F000AFACB /* Bonsai.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Bonsai.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B71551012CF957FF000AFACB /* DeviceActivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeviceActivity.framework; path = System/Library/Frameworks/DeviceActivity.framework; sourceTree = SDKROOT; };
-		B71551402CF96667000AFACB /* deviceactivitymonitor.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = deviceactivitymonitor.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		B71551702CFABBF4000AFACB /* deviceactivityreport.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.extensionkit-extension"; includeInIndex = 0; path = deviceactivityreport.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		B71551402CF96667000AFACB /* DeviceActivityMonitor.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DeviceActivityMonitor.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		B71551702CFABBF4000AFACB /* DeviceActivityReport.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.extensionkit-extension"; includeInIndex = 0; path = DeviceActivityReport.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7186B4C2D333920000723BE /* StoreKitConfig.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = StoreKitConfig.storekit; sourceTree = "<group>"; };
-		B76F61FC2D03FFE20092DA9E /* shieldConfiguration.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = shieldConfiguration.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		B76F61FC2D03FFE20092DA9E /* ShieldConfiguration.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ShieldConfiguration.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		B76F61FD2D03FFE20092DA9E /* ManagedSettings.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ManagedSettings.framework; path = System/Library/Frameworks/ManagedSettings.framework; sourceTree = SDKROOT; };
 		B76F61FF2D03FFE20092DA9E /* ManagedSettingsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ManagedSettingsUI.framework; path = System/Library/Frameworks/ManagedSettingsUI.framework; sourceTree = SDKROOT; };
 		B76F620D2D040EB40092DA9E /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -112,28 +98,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		247B0D7B2DC7DD9D001E772C /* Exceptions for "bonsai" folder in "bonsaiTests" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Static/DeviceActivityKeys.swift,
-				Static/Extensions.swift,
-				Static/GlobalStructs.swift,
-				Static/LocalStorageKeys.swift,
-				Static/Utils.swift,
-			);
-			target = B71550C62CF951A0000AFACB /* bonsaiTests */;
-		};
-		247B0D7C2DC7DD9D001E772C /* Exceptions for "bonsai" folder in "bonsaiUITests" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Static/DeviceActivityKeys.swift,
-				Static/Extensions.swift,
-				Static/GlobalStructs.swift,
-				Static/LocalStorageKeys.swift,
-				Static/Utils.swift,
-			);
-			target = B71550D02CF951A0000AFACB /* bonsaiUITests */;
-		};
 		247B0D832DC7DE3F001E772C /* Exceptions for "bonsai" folder in "ShieldActionExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -145,33 +109,33 @@
 			);
 			target = B77B2DCC2DB9FAAB0018F685 /* ShieldActionExtension */;
 		};
-		24E3C57D2D5586D60087940E /* Exceptions for "bonsai" folder in "bonsai" target */ = {
+		24E3C57D2D5586D60087940E /* Exceptions for "bonsai" folder in "Bonsai" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = B71550B62CF9519F000AFACB /* bonsai */;
+			target = B71550B62CF9519F000AFACB /* Bonsai */;
 		};
-		B715514A2CF96667000AFACB /* Exceptions for "deviceactivitymonitor" folder in "deviceactivitymonitor" target */ = {
+		B715514A2CF96667000AFACB /* Exceptions for "DeviceActivityMonitor" folder in "DeviceActivityMonitor" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = B715513F2CF96667000AFACB /* deviceactivitymonitor */;
+			target = B715513F2CF96667000AFACB /* DeviceActivityMonitor */;
 		};
-		B715517D2CFABBF4000AFACB /* Exceptions for "deviceactivityreport" folder in "deviceactivityreport" target */ = {
+		B715517D2CFABBF4000AFACB /* Exceptions for "DeviceActivityReport" folder in "DeviceActivityReport" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = B715516F2CFABBF4000AFACB /* deviceactivityreport */;
+			target = B715516F2CFABBF4000AFACB /* DeviceActivityReport */;
 		};
-		B76F620B2D03FFE20092DA9E /* Exceptions for "shieldConfiguration" folder in "shieldConfiguration" target */ = {
+		B76F620B2D03FFE20092DA9E /* Exceptions for "ShieldConfiguration" folder in "ShieldConfiguration" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = B76F61FB2D03FFE20092DA9E /* shieldConfiguration */;
+			target = B76F61FB2D03FFE20092DA9E /* ShieldConfiguration */;
 		};
 		B77B2DDA2DB9FAAC0018F685 /* Exceptions for "ShieldActionExtension" folder in "ShieldActionExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
@@ -180,7 +144,7 @@
 			);
 			target = B77B2DCC2DB9FAAB0018F685 /* ShieldActionExtension */;
 		};
-		B7F0144C2D238F09002BB521 /* Exceptions for "bonsai" folder in "deviceactivitymonitor" target */ = {
+		B7F0144C2D238F09002BB521 /* Exceptions for "bonsai" folder in "DeviceActivityMonitor" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Static/DeviceActivityKeys.swift,
@@ -189,9 +153,9 @@
 				Static/LocalStorageKeys.swift,
 				Static/Utils.swift,
 			);
-			target = B715513F2CF96667000AFACB /* deviceactivitymonitor */;
+			target = B715513F2CF96667000AFACB /* DeviceActivityMonitor */;
 		};
-		B7F0144D2D238F09002BB521 /* Exceptions for "bonsai" folder in "deviceactivityreport" target */ = {
+		B7F0144D2D238F09002BB521 /* Exceptions for "bonsai" folder in "DeviceActivityReport" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Static/DeviceActivityKeys.swift,
@@ -200,9 +164,9 @@
 				Static/LocalStorageKeys.swift,
 				Static/Utils.swift,
 			);
-			target = B715516F2CFABBF4000AFACB /* deviceactivityreport */;
+			target = B715516F2CFABBF4000AFACB /* DeviceActivityReport */;
 		};
-		B7F0144E2D238F09002BB521 /* Exceptions for "bonsai" folder in "shieldConfiguration" target */ = {
+		B7F0144E2D238F09002BB521 /* Exceptions for "bonsai" folder in "ShieldConfiguration" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Assets.xcassets,
@@ -212,7 +176,7 @@
 				Static/LocalStorageKeys.swift,
 				Static/Utils.swift,
 			);
-			target = B76F61FB2D03FFE20092DA9E /* shieldConfiguration */;
+			target = B76F61FB2D03FFE20092DA9E /* ShieldConfiguration */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -220,49 +184,37 @@
 		B71550B92CF9519F000AFACB /* bonsai */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				24E3C57D2D5586D60087940E /* Exceptions for "bonsai" folder in "bonsai" target */,
-				247B0D7B2DC7DD9D001E772C /* Exceptions for "bonsai" folder in "bonsaiTests" target */,
-				247B0D7C2DC7DD9D001E772C /* Exceptions for "bonsai" folder in "bonsaiUITests" target */,
-				B7F0144C2D238F09002BB521 /* Exceptions for "bonsai" folder in "deviceactivitymonitor" target */,
-				B7F0144D2D238F09002BB521 /* Exceptions for "bonsai" folder in "deviceactivityreport" target */,
-				B7F0144E2D238F09002BB521 /* Exceptions for "bonsai" folder in "shieldConfiguration" target */,
+				24E3C57D2D5586D60087940E /* Exceptions for "bonsai" folder in "Bonsai" target */,
+				B7F0144C2D238F09002BB521 /* Exceptions for "bonsai" folder in "DeviceActivityMonitor" target */,
+				B7F0144D2D238F09002BB521 /* Exceptions for "bonsai" folder in "DeviceActivityReport" target */,
+				B7F0144E2D238F09002BB521 /* Exceptions for "bonsai" folder in "ShieldConfiguration" target */,
 				247B0D832DC7DE3F001E772C /* Exceptions for "bonsai" folder in "ShieldActionExtension" target */,
 			);
 			path = bonsai;
 			sourceTree = "<group>";
 		};
-		B71550CA2CF951A0000AFACB /* bonsaiTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = bonsaiTests;
-			sourceTree = "<group>";
-		};
-		B71550D42CF951A0000AFACB /* bonsaiUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = bonsaiUITests;
-			sourceTree = "<group>";
-		};
-		B71551422CF96667000AFACB /* deviceactivitymonitor */ = {
+		B71551422CF96667000AFACB /* DeviceActivityMonitor */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				B715514A2CF96667000AFACB /* Exceptions for "deviceactivitymonitor" folder in "deviceactivitymonitor" target */,
+				B715514A2CF96667000AFACB /* Exceptions for "DeviceActivityMonitor" folder in "DeviceActivityMonitor" target */,
 			);
-			path = deviceactivitymonitor;
+			path = DeviceActivityMonitor;
 			sourceTree = "<group>";
 		};
-		B71551712CFABBF4000AFACB /* deviceactivityreport */ = {
+		B71551712CFABBF4000AFACB /* DeviceActivityReport */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				B715517D2CFABBF4000AFACB /* Exceptions for "deviceactivityreport" folder in "deviceactivityreport" target */,
+				B715517D2CFABBF4000AFACB /* Exceptions for "DeviceActivityReport" folder in "DeviceActivityReport" target */,
 			);
-			path = deviceactivityreport;
+			path = DeviceActivityReport;
 			sourceTree = "<group>";
 		};
-		B76F62012D03FFE20092DA9E /* shieldConfiguration */ = {
+		B76F62012D03FFE20092DA9E /* ShieldConfiguration */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				B76F620B2D03FFE20092DA9E /* Exceptions for "shieldConfiguration" folder in "shieldConfiguration" target */,
+				B76F620B2D03FFE20092DA9E /* Exceptions for "ShieldConfiguration" folder in "ShieldConfiguration" target */,
 			);
-			path = shieldConfiguration;
+			path = ShieldConfiguration;
 			sourceTree = "<group>";
 		};
 		B77B2DCF2DB9FAAC0018F685 /* ShieldActionExtension */ = {
@@ -282,22 +234,9 @@
 			files = (
 				24D629432E351C7A006AE72E /* ConfidentialKit in Frameworks */,
 				24B643B32E37A67300438A37 /* OTPView in Frameworks */,
+				24B64BF32E4777BF00438A37 /* StoreKit.framework in Frameworks */,
 				A78D2F1F2DC46B6E001375B1 /* GRDB in Frameworks */,
 				242A1FC52D274E8200D5CD5E /* iPhoneNumberField in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B71550C42CF951A0000AFACB /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B71550CE2CF951A0000AFACB /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -343,11 +282,9 @@
 			children = (
 				B7186B4C2D333920000723BE /* StoreKitConfig.storekit */,
 				B71550B92CF9519F000AFACB /* bonsai */,
-				B71550CA2CF951A0000AFACB /* bonsaiTests */,
-				B71550D42CF951A0000AFACB /* bonsaiUITests */,
-				B71551422CF96667000AFACB /* deviceactivitymonitor */,
-				B71551712CFABBF4000AFACB /* deviceactivityreport */,
-				B76F62012D03FFE20092DA9E /* shieldConfiguration */,
+				B71551422CF96667000AFACB /* DeviceActivityMonitor */,
+				B71551712CFABBF4000AFACB /* DeviceActivityReport */,
+				B76F62012D03FFE20092DA9E /* ShieldConfiguration */,
 				B77B2DCF2DB9FAAC0018F685 /* ShieldActionExtension */,
 				B71551002CF957FF000AFACB /* Frameworks */,
 				B71550B82CF9519F000AFACB /* Products */,
@@ -357,12 +294,10 @@
 		B71550B82CF9519F000AFACB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B71550B72CF9519F000AFACB /* bonsai.app */,
-				B71550C72CF951A0000AFACB /* bonsaiTests.xctest */,
-				B71550D12CF951A0000AFACB /* bonsaiUITests.xctest */,
-				B71551402CF96667000AFACB /* deviceactivitymonitor.appex */,
-				B71551702CFABBF4000AFACB /* deviceactivityreport.appex */,
-				B76F61FC2D03FFE20092DA9E /* shieldConfiguration.appex */,
+				B71550B72CF9519F000AFACB /* Bonsai.app */,
+				B71551402CF96667000AFACB /* DeviceActivityMonitor.appex */,
+				B71551702CFABBF4000AFACB /* DeviceActivityReport.appex */,
+				B76F61FC2D03FFE20092DA9E /* ShieldConfiguration.appex */,
 				B77B2DCD2DB9FAAB0018F685 /* ShieldActionExtension.appex */,
 			);
 			name = Products;
@@ -371,6 +306,7 @@
 		B71551002CF957FF000AFACB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				24B64BF22E4777BF00438A37 /* StoreKit.framework */,
 				B76F620D2D040EB40092DA9E /* UIKit.framework */,
 				B71551012CF957FF000AFACB /* DeviceActivity.framework */,
 				B76F61FD2D03FFE20092DA9E /* ManagedSettings.framework */,
@@ -382,9 +318,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		B71550B62CF9519F000AFACB /* bonsai */ = {
+		B71550B62CF9519F000AFACB /* Bonsai */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B71550DB2CF951A0000AFACB /* Build configuration list for PBXNativeTarget "bonsai" */;
+			buildConfigurationList = B71550DB2CF951A0000AFACB /* Build configuration list for PBXNativeTarget "Bonsai" */;
 			buildPhases = (
 				B71550B32CF9519F000AFACB /* Sources */,
 				B71550B42CF9519F000AFACB /* Frameworks */,
@@ -404,7 +340,7 @@
 			fileSystemSynchronizedGroups = (
 				B71550B92CF9519F000AFACB /* bonsai */,
 			);
-			name = bonsai;
+			name = Bonsai;
 			packageProductDependencies = (
 				242A1FC42D274E8200D5CD5E /* iPhoneNumberField */,
 				A78D2F1E2DC46B6E001375B1 /* GRDB */,
@@ -412,58 +348,12 @@
 				24B643B22E37A67300438A37 /* OTPView */,
 			);
 			productName = bonsaitest;
-			productReference = B71550B72CF9519F000AFACB /* bonsai.app */;
+			productReference = B71550B72CF9519F000AFACB /* Bonsai.app */;
 			productType = "com.apple.product-type.application";
 		};
-		B71550C62CF951A0000AFACB /* bonsaiTests */ = {
+		B715513F2CF96667000AFACB /* DeviceActivityMonitor */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B71550DE2CF951A0000AFACB /* Build configuration list for PBXNativeTarget "bonsaiTests" */;
-			buildPhases = (
-				B71550C32CF951A0000AFACB /* Sources */,
-				B71550C42CF951A0000AFACB /* Frameworks */,
-				B71550C52CF951A0000AFACB /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				B71550C92CF951A0000AFACB /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				B71550CA2CF951A0000AFACB /* bonsaiTests */,
-			);
-			name = bonsaiTests;
-			packageProductDependencies = (
-			);
-			productName = bonsaitestTests;
-			productReference = B71550C72CF951A0000AFACB /* bonsaiTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		B71550D02CF951A0000AFACB /* bonsaiUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B71550E12CF951A0000AFACB /* Build configuration list for PBXNativeTarget "bonsaiUITests" */;
-			buildPhases = (
-				B71550CD2CF951A0000AFACB /* Sources */,
-				B71550CE2CF951A0000AFACB /* Frameworks */,
-				B71550CF2CF951A0000AFACB /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				B71550D32CF951A0000AFACB /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				B71550D42CF951A0000AFACB /* bonsaiUITests */,
-			);
-			name = bonsaiUITests;
-			packageProductDependencies = (
-			);
-			productName = bonsaitestUITests;
-			productReference = B71550D12CF951A0000AFACB /* bonsaiUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
-		B715513F2CF96667000AFACB /* deviceactivitymonitor */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B715514B2CF96667000AFACB /* Build configuration list for PBXNativeTarget "deviceactivitymonitor" */;
+			buildConfigurationList = B715514B2CF96667000AFACB /* Build configuration list for PBXNativeTarget "DeviceActivityMonitor" */;
 			buildPhases = (
 				B715513C2CF96667000AFACB /* Sources */,
 				B715513D2CF96667000AFACB /* Frameworks */,
@@ -474,18 +364,18 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				B71551422CF96667000AFACB /* deviceactivitymonitor */,
+				B71551422CF96667000AFACB /* DeviceActivityMonitor */,
 			);
-			name = deviceactivitymonitor;
+			name = DeviceActivityMonitor;
 			packageProductDependencies = (
 			);
 			productName = deviceactivitymonitor;
-			productReference = B71551402CF96667000AFACB /* deviceactivitymonitor.appex */;
+			productReference = B71551402CF96667000AFACB /* DeviceActivityMonitor.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
-		B715516F2CFABBF4000AFACB /* deviceactivityreport */ = {
+		B715516F2CFABBF4000AFACB /* DeviceActivityReport */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B715517E2CFABBF4000AFACB /* Build configuration list for PBXNativeTarget "deviceactivityreport" */;
+			buildConfigurationList = B715517E2CFABBF4000AFACB /* Build configuration list for PBXNativeTarget "DeviceActivityReport" */;
 			buildPhases = (
 				B715516C2CFABBF4000AFACB /* Sources */,
 				B715516D2CFABBF4000AFACB /* Frameworks */,
@@ -496,18 +386,18 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				B71551712CFABBF4000AFACB /* deviceactivityreport */,
+				B71551712CFABBF4000AFACB /* DeviceActivityReport */,
 			);
-			name = deviceactivityreport;
+			name = DeviceActivityReport;
 			packageProductDependencies = (
 			);
 			productName = deviceactivityreport;
-			productReference = B71551702CFABBF4000AFACB /* deviceactivityreport.appex */;
+			productReference = B71551702CFABBF4000AFACB /* DeviceActivityReport.appex */;
 			productType = "com.apple.product-type.extensionkit-extension";
 		};
-		B76F61FB2D03FFE20092DA9E /* shieldConfiguration */ = {
+		B76F61FB2D03FFE20092DA9E /* ShieldConfiguration */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B76F620C2D03FFE20092DA9E /* Build configuration list for PBXNativeTarget "shieldConfiguration" */;
+			buildConfigurationList = B76F620C2D03FFE20092DA9E /* Build configuration list for PBXNativeTarget "ShieldConfiguration" */;
 			buildPhases = (
 				B76F61F82D03FFE20092DA9E /* Sources */,
 				B76F61F92D03FFE20092DA9E /* Frameworks */,
@@ -518,13 +408,13 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				B76F62012D03FFE20092DA9E /* shieldConfiguration */,
+				B76F62012D03FFE20092DA9E /* ShieldConfiguration */,
 			);
-			name = shieldConfiguration;
+			name = ShieldConfiguration;
 			packageProductDependencies = (
 			);
 			productName = shieldConfiguration;
-			productReference = B76F61FC2D03FFE20092DA9E /* shieldConfiguration.appex */;
+			productReference = B76F61FC2D03FFE20092DA9E /* ShieldConfiguration.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 		B77B2DCC2DB9FAAB0018F685 /* ShieldActionExtension */ = {
@@ -558,17 +448,10 @@
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1620;
 				LastUpgradeCheck = 1610;
+				ORGANIZATIONNAME = "Bonsai Software Incorporated";
 				TargetAttributes = {
 					B71550B62CF9519F000AFACB = {
 						CreatedOnToolsVersion = 16.1;
-					};
-					B71550C62CF951A0000AFACB = {
-						CreatedOnToolsVersion = 16.1;
-						TestTargetID = B71550B62CF9519F000AFACB;
-					};
-					B71550D02CF951A0000AFACB = {
-						CreatedOnToolsVersion = 16.1;
-						TestTargetID = B71550B62CF9519F000AFACB;
 					};
 					B715513F2CF96667000AFACB = {
 						CreatedOnToolsVersion = 16.1;
@@ -605,12 +488,10 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B71550B62CF9519F000AFACB /* bonsai */,
-				B71550C62CF951A0000AFACB /* bonsaiTests */,
-				B71550D02CF951A0000AFACB /* bonsaiUITests */,
-				B715513F2CF96667000AFACB /* deviceactivitymonitor */,
-				B715516F2CFABBF4000AFACB /* deviceactivityreport */,
-				B76F61FB2D03FFE20092DA9E /* shieldConfiguration */,
+				B71550B62CF9519F000AFACB /* Bonsai */,
+				B715513F2CF96667000AFACB /* DeviceActivityMonitor */,
+				B715516F2CFABBF4000AFACB /* DeviceActivityReport */,
+				B76F61FB2D03FFE20092DA9E /* ShieldConfiguration */,
 				B77B2DCC2DB9FAAB0018F685 /* ShieldActionExtension */,
 			);
 		};
@@ -622,20 +503,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B7186B4D2D333920000723BE /* StoreKitConfig.storekit in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B71550C52CF951A0000AFACB /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B71550CF2CF951A0000AFACB /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -677,20 +544,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B71550C32CF951A0000AFACB /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B71550CD2CF951A0000AFACB /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B715513C2CF96667000AFACB /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -726,29 +579,19 @@
 			isa = PBXTargetDependency;
 			productRef = 24D629452E351CCD006AE72E /* Confidential */;
 		};
-		B71550C92CF951A0000AFACB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B71550B62CF9519F000AFACB /* bonsai */;
-			targetProxy = B71550C82CF951A0000AFACB /* PBXContainerItemProxy */;
-		};
-		B71550D32CF951A0000AFACB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B71550B62CF9519F000AFACB /* bonsai */;
-			targetProxy = B71550D22CF951A0000AFACB /* PBXContainerItemProxy */;
-		};
 		B71551482CF96667000AFACB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B715513F2CF96667000AFACB /* deviceactivitymonitor */;
+			target = B715513F2CF96667000AFACB /* DeviceActivityMonitor */;
 			targetProxy = B71551472CF96667000AFACB /* PBXContainerItemProxy */;
 		};
 		B715517B2CFABBF4000AFACB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B715516F2CFABBF4000AFACB /* deviceactivityreport */;
+			target = B715516F2CFABBF4000AFACB /* DeviceActivityReport */;
 			targetProxy = B715517A2CFABBF4000AFACB /* PBXContainerItemProxy */;
 		};
 		B76F62072D03FFE20092DA9E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B76F61FB2D03FFE20092DA9E /* shieldConfiguration */;
+			target = B76F61FB2D03FFE20092DA9E /* ShieldConfiguration */;
 			targetProxy = B76F62062D03FFE20092DA9E /* PBXContainerItemProxy */;
 		};
 		B77B2DD52DB9FAAC0018F685 /* PBXTargetDependency */ = {
@@ -888,12 +731,10 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = bonsai/bonsai.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"bonsai/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = WNKZNZ5B7R;
+				DEVELOPMENT_TEAM = KGKP88X28G;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = bonsai/Info.plist;
@@ -911,10 +752,9 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.azamjb.bonsai;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bonsai.inc;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = bonsai;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -933,12 +773,10 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = bonsai/bonsai.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"bonsai/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = WNKZNZ5B7R;
+				DEVELOPMENT_TEAM = KGKP88X28G;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = bonsai/Info.plist;
@@ -956,10 +794,9 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.azamjb.bonsai;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bonsai.inc;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = bonsai;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -970,108 +807,17 @@
 			};
 			name = Release;
 		};
-		B71550DF2CF951A0000AFACB /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Distribution";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Distribution";
-				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = WNKZNZ5B7R;
-				"DEVELOPMENT_TEAM[sdk=macosx*]" = WNKZNZ5B7R;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.azamjb.bonsaiTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/bonsai.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/bonsai";
-			};
-			name = Debug;
-		};
-		B71550E02CF951A0000AFACB /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Distribution";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Distribution";
-				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = WNKZNZ5B7R;
-				"DEVELOPMENT_TEAM[sdk=macosx*]" = WNKZNZ5B7R;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.azamjb.bonsaitestTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/bonsai.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/bonsai";
-			};
-			name = Release;
-		};
-		B71550E22CF951A0000AFACB /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.azamjb.bonsaiUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = bonsaitest;
-			};
-			name = Debug;
-		};
-		B71550E32CF951A0000AFACB /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.azamjb.bonsaiUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = bonsaitest;
-			};
-			name = Release;
-		};
 		B715514C2CF96667000AFACB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = deviceactivitymonitor/deviceactivitymonitor.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = WNKZNZ5B7R;
+				DEVELOPMENT_TEAM = KGKP88X28G;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = deviceactivitymonitor/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = deviceactivitymonitor;
+				INFOPLIST_KEY_CFBundleDisplayName = DeviceActivityMonitor;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1079,10 +825,9 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.azamjb.bonsai.deviceactivitymonitor;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bonsai.inc.DeviceActivityMonitorId;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "bonsai-deviceactivitymonitor";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -1095,14 +840,12 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = deviceactivitymonitor/deviceactivitymonitor.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = WNKZNZ5B7R;
+				DEVELOPMENT_TEAM = KGKP88X28G;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = deviceactivitymonitor/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = deviceactivitymonitor;
+				INFOPLIST_KEY_CFBundleDisplayName = DeviceActivityMonitor;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1110,10 +853,9 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.azamjb.bonsai.deviceactivitymonitor;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bonsai.inc.DeviceActivityMonitorId;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "bonsai-deviceactivitymonitor";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -1126,14 +868,12 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = deviceactivityreport/deviceactivityreport.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = WNKZNZ5B7R;
+				DEVELOPMENT_TEAM = KGKP88X28G;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = deviceactivityreport/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = deviceactivityreport;
+				INFOPLIST_KEY_CFBundleDisplayName = DeviceActivityReport;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1141,10 +881,9 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.azamjb.bonsai.deviceactivityreport;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bonsai.inc.DeviceActivityReportId;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "bonsai-deviceactivityreport";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -1157,14 +896,12 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = deviceactivityreport/deviceactivityreport.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = WNKZNZ5B7R;
+				DEVELOPMENT_TEAM = KGKP88X28G;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = deviceactivityreport/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = deviceactivityreport;
+				INFOPLIST_KEY_CFBundleDisplayName = DeviceActivityReport;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1172,10 +909,9 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.azamjb.bonsai.deviceactivityreport;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bonsai.inc.DeviceActivityReportId;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "bonsai-deviceactivityreport";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -1188,14 +924,12 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = shieldConfiguration/shieldConfiguration.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = WNKZNZ5B7R;
+				DEVELOPMENT_TEAM = KGKP88X28G;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = shieldConfiguration/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = shieldConfiguration;
+				INFOPLIST_KEY_CFBundleDisplayName = ShieldConfiguration;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1203,10 +937,9 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.azamjb.bonsai.shieldConfiguration;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bonsai.inc.ShieldConfigurationId;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "bonsai-shieldconfiggg";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -1219,14 +952,12 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = shieldConfiguration/shieldConfiguration.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = WNKZNZ5B7R;
+				DEVELOPMENT_TEAM = KGKP88X28G;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = shieldConfiguration/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = shieldConfiguration;
+				INFOPLIST_KEY_CFBundleDisplayName = ShieldConfiguration;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1234,10 +965,9 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.azamjb.bonsai.shieldConfiguration;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bonsai.inc.ShieldConfigurationId;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "bonsai-shieldconfiggg";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -1250,11 +980,9 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = ShieldActionExtension/ShieldActionExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = WNKZNZ5B7R;
+				DEVELOPMENT_TEAM = KGKP88X28G;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ShieldActionExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = ShieldActionExtension;
@@ -1266,10 +994,9 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.azamjb.bonsai.shieldActionExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bonsai.inc.ShieldActionExtId;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "bonsai-shieldactionextension";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -1282,11 +1009,9 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = ShieldActionExtension/ShieldActionExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = WNKZNZ5B7R;
+				DEVELOPMENT_TEAM = KGKP88X28G;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ShieldActionExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = ShieldActionExtension;
@@ -1298,10 +1023,9 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.azamjb.bonsai.shieldActionExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bonsai.inc.ShieldActionExtId;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "bonsai-shieldactionextension";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -1321,7 +1045,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B71550DB2CF951A0000AFACB /* Build configuration list for PBXNativeTarget "bonsai" */ = {
+		B71550DB2CF951A0000AFACB /* Build configuration list for PBXNativeTarget "Bonsai" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B71550DC2CF951A0000AFACB /* Debug */,
@@ -1330,25 +1054,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B71550DE2CF951A0000AFACB /* Build configuration list for PBXNativeTarget "bonsaiTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B71550DF2CF951A0000AFACB /* Debug */,
-				B71550E02CF951A0000AFACB /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B71550E12CF951A0000AFACB /* Build configuration list for PBXNativeTarget "bonsaiUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B71550E22CF951A0000AFACB /* Debug */,
-				B71550E32CF951A0000AFACB /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B715514B2CF96667000AFACB /* Build configuration list for PBXNativeTarget "deviceactivitymonitor" */ = {
+		B715514B2CF96667000AFACB /* Build configuration list for PBXNativeTarget "DeviceActivityMonitor" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B715514C2CF96667000AFACB /* Debug */,
@@ -1357,7 +1063,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B715517E2CFABBF4000AFACB /* Build configuration list for PBXNativeTarget "deviceactivityreport" */ = {
+		B715517E2CFABBF4000AFACB /* Build configuration list for PBXNativeTarget "DeviceActivityReport" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B715517F2CFABBF4000AFACB /* Debug */,
@@ -1366,7 +1072,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B76F620C2D03FFE20092DA9E /* Build configuration list for PBXNativeTarget "shieldConfiguration" */ = {
+		B76F620C2D03FFE20092DA9E /* Build configuration list for PBXNativeTarget "ShieldConfiguration" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B76F62092D03FFE20092DA9E /* Debug */,

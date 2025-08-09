@@ -9,13 +9,10 @@ import DeviceActivity
 import ManagedSettings
 import ManagedSettingsUI
 import SwiftUICore
-import FamilyControls
-import _DeviceActivity_SwiftUI
 
 class DeviceActivityMonitorExtension: DeviceActivityMonitor {
-    private let appGroupID = "group.com.bonsai"
     private var sharedDefaults: UserDefaults? {
-        UserDefaults(suiteName: appGroupID)
+        UserDefaults(suiteName: BONSAI_GROUP_NAME)
     }
     
     let store = ManagedSettingsStore()

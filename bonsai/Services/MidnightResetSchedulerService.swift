@@ -5,9 +5,8 @@ class MidnightResetService {
     static let shared = MidnightResetService()
     private let screenTime = ScreenTimeService()
     
-    private let appGroupID = "group.com.bonsai"
     private var sharedDefaults: UserDefaults? {
-        UserDefaults(suiteName: appGroupID)
+        UserDefaults(suiteName: BONSAI_GROUP_NAME)
     }
     
     func setupMidnightReset() {

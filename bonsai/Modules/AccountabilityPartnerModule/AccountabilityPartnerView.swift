@@ -7,7 +7,7 @@ import ManagedSettings
 struct AccountabilityPartnerView: View {
     @Binding var tabSelection: Int
 
-    @AppStorage(ACCOUNTABILITY_PARTNER_NUMBER) private var AccountabilityPartnerNumber: String?
+    @AppStorage(ACCOUNTABILITY_PARTNER_NUMBER_STRING) private var AccountabilityPartnerNumber: String?
     @StateObject var UserViewModel: ProfileViewModel = ProfileViewModel()
     
     @StateObject private var viewModel = AccountabilityPartnerViewModel()

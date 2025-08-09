@@ -12,10 +12,8 @@ import Foundation
 class ProfileCreationViewModel: ObservableObject {
 
 
-    private let appGroupID = "group.com.bonsai"
-
     private var sharedDefaults: UserDefaults? {
-        UserDefaults(suiteName: appGroupID)
+        UserDefaults(suiteName: BONSAI_GROUP_NAME)
     }
 
     @Published var userProfile = UserProfile()

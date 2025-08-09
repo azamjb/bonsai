@@ -9,10 +9,8 @@ import DeviceActivity
 import SwiftUI
 import ManagedSettings
 
-private let appGroupID = "group.com.bonsai"
-
 private var sharedDefaults: UserDefaults? {
-    UserDefaults(suiteName: appGroupID)
+    UserDefaults(suiteName: BONSAI_GROUP_NAME)
 }
 
 // MARK: - Define Custom Context for Pill Bar Report

@@ -5,8 +5,11 @@
 //  Created by Brayden O on 2024-12-31.
 //
 
+let BONSAI_GROUP_NAME = "group.com.bonsai.inc"
+
 let USER_ID_STRING = "userId"
-let ACCOUNTABILITY_PARTNER_NUMBER = "AccountabilityPartnerNumber"
+let ACCOUNTABILITY_PARTNER_NUMBER_STRING = "AccountabilityPartnerNumber"
+let ACCOUNTABILITY_PARTNER_INVITE_CODE_STRING = "AccountabilityPartnerInviteCode"
 let REMAINING_BOUNDARY_EXTENSIONS_STRING = "remainingBoundaryExtensions"
 let DAILY_BOUNDARY_EXTENSIONS_STRING = "dailyBoundaryExtensions"
 let SENT_EXTENSION_CODES_STRING = "sentExtensionCodes"

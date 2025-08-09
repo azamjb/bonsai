@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import StoreKit
 import ManagedSettings
 import DeviceActivity
 import FamilyControls
@@ -38,24 +37,13 @@ public class ScreenTimeService: ObservableObject {
 
     let center = DeviceActivityCenter()
     
-    private let appGroupID = "group.com.bonsai"
-
     private var sharedDefaults: UserDefaults? {
-        UserDefaults(suiteName: appGroupID)
+        UserDefaults(suiteName: BONSAI_GROUP_NAME)
     }
 
-    let activityName = DeviceActivityName("ScreenTimeActivity")
-    let eventName = DeviceActivityEvent.Name("ScreenTimeThreshold")
-
-    @AppStorage(ACCOUNTABILITY_PARTNER_NUMBER) private var accountabilityPartnerNumber: String?
-    
-    // Product ID for the in-app purchase
-    private let productID = "com.azam.bonsai.screentimemanualoverride"
-    private var product: Product?
+    @AppStorage(ACCOUNTABILITY_PARTNER_NUMBER_STRING) private var accountabilityPartnerNumber: String?
     
     init() {
-        Task { await fetchProduct() }
-        
         setGroupDisplays()
     }
     
@@ -76,7 +64,6 @@ public class ScreenTimeService: ObservableObject {
     
     public func startMonitoring(boundary: Boundary) {
         if boundariesSet.contains(where: { $0.id == boundary.id }) {
-            print ("removing existing boundary")
             removeBoundaryById(id: boundary.id)
         }
         
@@ -419,53 +406,6 @@ public class ScreenTimeService: ObservableObject {
         }
         
         center.stopMonitoring([DeviceActivityName(id.uuidString)])
-    }
-    
-    // MARK: - In-App Purchase Methods
-    public func fetchProduct() async {
-        do {
-            let products = try await Product.products(for: [productID])
-            if let fetchedProduct = products.first {
-                product = fetchedProduct
-                print("Product fetched: \(fetchedProduct.displayName)")
-            } else {
-                //print("No products found.")
-            }
-        } catch {
-            print("Error fetching product: \(error)")
-        }
-    }
-
-    public func purchaseManualOverride() async {
-        guard let product = product else {
-            print("Product not loaded.")
-            return
-        }
-
-        do {
-            let result = try await product.purchase()
-
-            switch result {
-            case .success(let verification):
-                switch verification {
-                case .verified(let transaction):
-                    print("Purchase successful!")
-                    purchaseSuccessful = true
-                    clearAllRestrictions() // Clear restrictions after successful purchase
-                    await transaction.finish()
-                case .unverified(_, let error):
-                    print("Transaction verification failed: \(error.localizedDescription)")
-                }
-            case .pending:
-                print("Purchase pending.")
-            case .userCancelled:
-                print("Purchase cancelled.")
-            @unknown default:
-                print("Unknown purchase result.")
-            }
-        } catch {
-            print("Purchase failed: \(error.localizedDescription)")
-        }
     }
     
     // MARK: Helpers

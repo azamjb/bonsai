@@ -30,12 +30,8 @@ import ManagedSettings
     @Published public var isSendingTimeRequest: Bool = false
     @Published public var isRemovingAccountabilityPartner: Bool = false
     
-
-    private let userDefaultsKey = "SelectedActivity"
-    private let appGroupID = "group.com.bonsai" 
-    
     private var sharedDefaults: UserDefaults? {
-        UserDefaults(suiteName: appGroupID)
+        UserDefaults(suiteName: BONSAI_GROUP_NAME)
     }
 
     public func sendInvite(phoneNumber: String, userName: String, accountabilityPartnerName: String) async {
@@ -44,7 +40,7 @@ import ManagedSettings
         
         let smsApi = SMSApi()
         code = generateRandomCode()
-        UserDefaults.standard.set(code, forKey: "AccountabilityPartnerInviteCode")
+        UserDefaults.standard.set(code, forKey: ACCOUNTABILITY_PARTNER_INVITE_CODE_STRING)
         
         do {
             try await smsApi.invite(

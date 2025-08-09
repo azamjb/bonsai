@@ -141,7 +141,7 @@ func calculateUsage(screenTime: String) -> Int {
 
 func saveHoursPerDay(hours: Double) {
     var sharedDefaults: UserDefaults? {
-        UserDefaults(suiteName: "group.com.bonsai")
+        UserDefaults(suiteName: BONSAI_GROUP_NAME)
     }
     sharedDefaults?.set(try! JSONEncoder().encode(hours), forKey: HOURS_PER_DAY_STRING)
 }

@@ -13,7 +13,7 @@ import ManagedSettingsUI
 import BackgroundTasks
 
 @main
-struct bonsaiApp: App {
+struct BonsaiApp: App {
     @StateObject private var screenTime = ScreenTimeService()
     @StateObject private var notificationHandler = NotificationHandler.shared
     @StateObject private var quoteViewModel = QuoteViewModel()

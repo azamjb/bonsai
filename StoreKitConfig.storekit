@@ -15,7 +15,7 @@
   ],
   "products" : [
     {
-      "displayPrice" : "0.99",
+      "displayPrice" : "1.29",
       "familyShareable" : false,
       "internalID" : "D86969E0",
       "localizations" : [
@@ -25,8 +25,38 @@
           "locale" : "en_US"
         }
       ],
-      "productID" : "com.azam.bonsai.screentimemanualoverride",
-      "referenceName" : "Screen Time Override",
+      "productID" : "com.bonsai.inc.OverrideToken.One",
+      "referenceName" : "1 Override Token",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "2.99",
+      "familyShareable" : false,
+      "internalID" : "EA01D470",
+      "localizations" : [
+        {
+          "description" : "",
+          "displayName" : "",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.bonsai.inc.OverrideToken.Three",
+      "referenceName" : "3 Override Tokens",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "3.99",
+      "familyShareable" : false,
+      "internalID" : "9C63AA2E",
+      "localizations" : [
+        {
+          "description" : "",
+          "displayName" : "",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.bonsai.inc.OverrideToken.Five",
+      "referenceName" : "5 Override Tokens",
       "type" : "Consumable"
     }
   ],

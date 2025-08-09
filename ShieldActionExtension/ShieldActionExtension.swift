@@ -17,7 +17,7 @@ class ShieldActionExtension: ShieldActionDelegate {
         // Handle the action as needed.
         switch action {
         case .primaryButtonPressed:
-            let sharedDefaults = UserDefaults(suiteName: "group.com.bonsai")
+            let sharedDefaults = UserDefaults(suiteName: BONSAI_GROUP_NAME)
             sharedDefaults?.set("Head over to Bonsai to send a time extension request to your accountability partner", forKey: "shieldMessage")
             sendNotification()
             
@@ -33,7 +33,7 @@ class ShieldActionExtension: ShieldActionDelegate {
         // Handle the action as needed.
         switch action {
         case .primaryButtonPressed:
-            let sharedDefaults = UserDefaults(suiteName: "group.com.bonsai")
+            let sharedDefaults = UserDefaults(suiteName: BONSAI_GROUP_NAME)
             sharedDefaults?.set("Head over to Bonsai to send a time extension request to your accountability partner", forKey: "shieldMessage")
             sendNotification()
             
@@ -49,7 +49,7 @@ class ShieldActionExtension: ShieldActionDelegate {
         // Handle the action as needed.
         switch action {
         case .primaryButtonPressed:
-            let sharedDefaults = UserDefaults(suiteName: "group.com.bonsai")
+            let sharedDefaults = UserDefaults(suiteName: BONSAI_GROUP_NAME)
             sharedDefaults?.set("Head over to Bonsai to send a time extension request to your accountability partner", forKey: "shieldMessage")
             sendNotification()
             

@@ -9,7 +9,7 @@ import DeviceActivity
 import SwiftUI
 
 private var sharedDefaults: UserDefaults? {
-    UserDefaults(suiteName: "group.com.bonsai")
+    UserDefaults(suiteName: BONSAI_GROUP_NAME)
 }
 
 extension DeviceActivityReport.Context {

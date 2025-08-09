@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1610"
+   LastUpgradeVersion = "1620"
    wasCreatedForAppExtension = "YES"
    version = "2.0">
    <BuildAction
@@ -16,9 +16,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B715513F2CF96667000AFACB"
-               BuildableName = "deviceactivitymonitor.appex"
-               BlueprintName = "deviceactivitymonitor"
+               BlueprintIdentifier = "B76F61FB2D03FFE20092DA9E"
+               BuildableName = "ShieldConfiguration.appex"
+               BlueprintName = "ShieldConfiguration"
                ReferencedContainer = "container:bonsai.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -31,8 +31,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B71550B62CF9519F000AFACB"
-               BuildableName = "bonsai.app"
-               BlueprintName = "bonsai"
+               BuildableName = "Bonsai.app"
+               BlueprintName = "Bonsai"
                ReferencedContainer = "container:bonsai.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -44,30 +44,6 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES"
       shouldAutocreateTestPlan = "YES">
-      <Testables>
-         <TestableReference
-            skipped = "NO"
-            parallelizable = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B71550C62CF951A0000AFACB"
-               BuildableName = "bonsaiTests.xctest"
-               BlueprintName = "bonsaiTests"
-               ReferencedContainer = "container:bonsai.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO"
-            parallelizable = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B71550D02CF951A0000AFACB"
-               BuildableName = "bonsaiUITests.xctest"
-               BlueprintName = "bonsaiUITests"
-               ReferencedContainer = "container:bonsai.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-      </Testables>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -81,20 +57,16 @@
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES"
       launchAutomaticallySubstyle = "2">
-      <RemoteRunnable
-         runnableDebuggingMode = "0"
-         BundleIdentifier = "com.azamjb.bonsai"
-         RemotePath = "/var/containers/Bundle/Application/DBD64071-BAC9-4C56-A2D1-22EF5A9DD17E/bonsai.app">
-      </RemoteRunnable>
-      <MacroExpansion>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B71550B62CF9519F000AFACB"
-            BuildableName = "bonsai.app"
-            BlueprintName = "bonsai"
+            BuildableName = "Bonsai.app"
+            BlueprintName = "Bonsai"
             ReferencedContainer = "container:bonsai.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
+      </BuildableProductRunnable>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -109,8 +81,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B71550B62CF9519F000AFACB"
-            BuildableName = "bonsai.app"
-            BlueprintName = "bonsai"
+            BuildableName = "Bonsai.app"
+            BlueprintName = "Bonsai"
             ReferencedContainer = "container:bonsai.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

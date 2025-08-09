@@ -17,7 +17,7 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
     }
 
     private func makeShield() -> ShieldConfiguration {
-        let sharedDefaults = UserDefaults(suiteName: "group.com.bonsai")
+        let sharedDefaults = UserDefaults(suiteName: BONSAI_GROUP_NAME)
         let subtitleText = sharedDefaults?.string(forKey: "shieldMessage") ?? "Time limit resets at midnight"
 
         return ShieldConfiguration(
