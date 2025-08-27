@@ -33,6 +33,7 @@ struct ActivityReportView: View {
     @StateObject var viewModel: ActivityReportViewModel = ActivityReportViewModel()
     @EnvironmentObject var screenTime: ScreenTimeService
     @State private var isAuthorized = false
+    private let boundaryService = BoundaryService(storage: BoundaryStorageService(database: LocalDatabase.shared.databaseWriter))
 
     var now = Date()
 
@@ -186,7 +187,7 @@ struct ActivityReportView: View {
                                 .font(.system(size: 10))
                         }
 
-                        dailyBoundaryExtensionsView(models: screenTime.getDailyBoundaryExtensionsModels())
+                        dailyBoundaryExtensionsView(models: screenTime.getDailyBoundaryExtensions())
                             .padding(.bottom, 30)
                     }
                 }
@@ -312,6 +313,7 @@ struct ActivityReportView: View {
                     return
                 }
                 
+                boundaryService.writeBoundariesToUserDefaults()
                 await loadReportsInPriority()
             }
         }
@@ -456,7 +458,7 @@ struct ActivityReportView: View {
         await loadReportsInPriority()
     }
    
-    private func dailyBoundaryExtensionsView(models: [DailyBoundaryExtensionsModel]) -> some View {
+    private func dailyBoundaryExtensionsView(models: [DailyBoundaryExtension]) -> some View {
         HStack(spacing: 1) {
             extensionCountView(color: "0x1E2368", day: "MON", count: getAmountOfExtensionsForWeekday(weekday: .monday, models: models))
             extensionCountView(color: "0x454380", day: "TUE", count: getAmountOfExtensionsForWeekday(weekday: .tuesday, models: models))
@@ -468,7 +470,7 @@ struct ActivityReportView: View {
         }
     }
     
-    private func getAmountOfExtensionsForWeekday(weekday: Weekday, models: [DailyBoundaryExtensionsModel]) -> Int {
+    private func getAmountOfExtensionsForWeekday(weekday: Weekday, models: [DailyBoundaryExtension]) -> Int {
         let models = models.filter({ areDatesSameDay(date1: $0.extendedDateTimeUtc, date2: (getDateInWeekStartingFromThisMonday(weekday: weekday) ?? Date.distantFuture)) })
         return models.count
     }

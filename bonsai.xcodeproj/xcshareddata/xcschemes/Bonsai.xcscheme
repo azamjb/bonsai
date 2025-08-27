@@ -21,6 +21,62 @@
                ReferencedContainer = "container:bonsai.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B715513F2CF96667000AFACB"
+               BuildableName = "DeviceActivityMonitor.appex"
+               BlueprintName = "DeviceActivityMonitor"
+               ReferencedContainer = "container:bonsai.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B715516F2CFABBF4000AFACB"
+               BuildableName = "DeviceActivityReport.appex"
+               BlueprintName = "DeviceActivityReport"
+               ReferencedContainer = "container:bonsai.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B77B2DCC2DB9FAAB0018F685"
+               BuildableName = "ShieldActionExtension.appex"
+               BlueprintName = "ShieldActionExtension"
+               ReferencedContainer = "container:bonsai.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B76F61FB2D03FFE20092DA9E"
+               BuildableName = "ShieldConfiguration.appex"
+               BlueprintName = "ShieldConfiguration"
+               ReferencedContainer = "container:bonsai.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -29,6 +85,19 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES"
       shouldAutocreateTestPlan = "YES">
+      <Testables>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "240595AF2E4A150F00D6C3B5"
+               BuildableName = "SharedDatabaseTests.xctest"
+               BlueprintName = "SharedDatabaseTests"
+               ReferencedContainer = "container:bonsai.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+      </Testables>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -50,6 +119,13 @@
             ReferencedContainer = "container:bonsai.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <EnvironmentVariables>
+         <EnvironmentVariable
+            key = "OS_ACTIVITY_MODE"
+            value = "disable"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+      </EnvironmentVariables>
       <StoreKitConfigurationFileReference
          identifier = "../../StoreKitConfig.storekit">
       </StoreKitConfigurationFileReference>

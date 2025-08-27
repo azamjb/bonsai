@@ -9,6 +9,8 @@ import DeviceActivity
 import SwiftUI
 import ManagedSettings
 
+let BOUNDARIES_STRING = "boundaries"
+
 private var sharedDefaults: UserDefaults? {
     UserDefaults(suiteName: BONSAI_GROUP_NAME)
 }
@@ -165,14 +167,14 @@ struct TimeLimitSliderView: View {
         guard let defaults = sharedDefaults else { return }
         
         if let dailyExtensionsData = defaults.data(forKey: DAILY_BOUNDARY_EXTENSIONS_STRING),
-           let dailyExtensionsModels = try? JSONDecoder().decode([DailyBoundaryExtensionsModel].self, from: dailyExtensionsData) {
+           let dailyExtensionsModels = try? JSONDecoder().decode([DailyBoundaryExtension].self, from: dailyExtensionsData) {
             boundaryExtended = dailyExtensionsModels.contains(where: {
                 areDatesSameDay(date1: $0.extendedDateTimeUtc, date2: Date()) && $0.boundaryId == boundaryId
             })
         }
         
         if let activeCodesData = defaults.data(forKey: SENT_EXTENSION_CODES_STRING),
-           let activeCodeModels = try? JSONDecoder().decode([SentExtensionCodeModel].self, from: activeCodesData) {
+           let activeCodeModels = try? JSONDecoder().decode([SentExtensionCode].self, from: activeCodesData) {
             extensionCodeSent = activeCodeModels.contains(where: {
                 areDatesSameDay(date1: $0.sentDateTimeUtc, date2: Date()) && $0.boundaryId == boundaryId
             })

@@ -22,6 +22,7 @@ struct BoundaryEditorView: View {
     @State private var showingCancelConfirmation: Bool = false
     @State private var showingDeleteConfirmation: Bool = false
     @State private var showingEditConfirmation: Bool = false
+    @State private var boundaryService = BoundaryService(storage: BoundaryStorageService(database: LocalDatabase.shared.databaseWriter))
 
     var body: some View {
         VStack(spacing: 0) {
@@ -42,7 +43,7 @@ struct BoundaryEditorView: View {
                 allBoundaries: $screenTime.boundariesSet,
                 modifiedBoundaries: $modifiedBoundaries,
                 isPresented: $showViewScreen,
-                boundariesBeingDeleted: Binding.constant(boundaryIdsToDelete.map({ screenTime.getBoundaryById(id: $0) }))
+                boundariesBeingDeleted: Binding.constant(boundaryIdsToDelete.map({ boundaryService.getBoundaryById(boundaryId: $0) }))
             )
         }
         .customBackToolbar()
@@ -81,6 +82,7 @@ struct BoundaryEditorView: View {
         .alert("Are you sure you want to delete a boundary?", isPresented: $showingDeleteConfirmation) {
             Button("delete", role: .cancel) {
                 boundaryIdsToDelete.forEach { id in
+                    print(id)
                     screenTime.deleteBoundary(boundaryId: id)
                 }
                 

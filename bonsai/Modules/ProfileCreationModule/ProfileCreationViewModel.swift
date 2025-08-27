@@ -51,7 +51,7 @@ class ProfileCreationViewModel: ObservableObject {
     }
 
     func initDailyBoundaryExtensions() {
-        let emptyArr: [DailyBoundaryExtensionsModel] = []
+        let emptyArr: [DailyBoundaryExtension] = []
         sharedDefaults?.set(try! JSONEncoder().encode(emptyArr), forKey: DAILY_BOUNDARY_EXTENSIONS_STRING)
     }
 

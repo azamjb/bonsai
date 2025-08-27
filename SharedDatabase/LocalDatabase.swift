@@ -25,4 +25,5 @@ struct LocalDatabase {
     var databaseWriter: DatabaseWriter {
         writer
     }
+
 }

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2405959C2E4A13E300D6C3B5 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 2405959B2E4A13E300D6C3B5 /* GRDB */; };
+		2405959E2E4A13EB00D6C3B5 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 2405959D2E4A13EB00D6C3B5 /* GRDB */; settings = {ATTRIBUTES = (Required, ); }; };
 		242A1CD12D271CB300D5CD5E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B76F620D2D040EB40092DA9E /* UIKit.framework */; };
 		242A1FC52D274E8200D5CD5E /* iPhoneNumberField in Frameworks */ = {isa = PBXBuildFile; productRef = 242A1FC42D274E8200D5CD5E /* iPhoneNumberField */; };
 		24B643B32E37A67300438A37 /* OTPView in Frameworks */ = {isa = PBXBuildFile; productRef = 24B643B22E37A67300438A37 /* OTPView */; };
@@ -57,6 +59,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		240595C22E4A150F00D6C3B5 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B71550FA2CF952F5000AFACB /* Embed ExtensionKit Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 12;
@@ -147,6 +159,10 @@
 		B7F0144C2D238F09002BB521 /* Exceptions for "bonsai" folder in "DeviceActivityMonitor" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				LocalDatabase/Entities.swift,
+				LocalDatabase/LocalDatabase.swift,
+				"LocalDatabase/LocalDatabase+Migrator.swift",
+				"LocalDatabase/LocalDatabase+Persistent.swift",
 				Static/DeviceActivityKeys.swift,
 				Static/Extensions.swift,
 				Static/GlobalStructs.swift,
@@ -158,6 +174,10 @@
 		B7F0144D2D238F09002BB521 /* Exceptions for "bonsai" folder in "DeviceActivityReport" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				LocalDatabase/Entities.swift,
+				LocalDatabase/LocalDatabase.swift,
+				"LocalDatabase/LocalDatabase+Migrator.swift",
+				"LocalDatabase/LocalDatabase+Persistent.swift",
 				Static/DeviceActivityKeys.swift,
 				Static/Extensions.swift,
 				Static/GlobalStructs.swift,
@@ -245,6 +265,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B71551412CF96667000AFACB /* DeviceActivity.framework in Frameworks */,
+				2405959C2E4A13E300D6C3B5 /* GRDB in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -253,6 +274,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				24F94A602E2D4A1000EA6FF4 /* DeviceActivity.framework in Frameworks */,
+				2405959E2E4A13EB00D6C3B5 /* GRDB in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -327,6 +349,7 @@
 				B71550B52CF9519F000AFACB /* Resources */,
 				B71550FA2CF952F5000AFACB /* Embed ExtensionKit Extensions */,
 				B715510F2CF957FF000AFACB /* Embed Foundation Extensions */,
+				240595C22E4A150F00D6C3B5 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -368,6 +391,7 @@
 			);
 			name = DeviceActivityMonitor;
 			packageProductDependencies = (
+				2405959B2E4A13E300D6C3B5 /* GRDB */,
 			);
 			productName = deviceactivitymonitor;
 			productReference = B71551402CF96667000AFACB /* DeviceActivityMonitor.appex */;
@@ -390,6 +414,7 @@
 			);
 			name = DeviceActivityReport;
 			packageProductDependencies = (
+				2405959D2E4A13EB00D6C3B5 /* GRDB */,
 			);
 			productName = deviceactivityreport;
 			productReference = B71551702CFABBF4000AFACB /* DeviceActivityReport.appex */;
@@ -1136,6 +1161,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		2405959B2E4A13E300D6C3B5 /* GRDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A78D2F1D2DC46B6E001375B1 /* XCRemoteSwiftPackageReference "GRDB" */;
+			productName = GRDB;
+		};
+		2405959D2E4A13EB00D6C3B5 /* GRDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A78D2F1D2DC46B6E001375B1 /* XCRemoteSwiftPackageReference "GRDB" */;
+			productName = GRDB;
+		};
 		242A1FC42D274E8200D5CD5E /* iPhoneNumberField */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 242A1FC32D274E5200D5CD5E /* XCRemoteSwiftPackageReference "iPhoneNumberField" */;

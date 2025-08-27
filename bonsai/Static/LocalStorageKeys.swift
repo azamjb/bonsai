@@ -13,7 +13,6 @@ let ACCOUNTABILITY_PARTNER_INVITE_CODE_STRING = "AccountabilityPartnerInviteCode
 let REMAINING_BOUNDARY_EXTENSIONS_STRING = "remainingBoundaryExtensions"
 let DAILY_BOUNDARY_EXTENSIONS_STRING = "dailyBoundaryExtensions"
 let SENT_EXTENSION_CODES_STRING = "sentExtensionCodes"
-let BOUNDARIES_STRING = "boundaries"
 let CURRENT_DAYS_WITH_NO_EXTENSION_STREAK_STRING = "currentDaysWithNoExtension"
 let ALL_TIME_DAYS_WITH_NO_EXTENSION_STREAK_STRING = "allTimeDaysWithNoExtension"
 let HOURS_PER_DAY_STRING = "hoursPerDay"

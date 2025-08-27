@@ -8,18 +8,9 @@
 import Foundation
 import ManagedSettings
 
-public struct Boundary: Codable, Identifiable, Hashable {
-    public var id: UUID
-    var givenName: String
-    var appTokens: Set<ApplicationToken> = []
-    var categoryTokens: Set<ActivityCategoryToken> = []
-    var webDomainTokens: Set<WebDomainToken> = []
-    var hours: Int
-    var minutes: Int
-    var weekdays: Set<Weekday>
-    var isBlocked: Bool = false
-    // An invisble boundary is one that is set after they get an app unblocked from an accountability partner code. This bool tells us it isn't to be shown as a limit.
-    var invisibleBoundary: Bool
+
+public enum TokenType: String, CaseIterable, Codable {
+    case app = "appToken", category = "categoryToken", webDomain = "webDomainToken"
 }
 
 public enum Weekday: Int, CaseIterable, Codable {
@@ -30,7 +21,16 @@ public enum Weekday: Int, CaseIterable, Codable {
         let calendar = Calendar.current
         let calendarWeekday = calendar.component(.weekday, from: today)
         
-        return calendarWeekday == 1 ? Weekday.sunday : Weekday(rawValue: calendarWeekday - 1)!
+        switch calendarWeekday {
+        case 1: return .sunday
+        case 2: return .monday
+        case 3: return .tuesday
+        case 4: return .wednesday
+        case 5: return .thursday
+        case 6: return .friday
+        case 7: return .saturday
+        default: return .monday 
+        }
     }
     
     var fullName: String {
@@ -56,20 +56,4 @@ public enum Weekday: Int, CaseIterable, Codable {
         case .sunday: return "S"
         }
     }
-}
-
-public struct DailyBoundaryExtensionsModel: Codable, Hashable {
-    var boundaryId: UUID
-    var extendedDateTimeUtc: Date
-}
-
-public struct SentExtensionCodeModel: Codable, Hashable {
-    var boundaryId: UUID
-    var code: String
-    var sentDateTimeUtc: Date
-    var isCodeValid: Bool = true
-}
-
-public enum TokenType: String, CaseIterable, Codable {
-    case app = "appToken", category = "categoryToken", webDomain = "webDomainToken"
 }

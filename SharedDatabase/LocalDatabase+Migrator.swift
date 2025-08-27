@@ -19,7 +19,6 @@ extension LocalDatabase {
         migrator.registerMigration("1") { db in
             try createTokenTransactionTable(db)
             try createBoundaryTable(db)
-            try createSentExtensionCodeTable(db)
         }
 
         return migrator
@@ -50,16 +49,6 @@ extension LocalDatabase {
             table.column("minutes", .integer)
             table.column("isBlocked", .boolean)
             table.column("invisibleBoundary", .boolean)
-        }
-    }
-    
-    private func createSentExtensionCodeTable(_ db: GRDB.Database) throws {
-        try db.create(table: "sentExtensionCode") { table in
-            table.column("id", .text).primaryKey(onConflict: .replace)
-            table.column("boundaryId", .text)
-            table.column("code", .text)
-            table.column("sentDateTimeUtc", .datetime)
-            table.column("isCodeValid", .boolean)
         }
     }
 }

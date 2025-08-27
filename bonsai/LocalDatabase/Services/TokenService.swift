@@ -8,32 +8,6 @@
 import Foundation
 import GRDB
 
-enum TokenTransactionType: String, Codable {
-    case purchase = "PURCHASE"
-    case spend = "SPEND"
-    case grant = "GRANTS" // this is likely for subscriptions to be able to gift from the app without purchase process
-}
-
-struct TokenTransaction: Codable, FetchableRecord, PersistableRecord, Identifiable {
-    var id: UUID
-    var userId: String
-    var transactionId: String?
-    var timestamp: Date
-    var netTokenChange: Int
-    var balanceAfterChange: Int
-    var type: TokenTransactionType
-    
-    // Specify table name (optional if it matches "tokentransaction")
-    static let databaseTableName = "tokentransaction"
-}
-
-enum TokenResponseCode {
-    case success
-    case insufficientTokenBalance
-    case overrideLimitReached
-    case serverError
-}
-
 protocol TokenServiceProtocol {
     func fetchAllTokenTransactions(forUserWithId userId: String) async throws -> [TokenTransaction]
     func fetchTokenBalance(forUserWithId userId: String) async throws -> Int

@@ -50,6 +50,8 @@ class ProfileViewModel: ObservableObject {
     @Published var accountabilityPartner = AccountabilityPartner()
     private let screenTime = ScreenTimeService()
     private let profileService = ProfileService()
+    
+    private let sentExtensionCodeService = SentExtensionCodeService(storage: SentExtensionCodeStorageService(database: LocalDatabase.shared.databaseWriter))
 
     init() {
         fetchUserProfile()
@@ -80,7 +82,7 @@ class ProfileViewModel: ObservableObject {
     }
     
     public func getCurrentStreakDays() -> Int {
-        let sortedExtensions = screenTime.getDailyBoundaryExtensionsModels().sorted(by: { $0.extendedDateTimeUtc < $1.extendedDateTimeUtc })
+        let sortedExtensions = screenTime.getDailyBoundaryExtensions().sorted(by: { $0.extendedDateTimeUtc < $1.extendedDateTimeUtc })
         
         if sortedExtensions.isEmpty {
             return 0
@@ -95,7 +97,7 @@ class ProfileViewModel: ObservableObject {
     }
     
     public func getLongestStreakDays() -> Int {
-        let extensions = screenTime.getDailyBoundaryExtensionsModels().sorted(by: { $0.extendedDateTimeUtc < $1.extendedDateTimeUtc })
+        let extensions = screenTime.getDailyBoundaryExtensions().sorted(by: { $0.extendedDateTimeUtc < $1.extendedDateTimeUtc })
         
         if extensions.isEmpty {
             return 0
@@ -133,7 +135,7 @@ class ProfileViewModel: ObservableObject {
             let signUpDate = try! JSONDecoder().decode(Date.self, from: signUpDateData)
             
             // get all extensions after the start date
-            let allExtensions = screenTime.getDailyBoundaryExtensionsModels()
+            let allExtensions = screenTime.getDailyBoundaryExtensions()
             let extensionsAfterStartDate = allExtensions.filter {
                 $0.extendedDateTimeUtc >= signUpDate
             }
@@ -166,6 +168,6 @@ class ProfileViewModel: ObservableObject {
     }
     
     public func getExtensionRequestsCount() -> Int {
-        return screenTime.getSentExtensionCodes().count 
+        return sentExtensionCodeService.getSentExtensionCodesCount()
     }
 }

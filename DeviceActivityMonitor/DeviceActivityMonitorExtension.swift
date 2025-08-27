@@ -11,6 +11,8 @@ import ManagedSettingsUI
 import SwiftUICore
 
 class DeviceActivityMonitorExtension: DeviceActivityMonitor {
+    let BOUNDARIES_STRING = "boundaries"
+    
     private var sharedDefaults: UserDefaults? {
         UserDefaults(suiteName: BONSAI_GROUP_NAME)
     }
@@ -49,10 +51,10 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     }
     
     private func deactivateExtensionCodesForYesterday() {
-        var extensionCodes = [SentExtensionCodeModel]()
+        var extensionCodes = [SentExtensionCode]()
         if let data = sharedDefaults!.data(forKey: SENT_EXTENSION_CODES_STRING) {
             do {
-                let activeCodeModels = try JSONDecoder().decode([SentExtensionCodeModel].self, from: data)
+                let activeCodeModels = try JSONDecoder().decode([SentExtensionCode].self, from: data)
                 extensionCodes = activeCodeModels.sorted(by: { $0.sentDateTimeUtc > $1.sentDateTimeUtc })
             } catch {
                 extensionCodes = []
@@ -100,6 +102,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
             boundaries.append(boundary)
             
             sharedDefaults?.set(try? JSONEncoder().encode(boundaries), forKey: BOUNDARIES_STRING)
+            sharedDefaults?.set(true, forKey: "shouldSyncBoundaries")
         }
     }
     

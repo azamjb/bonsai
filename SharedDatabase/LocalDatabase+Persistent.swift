@@ -16,7 +16,12 @@ extension LocalDatabase {
         do {
             let fileManager = FileManager()
             
-            let sharedContainerURL = fileManager.containerURL(forSecurityApplicationGroupIdentifier: BONSAI_GROUP_NAME)!
+            // CHANGE: Use App Group container instead of app's local directory
+            guard let sharedContainerURL = fileManager.containerURL(
+                forSecurityApplicationGroupIdentifier: BONSAI_GROUP_NAME
+            ) else {
+                fatalError("App Group container could not be found. Make sure App Groups capability is enabled and BONSAI_GROUP_NAME is correct.")
+            }
             
             // Create database folder in the shared container
             let folder = sharedContainerURL.appendingPathComponent("database", isDirectory: true)

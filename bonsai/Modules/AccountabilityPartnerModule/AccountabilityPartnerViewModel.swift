@@ -30,6 +30,8 @@ import ManagedSettings
     @Published public var isSendingTimeRequest: Bool = false
     @Published public var isRemovingAccountabilityPartner: Bool = false
     
+    private let sentExtensionCodeService = SentExtensionCodeService(storage: SentExtensionCodeStorageService(database: LocalDatabase.shared.databaseWriter))
+
     private var sharedDefaults: UserDefaults? {
         UserDefaults(suiteName: BONSAI_GROUP_NAME)
     }
@@ -117,13 +119,13 @@ import ManagedSettings
     }
     
     public func validateVerificationCode(pin: String) -> Bool {
-        let foundExtensionCodeModels = screenTime.getSentExtensionCodes().filter() { model in model.code == pin && model.isCodeValid }
+        let boundaryIdsForCodeIfValid = sentExtensionCodeService.getBoundaryIdsForActiveCode(code: pin)
         
-        if foundExtensionCodeModels.isEmpty {
+        if boundaryIdsForCodeIfValid.isEmpty {
             return false
         } else {
-            foundExtensionCodeModels.forEach { model in
-                screenTime.extendBlockedBoundary(boundaryId: model.boundaryId)
+            boundaryIdsForCodeIfValid.forEach { id in
+                screenTime.extendBlockedBoundary(boundaryId: id)
                 screenTime.setGroupDisplays()
             }
             
