@@ -89,10 +89,12 @@ public struct BonsaiPhoneNumberField: View {
     var placeholder: String? // Shows within the text field
     var title: String? // Shows above the field
     var showEditIndicator: Bool = false
-    var onChange: (() -> Void)?
+    var onChange: ((String) -> Void)?
     
     @FocusState private var isFocused: Bool
-
+    @State private var maxDigits: Int = 10
+    @State private var lastCountryCode: UInt64?
+    
     public var body: some View {
         BaseTextField(
             binding: binding,
@@ -101,15 +103,22 @@ public struct BonsaiPhoneNumberField: View {
             showEditIndicator: showEditIndicator,
             input: AnyView(
                 iPhoneNumberField(placeholder ?? "(000) 000-0000", text: binding)
+                    .maximumDigits(maxDigits)
                     .flagHidden(false)
                     .flagSelectable(true)
                     .onEdit() { value in
-                        // Based on the docs, .formatted(false) should be doing this, but for some reason it force clears a formatted number (bug with library). This is the workaround for getting the full number.
                         if let phoneNumber = value.phoneNumber {
                             binding.wrappedValue = "+" + String(phoneNumber.countryCode) + String(phoneNumber.nationalNumber)
+                            
+                            switch phoneNumber.countryCode {
+                            case 1: maxDigits = 10 // US/Canada
+                            case 44: maxDigits = 11 // UK
+                            case 91: maxDigits = 10 // India
+                            default: maxDigits = 15 // fallback (E.164 max is 15 digits)
+                           }
                         }
                         
-                        if onChange != nil { onChange!() }
+                        onChange?(binding.wrappedValue)
                     }
                     .focused($isFocused)
             )

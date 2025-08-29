@@ -50,6 +50,13 @@
             ReferencedContainer = "container:bonsai.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <EnvironmentVariables>
+         <EnvironmentVariable
+            key = "OS_ACTIVITY_MODE"
+            value = "off"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+      </EnvironmentVariables>
       <StoreKitConfigurationFileReference
          identifier = "../../StoreKitConfig.storekit">
       </StoreKitConfigurationFileReference>
