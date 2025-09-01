@@ -11,6 +11,7 @@ struct ProfileCreation4View: View {
     @State private var navigateToFinal = false
     @State private var accountabilityPartnerName: String = ""
     @State private var accountabilityPartnerPhone: String = ""
+    @State private var isPhoneNumberInvalid: Bool = false
     @FocusState private var isFieldFocused: Bool
     @AppStorage("isProfileCreated") private var isProfileCreated = false
 
@@ -48,7 +49,15 @@ struct ProfileCreation4View: View {
                     VStack(spacing: 10) {
                         Group {
                             BonsaiTextField(binding: $accountabilityPartnerName, title: "Enter Partner Name")
-                            BonsaiPhoneNumberField(binding: $accountabilityPartnerPhone, title: "Enter Partner Phone Number")
+                            BonsaiPhoneNumberField(binding: $accountabilityPartnerPhone, title: "Enter Partner Phone Number") { value in
+                                print(value)
+                                isPhoneNumberInvalid = viewModel.userProfile.phoneNumber == $accountabilityPartnerPhone.wrappedValue
+                            }
+                            
+                            if isPhoneNumberInvalid {
+                                Text("Please choose a different phone number than your own.")
+                                    .foregroundColor(.red)
+                            }
                         }
                         .focused($isFieldFocused)
                     }
