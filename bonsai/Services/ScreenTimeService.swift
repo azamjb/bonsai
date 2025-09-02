@@ -29,6 +29,7 @@ public class ScreenTimeService: ObservableObject {
     private let activityCenter = DeviceActivityCenter()
     private let boundaryService = BoundaryService(storage: BoundaryStorageService(database: LocalDatabase.shared.databaseWriter))
     private let sentExtensionCodeService = SentExtensionCodeService(storage: SentExtensionCodeStorageService(database: LocalDatabase.shared.databaseWriter))
+    private let dailyBoundaryExtensionService = DailyBoundaryExtensionService(storage: DailyBoundaryExtensionStorageService(database: LocalDatabase.shared.databaseWriter))
 
     // DeviceActivityMonitor constants
     let dayLongSchedule = DeviceActivitySchedule(
@@ -119,28 +120,6 @@ public class ScreenTimeService: ObservableObject {
         return sharedDefaults!.integer(forKey: REMAINING_BOUNDARY_EXTENSIONS_STRING)
     }
     
-    public func getDailyBoundaryExtensions() -> [DailyBoundaryExtension] {
-        if let dailyExtensionsData = sharedDefaults!.data(forKey: DAILY_BOUNDARY_EXTENSIONS_STRING) {
-            do {
-                let dailyExtensionsModels  = try JSONDecoder().decode([DailyBoundaryExtension].self, from: dailyExtensionsData)
-                return dailyExtensionsModels
-            } catch {
-                let emptyArr: [DailyBoundaryExtension] = []
-                
-                let encoded = try! JSONEncoder().encode(emptyArr)
-                sharedDefaults?.set(encoded, forKey: DAILY_BOUNDARY_EXTENSIONS_STRING)
-                return []
-            }
-        } else {
-            let emptyArr: [DailyBoundaryExtension] = []
-            
-            let encoded = try! JSONEncoder().encode(emptyArr)
-            sharedDefaults?.set(encoded, forKey: DAILY_BOUNDARY_EXTENSIONS_STRING)
-            
-            return []
-        }
-    }
-
     // This removes everything. Blocked apps, active monitoring sessions, and set boundaries. Basically a fresh start for testing + unbricks phone.
     public func clearAllRestrictions() {
         monitoringStarted = false
@@ -239,19 +218,9 @@ public class ScreenTimeService: ObservableObject {
         }
         
         setGroupDisplays()
-        addBoundaryIdToExtensionModels(id: boundaryToExtend.id)
+        dailyBoundaryExtensionService.addBoundaryIdToExtensions(boundaryId: boundary.id, extendedDateTimeUtc: Date())
     }
     
-    private func addBoundaryIdToExtensionModels(id: UUID) {
-        var dailyExtensionsModels = getDailyBoundaryExtensions()
-        dailyExtensionsModels.append(DailyBoundaryExtension(boundaryId: id, extendedDateTimeUtc: Date()))
-        
-        let encoded = try! JSONEncoder().encode(dailyExtensionsModels)
-        
-        sharedDefaults!.set(encoded, forKey: DAILY_BOUNDARY_EXTENSIONS_STRING)
-        sharedDefaults!.synchronize()
-    }
-
     private func getShieldedCategoryTokens() -> Set<ActivityCategoryToken> {
         if let categories = settingsStore.shield.applicationCategories {
             switch categories {

@@ -51,7 +51,7 @@ struct ProfileCreation4View: View {
                             BonsaiTextField(binding: $accountabilityPartnerName, title: "Enter Partner Name")
                             BonsaiPhoneNumberField(binding: $accountabilityPartnerPhone, title: "Enter Partner Phone Number") { value in
                                 print(value)
-                                isPhoneNumberInvalid = viewModel.userProfile.phoneNumber == $accountabilityPartnerPhone.wrappedValue
+                                //isPhoneNumberInvalid = viewModel.userProfile.phoneNumber == $accountabilityPartnerPhone.wrappedValue
                             }
                             
                             if isPhoneNumberInvalid {

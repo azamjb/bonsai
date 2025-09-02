@@ -6,3 +6,71 @@
 //  Copyright © 2025 Bonsai Software Incorporated. All rights reserved.
 //
 
+import Foundation
+import DeviceActivity
+import GRDB
+
+private var sharedDefaults: UserDefaults? {
+    UserDefaults(suiteName: BONSAI_GROUP_NAME)
+}
+
+protocol DailyBoundaryExtensionServiceProtocol {
+    func getDailyBoundaryExtensions() -> [DailyBoundaryExtension]
+    func addBoundaryIdToExtensions(boundaryId: UUID, extendedDateTimeUtc: Date)
+    
+    func writeDailyBoundaryExtensionsToUserDefaults()
+}
+
+class DailyBoundaryExtensionService: DailyBoundaryExtensionServiceProtocol {
+    private let storage: DailyBoundaryExtensionStorageProtocol
+    
+    init(storage: DailyBoundaryExtensionStorageProtocol) {
+        self.storage = storage
+    }
+    
+    func getDailyBoundaryExtensions() -> [DailyBoundaryExtension] {
+        let sentExtensionCodes = try! storage.getDailyBoundaryExtensions()
+        
+        return sentExtensionCodes
+    }
+    
+    func addBoundaryIdToExtensions(boundaryId: UUID, extendedDateTimeUtc: Date) {
+        
+        try! storage.addBoundaryIdToExtensions(dailyBoundaryExtension: DailyBoundaryExtension(boundaryId: boundaryId, extendedDateTimeUtc: extendedDateTimeUtc))
+    }
+    
+    func writeDailyBoundaryExtensionsToUserDefaults() {
+        writeDailyBoundaryExtensionsToUserDefaultsInternal()
+    }
+    
+    private func writeDailyBoundaryExtensionsToUserDefaultsInternal() {
+        sharedDefaults!.set(try? JSONEncoder().encode(storage.getDailyBoundaryExtensions()), forKey: "dailyBoundaryExtensions")
+        sharedDefaults!.synchronize()
+    }
+}
+
+protocol DailyBoundaryExtensionStorageProtocol {
+    func getDailyBoundaryExtensions() throws -> [DailyBoundaryExtension]
+    func addBoundaryIdToExtensions(dailyBoundaryExtension: DailyBoundaryExtension) throws
+}
+
+class DailyBoundaryExtensionStorageService: DailyBoundaryExtensionStorageProtocol {
+    private let db: DatabaseWriter
+    
+    init(database: DatabaseWriter) {
+        self.db = database
+    }
+
+    func getDailyBoundaryExtensions() throws -> [DailyBoundaryExtension] {
+        try db.read { db in
+            try DailyBoundaryExtension
+                .fetchAll(db)
+        }
+    }
+    
+    func addBoundaryIdToExtensions(dailyBoundaryExtension: DailyBoundaryExtension) throws {
+        try db.write { db in
+            try dailyBoundaryExtension.save(db)
+        }
+    }
+}

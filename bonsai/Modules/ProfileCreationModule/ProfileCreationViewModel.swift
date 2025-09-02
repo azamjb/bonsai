@@ -35,7 +35,6 @@ class ProfileCreationViewModel: ObservableObject {
         await profileService.saveProfileFields(name: name, phoneNumber: phoneNumber, hobbies: hobbies, termsAccepted: termsAccepted)
 
         initRemainingBoundaryEdits()
-        initDailyBoundaryExtensions()
 
         fetchUserProfile()
     }
@@ -48,11 +47,6 @@ class ProfileCreationViewModel: ObservableObject {
 
     func initRemainingBoundaryEdits() {
         sharedDefaults?.set(2, forKey: REMAINING_BOUNDARY_EXTENSIONS_STRING)
-    }
-
-    func initDailyBoundaryExtensions() {
-        let emptyArr: [DailyBoundaryExtension] = []
-        sharedDefaults?.set(try! JSONEncoder().encode(emptyArr), forKey: DAILY_BOUNDARY_EXTENSIONS_STRING)
     }
 
     func fetchUserProfile() {

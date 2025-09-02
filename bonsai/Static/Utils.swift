@@ -28,17 +28,24 @@ func areDatesSameDay(date1: Date, date2: Date) -> Bool {
 
 func getDateInWeekStartingFromThisMonday(weekday: Weekday) -> Date? {
     let today = Date()
+    let calendar = Calendar.current
     
-    let recentMonday = today.previous(.monday, considerToday: true)
+    let startOfToday = calendar.startOfDay(for: today)
+    
+    let recentMonday = startOfToday.previous(.monday, considerToday: true)
+    
+    if weekday == .monday && calendar.isDate(startOfToday, inSameDayAs: recentMonday) {
+        return recentMonday
+    }
+    
     let targetWeekDay = recentMonday.next(weekday)
     
-    if targetWeekDay <= today {
+    if targetWeekDay <= startOfToday {
         return targetWeekDay
     }
     
     return nil
 }
-
 //Used to expose generic
 func DeepCopy<T:Codable>(_ object:T) -> T?{
    do{

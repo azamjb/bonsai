@@ -78,6 +78,7 @@ class SentExtensionCodeService: SentExtensionCodeServiceProtocol {
     
     private func writeSentExtensionCodesToUserDefaultsInternal() {
         sharedDefaults!.set(try? JSONEncoder().encode(storage.getSentExtensionCodes()), forKey: "sentExtensionCodes")
+        sharedDefaults!.synchronize()
     }
 }
 
@@ -134,7 +135,7 @@ class SentExtensionCodeStorageService: SentExtensionCodeStorageProtocol {
     func getBoundaryIdsForActiveCode(code: String) throws -> [UUID] {
         try db.read { db in
             try SentExtensionCode
-                .filter(Column("extensionCode") == code && Column("isCodeActive") == true)
+                .filter(Column("code") == code && Column("isCodeValid") == true)
                 .select(Column("boundaryId"))
                 .fetchAll(db)
         }

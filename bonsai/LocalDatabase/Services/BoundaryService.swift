@@ -22,7 +22,12 @@ protocol BoundaryServiceProtocol {
     func upsertBoundary(boundary: Boundary)
     func removeBoundary(boundaryId: UUID, settingsStore: ManagedSettingsStore, center: DeviceActivityCenter)
     func removeAllBoundaries(center: DeviceActivityCenter)
+    func unblockAllBoundaries()
     func writeBoundariesToUserDefaults()
+}
+
+extension BoundaryService {
+    static let service = BoundaryService(storage: BoundaryStorageService(database: LocalDatabase.shared.databaseWriter))
 }
 
 class BoundaryService: BoundaryServiceProtocol {
@@ -43,14 +48,12 @@ class BoundaryService: BoundaryServiceProtocol {
         // TODO - optimize this by just doing it in db. just wanna test this now
         let boundaries = (try! storage.getBoundaries()).filter { $0.weekdays.contains(Weekday.today) }
         
-        writeBoundariesToUserDefaults()
         return boundaries
     }
 
     func getBoundaryById(boundaryId: UUID) -> Boundary? {
         let boundary = try! storage.getBoundaryById(boundaryId: boundaryId)
         
-        writeBoundariesToUserDefaults()
         return boundary
     }
     
@@ -96,12 +99,17 @@ class BoundaryService: BoundaryServiceProtocol {
         writeBoundariesToUserDefaults()
     }
     
+    func unblockAllBoundaries() {
+        try! storage.unblockAllBoundaries()
+    }
+    
     func writeBoundariesToUserDefaults() {
         writeBoundariesToUserDefaultsInternal()
     }
     
     private func writeBoundariesToUserDefaultsInternal() {
         sharedDefaults!.set(try? JSONEncoder().encode(storage.getBoundaries()), forKey: "boundaries")
+        sharedDefaults!.synchronize()
     }
 }
 
@@ -111,6 +119,7 @@ protocol BoundaryStorageProtocol {
     func upsertBoundary(boundary: Boundary) throws
     func removeBoundary(boundaryId: UUID) throws
     func removeAllBoundaries() throws
+    func unblockAllBoundaries() throws
 }
 
 class BoundaryStorageService: BoundaryStorageProtocol {
@@ -151,6 +160,12 @@ class BoundaryStorageService: BoundaryStorageProtocol {
     func removeAllBoundaries() throws {
         _ = try db.write { db in
             try Boundary.deleteAll(db)
+        }
+    }
+    
+    func unblockAllBoundaries() throws {
+        _ = try db.write { db in
+            try Boundary.updateAll(db, Column("isBlocked").set(to: false))
         }
     }
 }

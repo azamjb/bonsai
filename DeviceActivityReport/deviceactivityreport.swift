@@ -6,10 +6,8 @@
 //
 
 import Foundation
-import GRDB
 import DeviceActivity
 import SwiftUI
-
 
 @main
 struct DeviceActivityReportScenes: DeviceActivityReportExtension {

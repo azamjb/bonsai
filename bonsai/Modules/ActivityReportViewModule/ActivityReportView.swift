@@ -34,6 +34,7 @@ struct ActivityReportView: View {
     @EnvironmentObject var screenTime: ScreenTimeService
     @State private var isAuthorized = false
     private let boundaryService = BoundaryService(storage: BoundaryStorageService(database: LocalDatabase.shared.databaseWriter))
+    private let dailyBoundaryExtensionService = DailyBoundaryExtensionService(storage: DailyBoundaryExtensionStorageService(database: LocalDatabase.shared.databaseWriter))
 
     var now = Date()
 
@@ -187,7 +188,7 @@ struct ActivityReportView: View {
                                 .font(.system(size: 10))
                         }
 
-                        dailyBoundaryExtensionsView(models: screenTime.getDailyBoundaryExtensions())
+                        dailyBoundaryExtensionsView(models: dailyBoundaryExtensionService.getDailyBoundaryExtensions())
                             .padding(.bottom, 30)
                     }
                 }

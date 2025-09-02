@@ -41,6 +41,7 @@ class PhoneNumberFormatter: Formatter {
 
 
 class ProfileViewModel: ObservableObject {
+    private let dailyBoundaryExtensionService = DailyBoundaryExtensionService(storage: DailyBoundaryExtensionStorageService(database: LocalDatabase.shared.databaseWriter))
 
     private var sharedDefaults: UserDefaults? {
         UserDefaults(suiteName: BONSAI_GROUP_NAME)
@@ -82,7 +83,7 @@ class ProfileViewModel: ObservableObject {
     }
     
     public func getCurrentStreakDays() -> Int {
-        let sortedExtensions = screenTime.getDailyBoundaryExtensions().sorted(by: { $0.extendedDateTimeUtc < $1.extendedDateTimeUtc })
+        let sortedExtensions = dailyBoundaryExtensionService.getDailyBoundaryExtensions().sorted(by: { $0.extendedDateTimeUtc < $1.extendedDateTimeUtc })
         
         if sortedExtensions.isEmpty {
             return 0
@@ -93,11 +94,11 @@ class ProfileViewModel: ObservableObject {
         let secondsDifference = Date().timeIntervalSinceReferenceDate - mostRecentExtension.extendedDateTimeUtc.timeIntervalSinceReferenceDate
         
         // convert seconds to days and return int
-        return Int(secondsDifference / (60 * 60 * 24))
+        return max(0, Int(secondsDifference / (60 * 60 * 24)))
     }
     
     public func getLongestStreakDays() -> Int {
-        let extensions = screenTime.getDailyBoundaryExtensions().sorted(by: { $0.extendedDateTimeUtc < $1.extendedDateTimeUtc })
+        let extensions = dailyBoundaryExtensionService.getDailyBoundaryExtensions().sorted(by: { $0.extendedDateTimeUtc < $1.extendedDateTimeUtc })
         
         if extensions.isEmpty {
             return 0
@@ -127,7 +128,7 @@ class ProfileViewModel: ObservableObject {
             longestStreak = daysSinceLastExtension
         }
         
-        return longestStreak
+        return max(0, longestStreak)
     }
     
     public func getTotalDaysWithoutExtension() -> Int {
@@ -135,7 +136,7 @@ class ProfileViewModel: ObservableObject {
             let signUpDate = try! JSONDecoder().decode(Date.self, from: signUpDateData)
             
             // get all extensions after the start date
-            let allExtensions = screenTime.getDailyBoundaryExtensions()
+            let allExtensions = dailyBoundaryExtensionService.getDailyBoundaryExtensions()
             let extensionsAfterStartDate = allExtensions.filter {
                 $0.extendedDateTimeUtc >= signUpDate
             }
@@ -160,7 +161,7 @@ class ProfileViewModel: ObservableObject {
             
             let daysWithExtensions = daysWithExtensionsSet.count
             
-            return min(0, totalDays - daysWithExtensions)
+            return max(0, totalDays - daysWithExtensions)
         } else {
             sharedDefaults!.set(try! JSONEncoder().encode(Date()), forKey: SIGN_UP_DATE_STRING)
             return 0

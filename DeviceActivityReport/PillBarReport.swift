@@ -9,7 +9,9 @@ import DeviceActivity
 import SwiftUI
 import ManagedSettings
 
-let BOUNDARIES_STRING = "boundaries"
+private let BOUNDARIES_STRING = "boundaries"
+private let SENT_EXTENSION_CODES_STRING = "sentExtensionCodes"
+private let DAILY_BOUNDARY_EXTENSIONS_STRING = "dailyBoundaryExtensions"
 
 private var sharedDefaults: UserDefaults? {
     UserDefaults(suiteName: BONSAI_GROUP_NAME)
@@ -184,6 +186,9 @@ struct TimeLimitSliderView: View {
            let boundaries = try? JSONDecoder().decode([Boundary].self, from: boundariesData) {
             boundaryReached = boundaries.first(where: { $0.id == boundaryId })?.isBlocked ?? false
         }
+        
+//        let boundary = boundaryService.getBoundaryById(boundaryId: boundaryId)
+//        boundaryReached = boundary?.isBlocked ?? false
     }
 }
 
@@ -249,7 +254,7 @@ extension Color {
 // MARK: - Optimized PillBarReport Scene
 struct PillBarReport: DeviceActivityReportScene {
     let context: DeviceActivityReport.Context = .pillBar
-    
+
     typealias Configuration = PillBarViewConfiguration
     typealias Content = PillBarView
     

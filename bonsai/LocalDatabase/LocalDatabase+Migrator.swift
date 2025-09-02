@@ -20,6 +20,7 @@ extension LocalDatabase {
             try createTokenTransactionTable(db)
             try createBoundaryTable(db)
             try createSentExtensionCodeTable(db)
+            try createDailyBoundaryExtensionTable(db)
         }
 
         return migrator
@@ -60,6 +61,13 @@ extension LocalDatabase {
             table.column("code", .text)
             table.column("sentDateTimeUtc", .datetime)
             table.column("isCodeValid", .boolean)
+        }
+    }
+    
+    private func createDailyBoundaryExtensionTable(_ db: GRDB.Database) throws {
+        try db.create(table: "dailyBoundaryExtension") { table in
+            table.column("boundaryId", .text)
+            table.column("extendedDateTimeUtc", .datetime)
         }
     }
 }

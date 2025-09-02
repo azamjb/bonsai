@@ -11,12 +11,9 @@ import ManagedSettingsUI
 import SwiftUICore
 
 class DeviceActivityMonitorExtension: DeviceActivityMonitor {
-    let BOUNDARIES_STRING = "boundaries"
-    
-    private var sharedDefaults: UserDefaults? {
-        UserDefaults(suiteName: BONSAI_GROUP_NAME)
-    }
-    
+    let boundaryService = BoundaryService(storage: BoundaryStorageService(database: LocalDatabase.shared.databaseWriter))
+    let sentExtensionCodeService = SentExtensionCodeService(storage: SentExtensionCodeStorageService(database: LocalDatabase.shared.databaseWriter))
+
     let store = ManagedSettingsStore()
 
     override func intervalDidStart(for activity: DeviceActivityName) {
@@ -24,7 +21,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
         
         if activity.rawValue == MIDNIGHT_RESET_STRING {
             unshieldApps()
-            resetBoundaryStates()
+            boundaryService.unblockAllBoundaries()
             deactivateExtensionCodesForYesterday()
         }
     }
@@ -35,31 +32,9 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
         store.shield.applicationCategories = nil
         store.shield.webDomainCategories = nil
     }
-
-    private func resetBoundaryStates() {
-        if let data = sharedDefaults?.data(forKey: BOUNDARIES_STRING),
-           var boundaries = try? JSONDecoder().decode([Boundary].self, from: data) {
-            
-            boundaries = boundaries.map { boundary in
-                var updated = boundary
-                updated.isBlocked = false
-                return updated
-            }
-            
-            sharedDefaults?.set(try? JSONEncoder().encode(boundaries), forKey: BOUNDARIES_STRING)
-        }
-    }
     
     private func deactivateExtensionCodesForYesterday() {
-        var extensionCodes = [SentExtensionCode]()
-        if let data = sharedDefaults!.data(forKey: SENT_EXTENSION_CODES_STRING) {
-            do {
-                let activeCodeModels = try JSONDecoder().decode([SentExtensionCode].self, from: data)
-                extensionCodes = activeCodeModels.sorted(by: { $0.sentDateTimeUtc > $1.sentDateTimeUtc })
-            } catch {
-                extensionCodes = []
-            }
-        }
+        var extensionCodes: [SentExtensionCode] = sentExtensionCodeService.getSentExtensionCodes()
         
         let yesterday = Date.yesterday
         
@@ -69,7 +44,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
             return updatedCode
         }
         
-        sharedDefaults!.set(try! JSONEncoder().encode(extensionCodes), forKey: SENT_EXTENSION_CODES_STRING)
+        extensionCodes.forEach(sentExtensionCodeService.upsertSentExtensionCode)
     }
 
     override func intervalDidEnd(for activity: DeviceActivityName) {
@@ -81,10 +56,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
         
         if event.rawValue != BOUNDARY_STRING { return }
         
-        guard let data = sharedDefaults?.data(forKey: BOUNDARIES_STRING),
-              var boundaries = try? JSONDecoder().decode([Boundary].self, from: data) else {
-            return
-        }
+        let boundaries = boundaryService.getBoundaries()
         
         if var boundary = boundaries.first(where: { $0.id == UUID(uuidString: activity.rawValue) }) {
             guard boundary.weekdays.contains(Weekday.today) else {
@@ -92,17 +64,12 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
                 return
             }
             
-            boundary.isBlocked = true
-            
             boundary.appTokens.forEach { token in handleThresholdReached(appToken: token) }
             boundary.categoryTokens.forEach { token in handleThresholdReached(categoryToken: token) }
             boundary.webDomainTokens.forEach { token in handleThresholdReached(webDomainToken: token) }
             
-            boundaries.removeAll(where: { $0.id == boundary.id })
-            boundaries.append(boundary)
-            
-            sharedDefaults?.set(try? JSONEncoder().encode(boundaries), forKey: BOUNDARIES_STRING)
-            sharedDefaults?.set(true, forKey: "shouldSyncBoundaries")
+            boundary.isBlocked = true
+            boundaryService.upsertBoundary(boundary: boundary)
         }
     }
     
