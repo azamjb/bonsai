@@ -20,8 +20,6 @@ struct BonsaiApp: App {
     
     init() {
         NotificationHandler.shared.requestAuthorization()
-        MidnightResetService.shared.setupMidnightReset()
-        //MidnightResetService.shared.setupTESTReset(inMinutes: 10)
     }
 
     var body: some Scene {

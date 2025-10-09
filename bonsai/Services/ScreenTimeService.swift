@@ -31,13 +31,6 @@ public class ScreenTimeService: ObservableObject {
     private let sentExtensionCodeService = SentExtensionCodeService(storage: SentExtensionCodeStorageService(database: LocalDatabase.shared.databaseWriter))
     private let dailyBoundaryExtensionService = DailyBoundaryExtensionService(storage: DailyBoundaryExtensionStorageService(database: LocalDatabase.shared.databaseWriter))
 
-    // DeviceActivityMonitor constants
-    let dayLongSchedule = DeviceActivitySchedule(
-        intervalStart: DateComponents(hour: 0, minute: 0, second: 0),
-        intervalEnd: DateComponents(hour: 23, minute: 59, second: 59),
-        repeats: true
-    )
-
     let center = DeviceActivityCenter()
     
     private var sharedDefaults: UserDefaults? {
@@ -67,13 +60,21 @@ public class ScreenTimeService: ObservableObject {
     }
     
     public func startMonitoring(boundary: Boundary) {
+//        let testDurationMinutes = 15
+        
+//        let startDate = Calendar.current.date(byAdding: .second, value: 5, to: Date())!
+//        let endDate   = Calendar.current.date(byAdding: .minute, value: testDurationMinutes, to: startDate)!
+        
+//        let startComps = Calendar.current.dateComponents([.hour, .minute, .second], from: startDate)
+//        let endComps   = Calendar.current.dateComponents([.hour, .minute, .second], from: endDate)
+
         let schedule = DeviceActivitySchedule(
+//            intervalStart: startComps,
+//            intervalEnd: endComps,
             intervalStart: DateComponents(hour: 0, minute: 0, second: 0),
             intervalEnd: DateComponents(hour: 23, minute: 59, second: 59),
             repeats: true
         )
-        
-        boundaryService.upsertBoundary(boundary: boundary)
         
         do {
             try center.startMonitoring(
@@ -83,23 +84,22 @@ public class ScreenTimeService: ObservableObject {
                     applications: boundary.appTokens,
                     categories: boundary.categoryTokens,
                     webDomains: boundary.webDomainTokens,
-                    threshold: DateComponents(hour: boundary.hours, minute: boundary.minutes)
+                    threshold: DateComponents(hour: boundary.hours, minute: boundary.minutes),
                     //threshold: DateComponents(second: 1)
-                    
                 )]
             )
+            
+            boundaryService.upsertBoundary(boundary: boundary)
+            monitoringStarted = true
+            setGroupDisplays()
+            updateLeftoverWeeklySaves()
         } catch {
-            print("Failed to start monitoring boundaries")
+            print("Failed to start monitoring boundaries. Error: \(error)")
         }
-        
-        
-        monitoringStarted = true
-        setGroupDisplays()
-        updateLeftoverWeeklySaves()
     }
     
     public func addActiveExtensionCode(boundaryId: UUID, code: String) {
-        var code = SentExtensionCode(id: UUID(), boundaryId: boundaryId, code: code, sentDateTimeUtc: Date())
+        let code = SentExtensionCode(id: UUID(), boundaryId: boundaryId, code: code, sentDateTimeUtc: Date())
         sentExtensionCodeService.addSentExtensionCode(sentExtensionCode: code)
     }
     

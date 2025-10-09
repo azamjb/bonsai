@@ -15,16 +15,6 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     let sentExtensionCodeService = SentExtensionCodeService(storage: SentExtensionCodeStorageService(database: LocalDatabase.shared.databaseWriter))
 
     let store = ManagedSettingsStore()
-
-    override func intervalDidStart(for activity: DeviceActivityName) {
-        super.intervalDidStart(for: activity)
-        
-        if activity.rawValue == MIDNIGHT_RESET_STRING {
-            unshieldApps()
-            boundaryService.unblockAllBoundaries()
-            deactivateExtensionCodesForYesterday()
-        }
-    }
     
     private func unshieldApps() {
         store.shield.applications = nil
@@ -49,6 +39,8 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
 
     override func intervalDidEnd(for activity: DeviceActivityName) {
         super.intervalDidEnd(for: activity)
+        unshieldApps()
+        deactivateExtensionCodesForYesterday()
     }
     
     override func eventDidReachThreshold(_ event: DeviceActivityEvent.Name, activity: DeviceActivityName) {
