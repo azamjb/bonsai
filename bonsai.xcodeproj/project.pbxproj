@@ -15,6 +15,7 @@
 		24B64BF32E4777BF00438A37 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 24B64BF22E4777BF00438A37 /* StoreKit.framework */; };
 		24D625782E2D6937006AE72E /* DeviceActivityReport.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = B71551702CFABBF4000AFACB /* DeviceActivityReport.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		24D629432E351C7A006AE72E /* ConfidentialKit in Frameworks */ = {isa = PBXBuildFile; productRef = 24D629422E351C7A006AE72E /* ConfidentialKit */; };
+		24EF2EC82E969C5900AD9B9A /* CountryPickerView in Frameworks */ = {isa = PBXBuildFile; productRef = 24EF2EC72E969C5900AD9B9A /* CountryPickerView */; };
 		24F94A602E2D4A1000EA6FF4 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71551012CF957FF000AFACB /* DeviceActivity.framework */; };
 		A78D2F1F2DC46B6E001375B1 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = A78D2F1E2DC46B6E001375B1 /* GRDB */; };
 		B71551412CF96667000AFACB /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B71551012CF957FF000AFACB /* DeviceActivity.framework */; };
@@ -205,6 +206,11 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		24EF2FD22E96A98F00AD9B9A /* iPhoneNumberField */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = iPhoneNumberField;
+			sourceTree = "<group>";
+		};
 		B71550B92CF9519F000AFACB /* bonsai */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -258,6 +264,7 @@
 			files = (
 				24D629432E351C7A006AE72E /* ConfidentialKit in Frameworks */,
 				24B643B32E37A67300438A37 /* OTPView in Frameworks */,
+				24EF2EC82E969C5900AD9B9A /* CountryPickerView in Frameworks */,
 				24B64BF32E4777BF00438A37 /* StoreKit.framework in Frameworks */,
 				A78D2F1F2DC46B6E001375B1 /* GRDB in Frameworks */,
 				242A1FC52D274E8200D5CD5E /* iPhoneNumberField in Frameworks */,
@@ -306,6 +313,7 @@
 		B71550AE2CF9519F000AFACB = {
 			isa = PBXGroup;
 			children = (
+				24EF2FD22E96A98F00AD9B9A /* iPhoneNumberField */,
 				B7186B4C2D333920000723BE /* StoreKitConfig.storekit */,
 				B71550B92CF9519F000AFACB /* bonsai */,
 				B71551422CF96667000AFACB /* DeviceActivityMonitor */,
@@ -365,6 +373,7 @@
 				B77B2DD52DB9FAAC0018F685 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
+				24EF2FD22E96A98F00AD9B9A /* iPhoneNumberField */,
 				B71550B92CF9519F000AFACB /* bonsai */,
 			);
 			name = Bonsai;
@@ -373,6 +382,7 @@
 				A78D2F1E2DC46B6E001375B1 /* GRDB */,
 				24D629422E351C7A006AE72E /* ConfidentialKit */,
 				24B643B22E37A67300438A37 /* OTPView */,
+				24EF2EC72E969C5900AD9B9A /* CountryPickerView */,
 			);
 			productName = bonsaitest;
 			productReference = B71550B72CF9519F000AFACB /* Bonsai.app */;
@@ -511,6 +521,7 @@
 				24D629412E351C7A006AE72E /* XCRemoteSwiftPackageReference "swift-confidential" */,
 				24D629442E351CAA006AE72E /* XCRemoteSwiftPackageReference "swift-confidential-plugin" */,
 				24B643B12E37A67300438A37 /* XCRemoteSwiftPackageReference "otpview-swiftui" */,
+				24EF2EC62E969C5900AD9B9A /* XCRemoteSwiftPackageReference "CountryPickerView" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B71550B82CF9519F000AFACB /* Products */;
@@ -1154,6 +1165,14 @@
 				minimumVersion = 0.4.1;
 			};
 		};
+		24EF2EC62E969C5900AD9B9A /* XCRemoteSwiftPackageReference "CountryPickerView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kizitonwose/CountryPickerView";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.3.0;
+			};
+		};
 		A78D2F1D2DC46B6E001375B1 /* XCRemoteSwiftPackageReference "GRDB" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/groue/GRDB.swift";
@@ -1194,6 +1213,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 24D629442E351CAA006AE72E /* XCRemoteSwiftPackageReference "swift-confidential-plugin" */;
 			productName = "plugin:Confidential";
+		};
+		24EF2EC72E969C5900AD9B9A /* CountryPickerView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 24EF2EC62E969C5900AD9B9A /* XCRemoteSwiftPackageReference "CountryPickerView" */;
+			productName = CountryPickerView;
 		};
 		A78D2F1E2DC46B6E001375B1 /* GRDB */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -1,6 +1,15 @@
 {
-  "originHash" : "73c90449fcaaa3bffe15c0c0314d60198b56f4e295e621c0e3e3c976288c8ea5",
+  "originHash" : "b16151ace19ad7da00c7ec6bbc38f46deb58570dfbdaefcef5b56b71f18691c1",
   "pins" : [
+    {
+      "identity" : "countrypickerview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kizitonwose/CountryPickerView",
+      "state" : {
+        "revision" : "6ecf22145d577411fb97c8c964df0fb5886f035f",
+        "version" : "3.3.0"
+      }
+    },
     {
       "identity" : "grdb.swift",
       "kind" : "remoteSourceControl",

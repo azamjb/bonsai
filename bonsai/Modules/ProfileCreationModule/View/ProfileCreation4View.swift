@@ -49,10 +49,7 @@ struct ProfileCreation4View: View {
                     VStack(spacing: 10) {
                         Group {
                             BonsaiTextField(binding: $accountabilityPartnerName, title: "Enter Partner Name")
-                            BonsaiPhoneNumberField(binding: $accountabilityPartnerPhone, title: "Enter Partner Phone Number") { value in
-                                //isPhoneNumberInvalid = viewModel.userProfile.phoneNumber == $accountabilityPartnerPhone.wrappedValue
-                            }
-                            
+                            BonsaiPhoneNumberField(binding: $accountabilityPartnerPhone, title: "Enter Partner Phone Number")                             
                             if isPhoneNumberInvalid {
                                 Text("Please choose a different phone number than your own.")
                                     .foregroundColor(.red)

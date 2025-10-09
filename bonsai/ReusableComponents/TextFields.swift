@@ -93,7 +93,6 @@ public struct BonsaiPhoneNumberField: View {
     
     @FocusState private var isFocused: Bool
     @State private var maxDigits: Int = 10
-    @State private var lastCountryCode: UInt64?
     
     public var body: some View {
         BaseTextField(
