@@ -83,8 +83,8 @@ public class ScreenTimeService: ObservableObject {
                     applications: boundary.appTokens,
                     categories: boundary.categoryTokens,
                     webDomains: boundary.webDomainTokens,
-                    //threshold: DateComponents(hour: boundary.hours, minute: boundary.minutes)
-                    threshold: DateComponents(second: 1)
+                    threshold: DateComponents(hour: boundary.hours, minute: boundary.minutes)
+                    //threshold: DateComponents(second: 1)
                     
                 )]
             )
