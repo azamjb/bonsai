@@ -36,6 +36,11 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
         
         extensionCodes.forEach(sentExtensionCodeService.upsertSentExtensionCode)
     }
+    
+   
+    override func intervalDidStart(for activity: DeviceActivityName) {
+        super.intervalDidStart(for: activity)
+    }
 
     override func intervalDidEnd(for activity: DeviceActivityName) {
         super.intervalDidEnd(for: activity)
