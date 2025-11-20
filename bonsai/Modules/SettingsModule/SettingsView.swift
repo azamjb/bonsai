@@ -129,7 +129,9 @@ struct SettingsView: View {
             let idString = UserDefaults.standard.string(forKey: ProfileKey.id.rawValue)
             let deleteUserRequest = DeleteUser(id: idString ?? "")
 
-            try await smsApi.removalNotif(request: SMSInvite)
+            if SMSInvite.number != "" {
+                try await smsApi.removalNotif(request: SMSInvite)
+            }
             try await accountApi.deleteUser(request: deleteUserRequest)
 
             await MainActor.run {
