@@ -7,7 +7,6 @@ struct DailyScreenTimeView: View {
     let name: String
     let phoneNumber: String
     
-    @State var screenTime: String = ""
     
     var body: some View {
         NavigationStack {
@@ -16,50 +15,43 @@ struct DailyScreenTimeView: View {
                     .padding(.top, 130)
                     .font(.system(size: 25))
                     .padding(.bottom, 50)
-                    
                 
-                screenTimeButton(title: "1-2 hours", color: "#db6552")
-                screenTimeButton(title: "2-4 hours", color: "#9d3b6a")
-                screenTimeButton(title: "4-6 hours", color: "#454380")
-                screenTimeButton(title: "7+  hours", color: "#1e2368")
-                    .padding(.bottom, 30)
-                
-                let forwardButton = Image(systemName: "chevron.right")
-                    .font(.system(size: 20))
-                    .foregroundColor(.white)
-                    .padding(20)
-                    .background(Color.primary)
-                    .clipShape(Circle())
-
-                NavigationLink(destination: PastUsageInspireView(screenTime: screenTime)) {
-                    forwardButton
+                NavigationLink(destination: PastUsageInspireView(screenTime: "1-2 hours")) {
+                    screenTimeButton(title: "1-2 hours", color: "#db6552")
+                        .padding(.bottom, 30)
                 }
-                .padding(.leading, 200)
+                NavigationLink(destination: PastUsageInspireView(screenTime: "2-4 hours")) {
+                    screenTimeButton(title: "2-4 hours", color: "#9d3b6a")
+                        .padding(.bottom, 30)
+                }
+                NavigationLink(destination: PastUsageInspireView(screenTime: "4-6 hours")) {
+                    screenTimeButton(title: "4-6 hours", color: "#454380")
+                        .padding(.bottom, 30)
+                }
+                NavigationLink(destination: PastUsageInspireView(screenTime: "7+  hours")) {
+                    screenTimeButton(title: "7+  hours", color: "#1e2368")
+                        .padding(.bottom, 30)
+                }
+                .padding(.bottom, 30)
+                
                 
                 Spacer()
             }
+            
         }
         .navigationBarBackButtonHidden(true)
     }
     
     
     func screenTimeButton(title: String, color: String) -> some View {
-        Button(action: {
-            screenTime = title
-        }) {
-            Text(title)
+        
+        Text(title)
                 .padding(.horizontal, 95)
                 .padding(.vertical, 14)
                 .background(Color(hex: color))
                 .foregroundColor(.white)
                 .cornerRadius(20)
                 .fontWeight(.bold)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 20)
-                        .stroke(screenTime == title ? Color.primary : Color.clear, lineWidth: 1)
-                )
-        }
-        .padding(.bottom, 20)
     }
 }
 

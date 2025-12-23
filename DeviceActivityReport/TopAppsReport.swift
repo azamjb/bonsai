@@ -7,7 +7,6 @@
 
 import ManagedSettings
 import Foundation
-import SwiftUICore
 import SwiftUI
 import FamilyControls
 import _DeviceActivity_SwiftUI

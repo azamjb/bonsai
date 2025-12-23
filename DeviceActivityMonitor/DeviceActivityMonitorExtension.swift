@@ -8,7 +8,7 @@
 import DeviceActivity
 import ManagedSettings
 import ManagedSettingsUI
-import SwiftUICore
+import SwiftUI
 
 class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     let boundaryService = BoundaryService(storage: BoundaryStorageService(database: LocalDatabase.shared.databaseWriter))

@@ -7,7 +7,7 @@
 
 import Foundation
 import UIKit
-import SwiftUICore
+import SwiftUI
 
 extension String {
     func shorted(to symbols: Int) -> String {

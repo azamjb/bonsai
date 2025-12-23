@@ -128,18 +128,18 @@ struct EducateView: View {
                     
                     
                     NavigationLink(destination: ProfileCreation1View()) {
-                        HStack {
-                            Text("Get Started")
-                                .font(.system(size: 18))
-                                .foregroundColor(.black)
-                                .padding(.vertical, 10)
-                                .padding(.horizontal, 90)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 20)
-                                        .stroke(Color.black, lineWidth: 1)
-                                )
-                        }
+                        Text("Get Started")
+                            .font(.system(size: 18))
+                            .foregroundColor(.white)
+                            .padding(.vertical, 10)
+                            .padding(.horizontal, 90)
+                            .background(
+                                RoundedRectangle(cornerRadius: 20)
+                                    .fill(Color.black)
+                            )
                     }
+                    .buttonStyle(.plain)
+
 
                 }
                 .padding()

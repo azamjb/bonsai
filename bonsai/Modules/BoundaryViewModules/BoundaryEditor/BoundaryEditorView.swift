@@ -5,7 +5,7 @@
 //  Created by Brayden O on 2025-03-09.
 //
 
-import SwiftUICore
+
 import SwiftUI
 
 struct BoundaryEditorView: View {

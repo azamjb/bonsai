@@ -13,25 +13,25 @@ struct PastUsageInspireView: View {
     }
     
     @State private var currentStep = 0
-    @State private var showText = true
+    @State private var showText = false
     @State private var navigateToNextView = false
     
     var texts: [AnyView] {
         return [
-            AnyView(Text("At your current pace, you're on track to spend")),
+            AnyView(Text("At your current pace, you're on track to spend").font(.system(size: 30, weight: .medium))),
             AnyView(
                 HStack {
                     Text("\(calculateUsage(screenTime: screenTime))")
-                        .font(.system(size: 50, weight: .bold))
+                        .font(.system(size: 65, weight: .bold))
                         .frame(alignment: .leading)
                     
                     Text("years of your life, staring at your screen")
-                        .font(.body)
+                        .font(.system(size: 30, weight: .medium))
                         .multilineTextAlignment(.leading)
                 }
             ),
-            AnyView(Text("But starting today, you choose differently")),
-            AnyView(Text("Starting today, you make the commitment to reclaim your time"))
+            AnyView(Text("But starting today, you choose differently.").font(.system(size: 30, weight: .medium))),
+            AnyView(Text("Starting today, you make the commitment to reclaim your time.").font(.system(size: 30, weight: .medium)))
         ]
     }
 
@@ -67,7 +67,9 @@ struct PastUsageInspireView: View {
         }
         .preferredColorScheme(.light)
         .onAppear {
-            showTextSequentially()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+                    showTextSequentially()
+                }
         }
     }
     
