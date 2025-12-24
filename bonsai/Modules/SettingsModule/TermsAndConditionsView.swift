@@ -12,7 +12,7 @@ struct TermsAndConditionsView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            Text("Privacy Policy")
+            Text("Terms and Conditions")
                 .font(.system(size: 25, weight: .semibold))
                 .padding(.vertical, 20)
             

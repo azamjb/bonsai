@@ -79,64 +79,72 @@ struct BoundaryDetailsView: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 16) {
+                
                 Text("Boundary Details")
                     .font(.system(size: 30))
                     .multilineTextAlignment(.center)
                     .padding(.top, 80)
                 
-                List {
-                    Section {
-                        NavigationLink(destination: BoundaryLabelEditor(boundary: $boundaryToUse)) {
-                            HStack {
-                                Text("BOUNDARY LABEL")
-                                    .foregroundColor(.primary)
-                                Spacer()
-                                Text(boundaryToUse.givenName.shorted(to: 10))
-                                    .foregroundColor(.primary)
-                                    .lineLimit(1)
-                            }
-                            .padding(.horizontal, 5)
-                            .padding(.vertical)
-                            .background(Color(UIColor.systemGray5))
+                VStack(spacing: 15) {
+                    NavigationLink(destination: BoundaryLabelEditor(boundary: $boundaryToUse)) {
+                        HStack {
+                            Text("BOUNDARY LABEL")
+                            Spacer()
+                            Text(boundaryToUse.givenName.shorted(to: 10))
+                                .lineLimit(1)
+                                .foregroundColor(.secondary)
+                            
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundColor(.secondary)
+                                .padding(.leading, 4)
                         }
-                        
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 16)
+                        .contentShape(Rectangle())
                     }
-                    .listRowBackground(Color(UIColor.systemGray5))
+                    .foregroundStyle(.primary)
+                    Divider().padding(.leading, 16)
 
-                    Section {
-                        NavigationLink(destination: DaysActiveEditor(boundary: $boundaryToUse)) {
-                            HStack {
-                                Text("DAYS ACTIVE")
-                                    .foregroundColor(.primary)
-                                Spacer()
-                                DaysView(days: boundaryToUse.weekdays)
-                            }
-                            .padding(.horizontal, 5)
-                            .padding(.vertical)
+                    NavigationLink(destination: DaysActiveEditor(boundary: $boundaryToUse)) {
+                        HStack {
+                            Text("DAYS ACTIVE")
+                            Spacer()
+                            DaysView(days: boundaryToUse.weekdays)
+                            
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundColor(.secondary)
+                                .padding(.leading, 4)
                         }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 16)
+                        .contentShape(Rectangle())
                     }
-                    .listRowBackground(Color(UIColor.systemGray5))
+                    .foregroundStyle(.primary)
+                    Divider().padding(.leading, 16)
 
-                    Section {
-                        NavigationLink(destination: TimeBoundaryEditor(boundary: $boundaryToUse)) {
-                            HStack {
-                                Text("DAILY LIMIT")
-                                    .foregroundColor(.primary)
-                                Spacer()
-                                Text("\(boundaryToUse.hours) hrs, \(boundaryToUse.minutes) mins")
-                                    .foregroundColor(Color.primary)
-                            }
-                            .padding(.horizontal, 5)
-                            .padding(.vertical)
-                            .listRowBackground(Color.black)
+                    NavigationLink(destination: TimeBoundaryEditor(boundary: $boundaryToUse)) {
+                        HStack {
+                            Text("DAILY LIMIT")
+                            Spacer()
+                            Text("\(boundaryToUse.hours) hrs, \(boundaryToUse.minutes) mins")
+                                .foregroundColor(.secondary)
+                            
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundColor(.secondary)
+                                .padding(.leading, 4)
                         }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 16)
+                        .contentShape(Rectangle())
                     }
-                    .listRowBackground(Color(UIColor.systemGray5))
-
+                    .foregroundStyle(.primary)
                 }
-                .cornerRadius(CGFloat(15))
-                .listStyle(PlainListStyle())
-                .frame(height: 225)
+                .padding(.vertical, 15)
+                .background(Color(UIColor.systemGray5))
+                .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
                 .padding()
                 
                 Spacer()

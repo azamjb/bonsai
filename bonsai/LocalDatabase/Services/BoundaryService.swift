@@ -57,6 +57,12 @@ class BoundaryService: BoundaryServiceProtocol {
         return boundary
     }
     
+    func clearBoundariesFromUserDefaults() {
+        sharedDefaults?.removeObject(forKey: "boundaries")
+        sharedDefaults?.synchronize()
+    }
+    
+    
     func upsertBoundary(boundary: Boundary) {
         try! storage.upsertBoundary(boundary: boundary)
         
@@ -96,7 +102,7 @@ class BoundaryService: BoundaryServiceProtocol {
         center.stopMonitoring(center.activities)
         try! storage.removeAllBoundaries()
         
-        writeBoundariesToUserDefaults()
+        clearBoundariesFromUserDefaults()
     }
     
     func unblockAllBoundaries() {
@@ -108,9 +114,18 @@ class BoundaryService: BoundaryServiceProtocol {
     }
     
     private func writeBoundariesToUserDefaultsInternal() {
-        sharedDefaults!.set(try? JSONEncoder().encode(storage.getBoundaries()), forKey: "boundaries")
-        sharedDefaults!.synchronize()
+        do {
+            let boundaries = try storage.getBoundaries()
+            let data = try JSONEncoder().encode(boundaries)
+            sharedDefaults?.set(data, forKey: "boundaries")
+        } catch {
+            sharedDefaults?.removeObject(forKey: "boundaries")
+            print("Failed to write boundaries to user defaults:", error)
+        }
+        
+        sharedDefaults?.synchronize()
     }
+
 }
 
 protocol BoundaryStorageProtocol {

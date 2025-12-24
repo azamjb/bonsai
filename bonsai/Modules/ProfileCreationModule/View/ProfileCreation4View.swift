@@ -78,6 +78,7 @@ struct ProfileCreation4View: View {
                                         RoundedRectangle(cornerRadius: 20)
                                             .stroke(Color.primary, lineWidth: 1)
                                     )
+                                
                             }
                             .background(
                                 NavigationLink("", destination: ProfileCreationFinalView(), isActive: $navigateToFinal)

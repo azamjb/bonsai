@@ -127,8 +127,22 @@ struct BoundaryViewerView: View {
                             screenTime.setGroupDisplays()
                         }
                 }
+                .onAppear {
+                            // ensures latest data when landing on this screen
+                            if hasAccountabilityPartner {
+                                screenTime.setGroupDisplays()
+                            }
+                        }
+                        .onChange(of: hasAccountabilityPartner) { _, newValue in
+                            // ensures instant refresh when partner is added/removed
+                            if newValue {
+                                screenTime.setGroupDisplays()
+                            }
+                        }
             }
     }
+    
+    
     
     private var buttonContent: some View {
         VStack {

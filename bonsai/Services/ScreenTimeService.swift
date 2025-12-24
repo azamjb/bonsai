@@ -146,6 +146,7 @@ public class ScreenTimeService: ObservableObject {
         boundariesReached = boundaries.filter { $0.isBlocked }
     }
     
+    
     public func validateExtensionCode(inputPin: String, correctPin: String, boundary: Boundary) { // not in use
         if inputPin == correctPin {
             extendBlockedBoundary(boundaryId: boundary.id)

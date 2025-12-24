@@ -17,7 +17,7 @@ class ProfileCreationViewModel: ObservableObject {
     }
 
     @Published var userProfile = UserProfile()
-    @Published var accountabilityPartner = AccountabilityPartner()
+    @Published var accountabilityPartner = AccountabilityPartner();
     private let profileService: ProfileServiceProtocol = ProfileService()
 
     init() {
