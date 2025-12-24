@@ -171,4 +171,12 @@ class ProfileViewModel: ObservableObject {
     public func getExtensionRequestsCount() -> Int {
         return sentExtensionCodeService.getSentExtensionCodesCount()
     }
+    
+    public func resetExtensionRequestsCount()  { // for account deletion
+        sentExtensionCodeService.removeAllSentExtensionCodes()
+    }
+    
+    public func resetBoundaryExtensionCount()  { // for account deletion
+        dailyBoundaryExtensionService.removeAllDailyBoundaryExtensions()
+    }
 }

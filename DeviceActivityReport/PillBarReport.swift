@@ -12,6 +12,7 @@ import ManagedSettings
 private let BOUNDARIES_STRING = "boundaries"
 private let SENT_EXTENSION_CODES_STRING = "sentExtensionCodes"
 private let DAILY_BOUNDARY_EXTENSIONS_STRING = "dailyBoundaryExtensions"
+private let pillHeight: CGFloat = 18
 
 private var sharedDefaults: UserDefaults? {
     UserDefaults(suiteName: BONSAI_GROUP_NAME)
@@ -64,7 +65,7 @@ struct TimeLimitSliderView: View {
                 ZStack(alignment: .leading) {
                     Capsule()
                         .fill(Color.gray.opacity(0.2))
-                        .frame(height: 10)
+                        .frame(height: pillHeight)
                     
                     if boundaryExtended {
                         ZStack(alignment: .leading) {
@@ -73,18 +74,18 @@ struct TimeLimitSliderView: View {
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )
-                            .frame(width: geometry.size.width, height: 12)
+                            .frame(width: geometry.size.width, height: pillHeight)
                         }
                         .clipShape(
                             Capsule()
-                                .path(in: CGRect(x: 0, y: 0, width: geometry.size.width, height: 12))
+                                .path(in: CGRect(x: 0, y: 0, width: geometry.size.width, height: pillHeight))
                         )
                         
                         Text("BOUNDARY EXTENDED +")
                             .foregroundStyle(Color(UIColor.systemBackground))
                             .font(Font.system(size: 10))
                             .bold()
-                            .frame(width: geometry.size.width, height: 12, alignment: .center)
+                            .frame(width: geometry.size.width, height: pillHeight, alignment: .center)
                     } else if boundaryReached {
                         ZStack(alignment: .leading) {
                             LinearGradient(
@@ -92,18 +93,18 @@ struct TimeLimitSliderView: View {
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )
-                            .frame(width: geometry.size.width, height: 12)
+                            .frame(width: geometry.size.width, height: pillHeight)
                         }
                         .clipShape(
                             Capsule()
-                                .path(in: CGRect(x: 0, y: 0, width: geometry.size.width, height: 12))
+                                .path(in: CGRect(x: 0, y: 0, width: geometry.size.width, height: pillHeight))
                         )
                         
                         Text("BOUNDARY REACHED")
                             .foregroundStyle(Color(UIColor.systemBackground))
                             .font(Font.system(size: 10))
                             .bold()
-                            .frame(width: geometry.size.width, height: 12, alignment: .center)
+                            .frame(width: geometry.size.width, height: pillHeight, alignment: .center)
                         
                     }
                     else if extensionCodeSent {
@@ -119,11 +120,11 @@ struct TimeLimitSliderView: View {
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )
-                            .frame(width: geometry.size.width, height: 12)
+                            .frame(width: geometry.size.width, height: pillHeight)
                         }
                         .clipShape(
                             Capsule()
-                                .path(in: CGRect(x: 0, y: 0, width: geometry.size.width * CGFloat(progress), height: 12))
+                                .path(in: CGRect(x: 0, y: 0, width: geometry.size.width * CGFloat(progress), height: pillHeight))
                         )
                         .animation(.easeInOut, value: progress)
                         
@@ -131,7 +132,7 @@ struct TimeLimitSliderView: View {
                             .foregroundStyle(Color.white)
                             .font(Font.system(size: 10))
                             .bold()
-                            .frame(width: geometry.size.width, height: 12, alignment: .center)
+                            .frame(width: geometry.size.width, height: pillHeight, alignment: .center)
                         
                     }
                     else {
@@ -147,11 +148,11 @@ struct TimeLimitSliderView: View {
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )
-                            .frame(width: geometry.size.width, height: 12)
+                            .frame(width: geometry.size.width, height: pillHeight)
                         }
                         .clipShape(
                             Capsule()
-                                .path(in: CGRect(x: 0, y: 0, width: geometry.size.width * CGFloat(progress), height: 12))
+                                .path(in: CGRect(x: 0, y: 0, width: geometry.size.width * CGFloat(progress), height: pillHeight))
                         )
                         .animation(.easeInOut, value: progress)
                     }

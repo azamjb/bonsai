@@ -17,7 +17,7 @@ private var sharedDefaults: UserDefaults? {
 protocol DailyBoundaryExtensionServiceProtocol {
     func getDailyBoundaryExtensions() -> [DailyBoundaryExtension]
     func addBoundaryIdToExtensions(boundaryId: UUID, extendedDateTimeUtc: Date)
-    
+    func removeAllDailyBoundaryExtensions()
     func writeDailyBoundaryExtensionsToUserDefaults()
 }
 
@@ -32,6 +32,13 @@ class DailyBoundaryExtensionService: DailyBoundaryExtensionServiceProtocol {
         let sentExtensionCodes = try! storage.getDailyBoundaryExtensions()
         
         return sentExtensionCodes
+    }
+    
+    func removeAllDailyBoundaryExtensions() {
+        
+        try! storage.resetDailyBoundaryExtensions()
+
+        writeDailyBoundaryExtensionsToUserDefaults()
     }
     
     func addBoundaryIdToExtensions(boundaryId: UUID, extendedDateTimeUtc: Date) {
@@ -51,10 +58,12 @@ class DailyBoundaryExtensionService: DailyBoundaryExtensionServiceProtocol {
 
 protocol DailyBoundaryExtensionStorageProtocol {
     func getDailyBoundaryExtensions() throws -> [DailyBoundaryExtension]
+    func resetDailyBoundaryExtensions() throws
     func addBoundaryIdToExtensions(dailyBoundaryExtension: DailyBoundaryExtension) throws
 }
 
 class DailyBoundaryExtensionStorageService: DailyBoundaryExtensionStorageProtocol {
+    
     private let db: DatabaseWriter
     
     init(database: DatabaseWriter) {
@@ -65,6 +74,13 @@ class DailyBoundaryExtensionStorageService: DailyBoundaryExtensionStorageProtoco
         try db.read { db in
             try DailyBoundaryExtension
                 .fetchAll(db)
+        }
+    }
+    
+    func resetDailyBoundaryExtensions() throws {
+        
+        try db.write { db in
+            try DailyBoundaryExtension.deleteAll(db)
         }
     }
     

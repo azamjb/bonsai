@@ -22,7 +22,7 @@ protocol SentExtensionCodeServiceProtocol {
     func addSentExtensionCode(sentExtensionCode: SentExtensionCode)
     func getSentExtensionCodeForBoundary(boundaryId: UUID) -> SentExtensionCode?
     func getBoundaryIdsForActiveCode(code: String) -> [UUID]
-    func removeAllSentExtensionCodes(center: DeviceActivityCenter)
+    func removeAllSentExtensionCodes()
     
     func writeSentExtensionCodesToUserDefaults()
 }
@@ -65,8 +65,8 @@ class SentExtensionCodeService: SentExtensionCodeServiceProtocol {
         try! storage.getBoundaryIdsForActiveCode(code: code)
     }
     
-    func removeAllSentExtensionCodes(center: DeviceActivityCenter) {
-        center.stopMonitoring(center.activities)
+    func removeAllSentExtensionCodes() {
+        
         try! storage.removeAllSentExtensionCodes()
         
         writeSentExtensionCodesToUserDefaults()

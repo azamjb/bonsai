@@ -26,7 +26,11 @@ struct BoundaryExtensionRequestView: View {
                         SelectAppsSection(screenTime: screenTime, checkedItems: $checkedItems, showErrorMessage: $showNoBoundariesSelectedError)
                         NoteSection(requestNote: $requestNote, isFieldFocused: _isFieldFocused)
                         SendCodeButton(viewModel: viewModel, userViewModel: UserViewModel, requestNote: $requestNote, checkedItems: $checkedItems, showErrorMessage: $showNoBoundariesSelectedError, isRequestSent: $isRequestSent)
-                        EnterCodeSection(pin: $pin, checkedItems: $checkedItems, viewModel: viewModel, screenTime: screenTime, isRequestSent: $isRequestSent)
+                        
+                        if (isRequestSent) {
+                            EnterCodeSection(pin: $pin, checkedItems: $checkedItems, viewModel: viewModel, screenTime: screenTime, isRequestSent: $isRequestSent)
+                        }
+                        
                         SentRequestCodesSection(sentExtensionRequests: screenTime.getSentExtensionCodesAsBoundaryNameAndDateDict())
                     }
                     .padding(.horizontal, 40)

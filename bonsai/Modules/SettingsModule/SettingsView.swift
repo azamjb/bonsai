@@ -135,15 +135,16 @@ struct SettingsView: View {
             try await accountApi.deleteUser(request: deleteUserRequest)
 
             await MainActor.run {
-                print("INITIAL")
-                print(screenTime.boundariesSet)// clearing boundaries
+               
                 screenTime.clearAllRestrictions();
-                print("hiiiiiiiiiii")
-                print(screenTime.boundariesSet)
                 UserDefaults.standard.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
                 UserDefaults(suiteName: BONSAI_GROUP_NAME)?
                     .removePersistentDomain(forName: BONSAI_GROUP_NAME)
-                shouldNavigateToLandingPage = true
+                
+                viewModel.resetExtensionRequestsCount();
+                viewModel.resetBoundaryExtensionCount();
+                
+                shouldNavigateToLandingPage = true;
             }
 
             UserDefaults.standard.set(false, forKey: "isProfileCreated")
