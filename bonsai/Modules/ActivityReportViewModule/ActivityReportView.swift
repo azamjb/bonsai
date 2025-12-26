@@ -134,7 +134,8 @@ struct ActivityReportView: View {
                     Image("koibois")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 350)
+                        .frame(width: 120)
+                    
                 }
                 .padding(.bottom, 25)
                 .padding(.top, 25)
@@ -148,7 +149,7 @@ struct ActivityReportView: View {
                                 .fontWeight(.bold)
                             
                             if screenTime.boundariesSetToday.isEmpty {
-                                Text("No boundaries are active for today.")
+                                Text("No limits are active for today.")
                                     .font(.system(size: 11))
                                     .foregroundStyle(Color.secondary)
                                     .padding(.bottom, 10)
@@ -202,6 +203,7 @@ struct ActivityReportView: View {
                     VStack(alignment: .leading) {
                         HStack {
                             Text("ANALYTICS")
+                                .fontWeight(.bold)
                                 .padding(.bottom, 5)
 
                             Spacer()
@@ -275,29 +277,8 @@ struct ActivityReportView: View {
                     }
                 }
                 .padding(.horizontal, 18)
+                .padding(.bottom, 40)
 
-                if hasAccountabilityPartner {
-                    Group {
-                        Divider()
-                            .frame(height: 1)
-                            .background(Color.primary)
-                            .padding(.bottom, 20)
-                            .padding(.top, 10)
-
-                        Text("EXTEND BOUNDARIES")
-                            .padding(.bottom, 30)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-
-                        NavigationStack {
-                            BonsaiNavLinkSmall(buttonText: "request boundary extension", destination: BoundaryExtensionRequestView())
-                                .padding(.bottom, 30)
-                            
-                            BonsaiNavLinkSmall(buttonText: "override boundaries", destination: OverrideBoundaryView(screenTime))
-                                .padding(.bottom, 40)
-                        }
-                    }
-                    .padding(.horizontal, 18)
-                }
             }
             .navigationBarBackButtonHidden(true)
             .padding(.horizontal, 18)

@@ -13,41 +13,106 @@ struct BoundaryExtensionRequestView: View {
     @State private var pin: String = ""
     @FocusState private var isFieldFocused: Bool
     @AppStorage("isProfileCreated") private var isProfileCreated = false
+    @AppStorage("hasAccountabilityPartner") var hasAccountabilityPartner: Bool = false
     
     @State public var showNoBoundariesSelectedError: Bool = false
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                ScrollView {
-                    VStack(alignment: .leading) {
-                        Spacer()
-                        HeaderView()
-                        SelectAppsSection(screenTime: screenTime, checkedItems: $checkedItems, showErrorMessage: $showNoBoundariesSelectedError)
-                        NoteSection(requestNote: $requestNote, isFieldFocused: _isFieldFocused)
-                        SendCodeButton(viewModel: viewModel, userViewModel: UserViewModel, requestNote: $requestNote, checkedItems: $checkedItems, showErrorMessage: $showNoBoundariesSelectedError, isRequestSent: $isRequestSent)
-                        
-                        if (isRequestSent) {
-                            EnterCodeSection(pin: $pin, checkedItems: $checkedItems, viewModel: viewModel, screenTime: screenTime, isRequestSent: $isRequestSent)
-                        }
-                        
-                        SentRequestCodesSection(sentExtensionRequests: screenTime.getSentExtensionCodesAsBoundaryNameAndDateDict())
-                    }
-                    .padding(.horizontal, 40)
-                }
-                .onTapGesture {
-                    hideKeyboard()
-                }
-            }
-            .onAppear {
-                setupOnAppear()
-            }
-            .onChange(of: screenTime.boundariesReached) { _, newboundaries in
-                updateCheckedItems(newboundaries)
-            }
+        
+        if !hasAccountabilityPartner {
+            noAccountabilityPartnerView(hasAccountabilityPartner: $hasAccountabilityPartner)
+                
         }
-        .customBackToolbar()
-        .navigationBarBackButtonHidden(true)
+        
+        else {
+            
+            NavigationStack {
+                ZStack {
+                    ScrollView {
+                        VStack(alignment: .leading) {
+                            Spacer()
+                            HStack {
+                                Spacer()
+                                HeaderView()
+                                Spacer()
+                            }
+                            HStack {
+                                Spacer()
+                                Image("lanterns")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(height: 150)
+                                Spacer()
+                            }
+                            SelectAppsSection(screenTime: screenTime, checkedItems: $checkedItems, showErrorMessage: $showNoBoundariesSelectedError)
+                            NoteSection(requestNote: $requestNote, isFieldFocused: _isFieldFocused)
+                            
+                            HStack() {
+                                SendCodeButton(viewModel: viewModel, userViewModel: UserViewModel, requestNote: $requestNote, checkedItems: $checkedItems, showErrorMessage: $showNoBoundariesSelectedError, isRequestSent: $isRequestSent)
+                                NavigationLink(destination: OverrideBoundaryView(screenTime)) {
+                                    Text("override")
+                                        .font(.system(size: 15, weight: .bold))
+                                        .foregroundColor(.white)
+                                        .padding(.vertical, 15)
+                                        .padding(.horizontal, 24)
+                                        .frame(alignment: .center)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 15)
+                                                .fill(Color.black)
+                                        )
+                                        .padding(.bottom, 30)
+
+
+                                }
+                                .buttonStyle(.plain)
+                                
+                            }
+                            
+                            if showNoBoundariesSelectedError {
+                                HStack {
+                                    Spacer()
+                                    Text("Please select at least one boundary.")
+                                        .foregroundColor(.red)
+                                    Spacer()
+                                }
+                                
+                            }
+                            
+                            if isRequestSent {
+                                HStack {
+                                    Spacer()
+                                    Text("Extension code has been sent")
+                                        .foregroundColor(.green)
+                                    Spacer()
+                                }
+                                
+                            }
+                            
+                            
+                            if (isRequestSent) {
+                                EnterCodeSection(pin: $pin, checkedItems: $checkedItems, viewModel: viewModel, screenTime: screenTime, isRequestSent: $isRequestSent)
+                            }
+                            
+                            SentRequestCodesSection(sentExtensionRequests: screenTime.getSentExtensionCodesAsBoundaryNameAndDateDict())
+                        }
+                        .padding(.horizontal, 40)
+                    }
+                    .onTapGesture {
+                        hideKeyboard()
+                    }
+                }
+                .onAppear {
+                    setupOnAppear()
+                }
+                .onChange(of: screenTime.boundariesReached) { _, newboundaries in
+                    updateCheckedItems(newboundaries)
+                }
+            }
+            .navigationBarBackButtonHidden(true)
+            
+        }
+        
+        
     }
 
     private func setupOnAppear() {
@@ -78,16 +143,139 @@ struct BoundaryExtensionRequestView: View {
 // MARK: - Component Views
 struct HeaderView: View {
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Request")
-                .font(.title2)
-                .foregroundStyle(.primary)
+        
+        VStack(alignment: .center, spacing: 8) {
+           
 
-            Text("Boundary Extension")
-                .font(.title2)
-                .foregroundStyle(.primary)
+            Text("BOUNDARY EXTENSION")
+                .bold()
+                .font(.system(size: 25))
+                .multilineTextAlignment(.center)
+                .padding(.top, 20)
         }
-        .padding(.bottom, 40)
+        .padding(.top, 40)
+    }
+}
+
+private struct noAccountabilityPartnerView: View {
+    @State private var pin: String = ""
+    @State private var wrongCodeEntered = false
+    @State private var navigateToProfileCreation4 = false
+    @State private var triggerSuccess = false
+
+    let smsApi = SMSApi()
+    @ObservedObject var viewModel: ProfileCreationViewModel = ProfileCreationViewModel()
+    @AppStorage("invitedAccountabilityPartner") var invitedAccountabilityPartner: Bool = false
+    @Binding var hasAccountabilityPartner: Bool
+
+    var body: some View {
+        ScrollView {
+            VStack {
+                Text("You need to have an Accountability Partner in order to use this feature")
+                    .font(.system(size: 19))
+                    .padding(.bottom, 35)
+                    .padding(.top, 130)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity, alignment: .center)
+
+                if invitedAccountabilityPartner {
+                    Group {
+                        Text("We have sent your partner an invite containing a verification code, enter this code below to validate your partner")
+                            .font(.system(size: 19))
+                            .padding(.bottom, 40)
+                            .multilineTextAlignment(.center)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                        
+                        SixDigitCodeField(code: $pin)
+                            .padding(.bottom, 30)
+                        
+                        Button {
+                            handleInviteCodeValidation(pin: pin)
+                            pin = ""
+                        } label: {
+                            Text("validate")
+                                .font(.system(size: 15))
+                                .foregroundColor(.primary)
+                                .padding(.vertical, 15)
+                                .padding(.horizontal, 80)
+                                .frame(maxWidth: .infinity, alignment: .center)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 20)
+                                        .stroke(wrongCodeEntered ? Color.red : Color.primary, lineWidth: 1)
+                                )
+                        }
+                        .padding(.bottom, 20)
+                    }
+                }
+
+                Button(action: {
+                    navigateToProfileCreation4 = true
+                }) {
+                    Text("Send a New Invite")
+                        .foregroundColor(.blue)
+                        .font(.system(size: 15))
+                        .underline()
+                        .frame(alignment: .leading)
+                }
+
+                Spacer(minLength: 200)
+            }
+            .padding(.horizontal, 35)
+            .background(Color.white.opacity(0.0001))
+            .onTapGesture {
+                hideKeyboard()
+            }
+        }
+        .navigationDestination(isPresented: $navigateToProfileCreation4) {
+            ProfileCreation4View()
+        }
+        .onChange(of: triggerSuccess) { _, newValue in
+            if newValue {
+                hasAccountabilityPartner = true
+            }
+        }
+    }
+
+    @MainActor
+    private func handleInviteCodeValidation(pin: String) {
+        let inviteCode = UserDefaults.standard.string(forKey: "AccountabilityPartnerInviteCode")
+        let accountabilityPartnerPhone = UserDefaults.standard.string(forKey: "tempAccountabilityPartnerNumber") ?? ""
+        let accountabilityPartnerName = UserDefaults.standard.string(forKey: "tempAccountabilityPartnerName") ?? ""
+
+        if pin == inviteCode {
+            print("CORRECTTTTTT")
+
+            Task {
+                await viewModel.saveAccountabilityPartner(
+                    name: accountabilityPartnerName,
+                    phoneNumber: accountabilityPartnerPhone
+                )
+
+                UserDefaults.standard.removeObject(forKey: "tempAccountabilityPartnerNumber")
+                UserDefaults.standard.removeObject(forKey: "tempAccountabilityPartnerName")
+
+                // Add a small delay to allow Screen Time service to stabilize
+                try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+                
+                DispatchQueue.main.async {
+                    triggerSuccess = true
+                }
+                
+                let SMSInvite = SMSInvite(
+                    number: viewModel.accountabilityPartner.phoneNumber ?? "",
+                    username: viewModel.userProfile.name ?? "",
+                    accountabilityPartnerName: viewModel.accountabilityPartner.name ?? "", code: ""
+                )
+                
+                try await smsApi.introduction(request: SMSInvite)
+            }
+        } else {
+            print("wrongggggg")
+            wrongCodeEntered = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                wrongCodeEntered = false
+            }
+        }
     }
 }
 
@@ -182,28 +370,19 @@ struct SendCodeButton: View {
                     }
                 }
             } label: {
-                Text("send code to partner")
+                Text("send request")
                     .font(.system(size: 15))
                     .foregroundColor(.primary)
                     .padding(.vertical, 15)
-                    .padding(.horizontal, 80)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 40)
+                    .frame(maxWidth: .infinity, alignment: .center)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 20)
+                        RoundedRectangle(cornerRadius: 15)
                             .stroke(Color.primary, lineWidth: 1)
                     )
                     .padding(.bottom, 30)
             }
             
-            if showErrorMessage {
-                Text("Please select at least one boundary.")
-                    .foregroundColor(.red)
-            }
-            
-            if isRequestSent {
-                Text("Extension code has been sent")
-                    .foregroundColor(.green)
-            }
         }
     }
 }

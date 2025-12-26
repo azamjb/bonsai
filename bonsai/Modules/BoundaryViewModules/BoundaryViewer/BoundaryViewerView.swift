@@ -48,7 +48,7 @@ struct BoundaryViewerView: View {
                                     .bold()
                                     .font(.system(size: 30))
                                     .multilineTextAlignment(.center)
-                                    .padding(.top, 20)
+                                    .padding(.top, 60)
                                 
                                 Spacer()
 
@@ -256,7 +256,7 @@ private struct noAccountabilityPartnerView: View {
     var body: some View {
         ScrollView {
             VStack {
-                Text("You need to have an Accountability Partner in order to use the main features of this app!")
+                Text("You need to have an Accountability Partner in order to use this feature")
                     .font(.system(size: 19))
                     .padding(.bottom, 35)
                     .padding(.top, 130)

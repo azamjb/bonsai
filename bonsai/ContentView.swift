@@ -37,6 +37,10 @@ struct ContentView: View {
                     NavigationStack {
                         ProfileView(viewModel: viewModel)
                     }
+                case 4:
+                    NavigationStack {
+                        BoundaryExtensionRequestView()
+                    }
                 default:
                     Text("Unknown Tab")
                 }
@@ -106,15 +110,17 @@ struct CustomTabBar: View {
                 .padding(.horizontal, 30)
 
             HStack(spacing: 0) {
-                TabBarButton(title: "BOUNDARIES", tag: 1, selectedTab: $selectedTab)
+                TabBarButton(title: "BOUNDS", systemImage: nil, tag: 1, selectedTab: $selectedTab)
                     .frame(maxWidth: .infinity)
-                TabBarButton(title: "B.", tag: 2, selectedTab: $selectedTab)
+                TabBarButton(title: "EXTEND", systemImage: nil, tag: 4, selectedTab: $selectedTab)
                     .frame(maxWidth: .infinity)
-                TabBarButton(title: "PROFILE", tag: 3, selectedTab: $selectedTab)
+                TabBarButton(title: "INSIGHTS", systemImage: nil, tag: 2, selectedTab: $selectedTab)
+                    .frame(maxWidth: .infinity)
+                TabBarButton(title: "PROFILE", systemImage: nil, tag: 3, selectedTab: $selectedTab)
                     .frame(maxWidth: .infinity)
             }
-            .padding(.top, 20)
-            .padding(.bottom, 35)
+            .padding(.top, 25)
+            .padding(.bottom, 45)
             .padding(.horizontal, 30)
         }
         .background(Color(.systemBackground).ignoresSafeArea(edges: .bottom))
@@ -124,22 +130,29 @@ struct CustomTabBar: View {
 
 struct TabBarButton: View {
     let title: String
+    let systemImage: String?
     let tag: Int
     @Binding var selectedTab: Int
 
     var body: some View {
-        Button(action: {
+        Button {
             selectedTab = tag
-        }) {
-            Text(title)
-                .font(
-                    title == "B."
-                    ? .system(size: 24, weight: .bold) // Bigger font just for "B."
-                    : .system(size: 14, weight: .bold)
-                )
-                .foregroundColor(selectedTab == tag ? .primary : .gray)
+        } label: {
+            VStack(spacing: 4) {
+                if let systemImage {
+                    Image(systemName: systemImage)
+                        .font(.system(size: 18, weight: .semibold))
+                }
+
+                Text(title)
+                    .font(
+                        title == "B."
+                        ? .system(size: 24, weight: .bold)
+                        : .system(size: 13, weight: .bold)
+                    )
+            }
+            .foregroundColor(selectedTab == tag ? .primary : .gray)
         }
     }
 }
-
 
