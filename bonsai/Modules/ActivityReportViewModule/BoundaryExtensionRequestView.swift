@@ -52,20 +52,20 @@ struct BoundaryExtensionRequestView: View {
                                 NavigationLink(destination: OverrideBoundaryView(screenTime)) {
                                     Text("override")
                                         .font(.system(size: 15, weight: .bold))
-                                        .foregroundColor(.white)
+                                        .foregroundColor(.primary)
                                         .padding(.vertical, 15)
                                         .padding(.horizontal, 24)
                                         .frame(alignment: .center)
                                         .background(
                                             RoundedRectangle(cornerRadius: 15)
-                                                .fill(Color.black)
+                                                .fill(Color(red: 1.0, green: 0.7, blue: 0.7).opacity(0.8))
                                         )
                                         .padding(.bottom, 30)
 
 
                                 }
                                 .buttonStyle(.plain)
-                                
+
                             }
                             
                             if showNoBoundariesSelectedError {
@@ -232,6 +232,12 @@ private struct noAccountabilityPartnerView: View {
         .onChange(of: triggerSuccess) { _, newValue in
             if newValue {
                 hasAccountabilityPartner = true
+            }
+        }
+        .onChange(of: pin) { _, newValue in
+            if newValue.count == 6 {
+                handleInviteCodeValidation(pin: newValue)
+                pin = ""
             }
         }
     }
@@ -486,6 +492,11 @@ struct EnterCodeSection: View {
             Button("Try Again", role: .cancel) {}
         } message: {
             Text("The verification code you entered is not valid.")
+        }
+        .onChange(of: pin) { _, newValue in
+            if newValue.count == 6 {
+                handleCodeValidation()
+            }
         }
     }
 

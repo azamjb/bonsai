@@ -32,6 +32,7 @@ struct ActivityReportView: View {
     @AppStorage("hasAccountabilityPartner") var hasAccountabilityPartner: Bool = false
     @StateObject var viewModel: ActivityReportViewModel = ActivityReportViewModel()
     @EnvironmentObject var screenTime: ScreenTimeService
+    @Environment(\.colorScheme) var colorScheme
     @State private var isAuthorized = false
     private let boundaryService = BoundaryService(storage: BoundaryStorageService(database: LocalDatabase.shared.databaseWriter))
     private let dailyBoundaryExtensionService = DailyBoundaryExtensionService(storage: DailyBoundaryExtensionStorageService(database: LocalDatabase.shared.databaseWriter))
@@ -254,7 +255,7 @@ struct ActivityReportView: View {
                                         .frame(height: 120)
                                 }
                                 
-                                // Use id modifier to force re-render when range changes
+                                // Use id modifier to force re-render when range or appearance changes
                                 Group {
                                     switch analyticsRange {
                                     case .daily:
@@ -266,7 +267,7 @@ struct ActivityReportView: View {
                                     }
                                 }
                                 .frame(height: 120)
-                                .id("\(analyticsRange.rawValue)")
+                                .id("\(analyticsRange.rawValue)_\(colorScheme)")
                                 .opacity(isAnalyticsLoaded ? 1 : 0)
                                 .animation(.easeInOut(duration: 0.3), value: isAnalyticsLoaded)
                             }
@@ -301,6 +302,16 @@ struct ActivityReportView: View {
         }
         .onChange(of: analyticsRange) { _, _ in
             // Only reload analytics when range changes
+            isAnalyticsLoaded = false
+            Task {
+                try? await Task.sleep(nanoseconds: 200_000_000)
+                await MainActor.run {
+                    isAnalyticsLoaded = true
+                }
+            }
+        }
+        .onChange(of: colorScheme) { _, _ in
+            // Reload analytics when appearance changes (light/dark mode)
             isAnalyticsLoaded = false
             Task {
                 try? await Task.sleep(nanoseconds: 200_000_000)

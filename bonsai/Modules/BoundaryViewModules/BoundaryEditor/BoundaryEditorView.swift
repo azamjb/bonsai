@@ -46,18 +46,32 @@ struct BoundaryEditorView: View {
                 boundariesBeingDeleted: Binding.constant(boundaryIdsToDelete.map({ boundaryService.getBoundaryById(boundaryId: $0) }))
             )
         }
-        .customBackToolbar()
-        
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: handleReturn) {
+                    HStack {
+                        Image(systemName: "chevron.left")
+                        Text("return")
+                    }
+                    .foregroundColor(Color.primary)
+                }
+            }
+        }
+        .onAppear {
+            enableSwipeBackGesture()
+        }
+
         .alert("Unsaved changes will be lost", isPresented: $showingCancelConfirmation) {
-            Button("discard changes", role: .cancel) {
+            Button("discard changes", role: .destructive) {
                 presentationMode.wrappedValue.dismiss()
-            }.backgroundStyle(Color(UIColor.systemRed))
-            
-            Button("keep editing") {
+            }
+
+            Button("keep editing", role: .cancel) {
                 showingCancelConfirmation = false
             }
         } message: {
-            Text("Are you sure you want to exit?")
+            Text("You have \(changesSummary) that will be discarded. Are you sure you want to exit?")
         }
         .alert("Are you sure you want to save?", isPresented: $showingEditConfirmation) {
             Button("save", role: .cancel) {
@@ -100,7 +114,62 @@ struct BoundaryEditorView: View {
             Text("Once deleted, a boundary cannot be recovered.")
         }
     }
-    
+
+    // MARK: - Helper Properties
+    private var hasUnsavedChanges: Bool {
+        !modifiedBoundaries.isEmpty || !boundaryIdsToDelete.isEmpty
+    }
+
+    private var changesSummary: String {
+        var summary = ""
+        let additionsCount = modifiedBoundaries.count
+        let deletionsCount = boundaryIdsToDelete.count
+
+        if additionsCount > 0 {
+            summary += "\(additionsCount) boundary addition\(additionsCount == 1 ? "" : "s")"
+        }
+
+        if deletionsCount > 0 {
+            if !summary.isEmpty {
+                summary += " and "
+            }
+            summary += "\(deletionsCount) boundary deletion\(deletionsCount == 1 ? "" : "s")"
+        }
+
+        return summary
+    }
+
+    // MARK: - Helper Methods
+    private func handleReturn() {
+        if hasUnsavedChanges {
+            showingCancelConfirmation = true
+        } else {
+            presentationMode.wrappedValue.dismiss()
+        }
+    }
+
+    private func enableSwipeBackGesture() {
+        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let root = scene.windows.first?.rootViewController,
+              let nav = findNavController(from: root) else { return }
+
+        nav.interactivePopGestureRecognizer?.isEnabled = true
+        nav.interactivePopGestureRecognizer?.delegate = nil
+    }
+
+    private func findNavController(from root: UIViewController) -> UINavigationController? {
+        if let nav = root as? UINavigationController {
+            return nav
+        } else if let tab = root as? UITabBarController,
+                  let selected = tab.selectedViewController {
+            return findNavController(from: selected)
+        } else if let presented = root.presentedViewController {
+            return findNavController(from: presented)
+        } else {
+            return root.children.compactMap { findNavController(from: $0) }.first
+        }
+    }
+
     // MARK: - Extracted Views
     private var headerContent: some View {
         ZStack(alignment: .top) {
