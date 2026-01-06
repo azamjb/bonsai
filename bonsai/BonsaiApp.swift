@@ -36,6 +36,7 @@ struct BonsaiApp: App {
 
 // Here we can set a way to display splash screen then profile creation or skip straight to ContentView()
 struct RootView: View {
+    @AppStorage(LAST_LAUNCH_DATE_STRING) private var lastLaunchDateSeconds: Double = 0
     @AppStorage("isProfileCreated") public var isProfileCreated = false
     @State private var isSplashScreenActive: Bool = false
     
@@ -58,5 +59,26 @@ struct RootView: View {
                 }
             }
         }
+        .onAppear() {
+            Task { expireCodesIfNewDay() }
+        }
+    }
+    
+    private func expireCodesIfNewDay() {
+        let calendar = Calendar.current
+        let now = Date()
+        
+        let last = Date(timeIntervalSince1970: lastLaunchDateSeconds)
+        if lastLaunchDateSeconds == 0 || !calendar.isDate(last, inSameDayAs: now) {
+            let sentExtensionCodeService = SentExtensionCodeService(storage: SentExtensionCodeStorageService(database: LocalDatabase.shared.databaseWriter))
+            
+            var codes = sentExtensionCodeService.getSentExtensionCodes()
+            for i in codes.indices where codes[i].isCodeValid {
+                codes[i].isCodeValid = false
+                sentExtensionCodeService.upsertSentExtensionCode(SentExtensionCode: codes[i])
+            }
+        }
+        
+        lastLaunchDateSeconds = now.timeIntervalSince1970
     }
 }

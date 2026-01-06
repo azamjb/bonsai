@@ -63,8 +63,6 @@ import ManagedSettings
     }
     
     public func removeAccountabilityPartner( phoneNumber: String, userName: String, accountabilityPartnerName: String) async {
-       
-        
         isRemovingAccountabilityPartner = true
         
         let smsApi = SMSApi()
@@ -119,22 +117,36 @@ import ManagedSettings
     }
     
     public func validateVerificationCode(pin: String) -> Bool {
-        let boundaryIdsForCodeIfValid = sentExtensionCodeService.getBoundaryIdsForActiveCode(code: pin)
-        
-        if boundaryIdsForCodeIfValid.isEmpty {
+        guard var code = sentExtensionCodeService.getSentExtensionCodeByCode(code: pin) else {
             return false
-        } else {
-            boundaryIdsForCodeIfValid.forEach { id in
-                screenTime.extendBlockedBoundary(boundaryId: id)
-                screenTime.setGroupDisplays()
-            }
-            
-            return true
         }
+
+        guard code.isCodeValid else {
+            return false
+        }
+
+        guard Calendar.current.isDateInToday(code.sentDateTimeUtc) else {
+            code.isCodeValid = false
+            sentExtensionCodeService.upsertSentExtensionCode(SentExtensionCode: code)
+            return false
+        }
+        
+        let boundaryIds = sentExtensionCodeService.getBoundaryIdsForActiveCode(code: pin)
+        guard !boundaryIds.isEmpty else { return false }
+        
+        boundaryIds.forEach { id in
+            screenTime.extendBlockedBoundary(boundaryId: id)
+        }
+        
+        return true
     }
 
     public func generateRandomCode() -> String {
         let randomCode = Int.random(in: 100_000...999_999)
         return String(randomCode)
+    }
+    
+    public func isAnyCodeActive() -> Bool {
+        return sentExtensionCodeService.getSentExtensionCodes().filter { $0.isCodeValid && areDatesSameDay(date1: $0.sentDateTimeUtc, date2: Date()) }.count > 0
     }
 }

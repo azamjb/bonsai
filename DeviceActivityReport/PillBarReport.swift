@@ -36,6 +36,10 @@ struct PillBarViewConfiguration {
     let usageGroups: [UsageGroup]
 }
 
+enum BoundaryState {
+    case extended, codeSent, reached
+}
+
 // MARK: - A Custom Slider/Pill View
 struct TimeLimitSliderView: View {
     let elapsedTime: TimeInterval
@@ -43,9 +47,7 @@ struct TimeLimitSliderView: View {
     let boundaryId: UUID
     
     // Cache these computations
-    @State private var boundaryExtended: Bool = false
-    @State private var extensionCodeSent: Bool = false
-    @State private var boundaryReached: Bool = false
+    @State var boundaryState: BoundaryState?
     
     // Calculate progress as a value between 0.0 and 1.0.
     private var progress: Double {
@@ -67,7 +69,7 @@ struct TimeLimitSliderView: View {
                         .fill(Color.gray.opacity(0.2))
                         .frame(height: pillHeight)
                     
-                    if boundaryExtended {
+                    if boundaryState == .extended {
                         ZStack(alignment: .leading) {
                             LinearGradient(
                                 gradient: Gradient(stops: [Gradient.Stop(color: Color.primary, location: 0.0)]),
@@ -86,7 +88,7 @@ struct TimeLimitSliderView: View {
                             .font(Font.system(size: 10))
                             .bold()
                             .frame(width: geometry.size.width, height: pillHeight, alignment: .center)
-                    } else if boundaryReached {
+                    } else if boundaryState == .reached {
                         ZStack(alignment: .leading) {
                             LinearGradient(
                                 gradient: Gradient(stops: [Gradient.Stop(color: Color.primary, location: 0.0)]),
@@ -106,8 +108,7 @@ struct TimeLimitSliderView: View {
                             .bold()
                             .frame(width: geometry.size.width, height: pillHeight, alignment: .center)
                         
-                    }
-                    else if extensionCodeSent {
+                    } else if boundaryState == .codeSent {
                         ZStack(alignment: .leading) {
                             LinearGradient(
                                 gradient: Gradient(stops: [
@@ -168,28 +169,53 @@ struct TimeLimitSliderView: View {
     
     private func updateBoundaryStates() {
         guard let defaults = sharedDefaults else { return }
+        var boundaries: [Boundary]? = []
         
+        if let boundariesData = defaults.data(forKey: BOUNDARIES_STRING) {
+           boundaries = try? JSONDecoder().decode([Boundary].self, from: boundariesData)
+        }
+
+        // Check if boundary is currently extended
         if let dailyExtensionsData = defaults.data(forKey: DAILY_BOUNDARY_EXTENSIONS_STRING),
            let dailyExtensionsModels = try? JSONDecoder().decode([DailyBoundaryExtension].self, from: dailyExtensionsData) {
-            boundaryExtended = dailyExtensionsModels.contains(where: {
-                areDatesSameDay(date1: $0.extendedDateTimeUtc, date2: Date()) && $0.boundaryId == boundaryId
-            })
+            if boundaries != nil {
+                let extensionActive = dailyExtensionsModels.contains(where: {
+                    areDatesSameDay(date1: $0.extendedDateTimeUtc, date2: Date())
+                    && $0.boundaryId == boundaryId
+                    && !(boundaries?.first(where: { $0.id == boundaryId })?.isBlocked ?? false)
+                })
+                
+                if extensionActive {
+                    boundaryState = .extended
+                    return
+                }
+            }
         }
         
+        // Check if boundary has an active code but has not yet been extended
         if let activeCodesData = defaults.data(forKey: SENT_EXTENSION_CODES_STRING),
            let activeCodeModels = try? JSONDecoder().decode([SentExtensionCode].self, from: activeCodesData) {
-            extensionCodeSent = activeCodeModels.contains(where: {
-                areDatesSameDay(date1: $0.sentDateTimeUtc, date2: Date()) && $0.boundaryId == boundaryId
+            let extensionCodeSent = activeCodeModels.contains(where: {
+                areDatesSameDay(date1: $0.sentDateTimeUtc, date2: Date())
+                && $0.boundaryId == boundaryId
+                && activeCodeModels.first(where: { $0.boundaryId == boundaryId })?.isCodeValid ?? false
             })
+            
+            if extensionCodeSent {
+                boundaryState = .codeSent
+                return
+            }
         }
         
+        // Check if boundary is reached
         if let boundariesData = defaults.data(forKey: BOUNDARIES_STRING),
            let boundaries = try? JSONDecoder().decode([Boundary].self, from: boundariesData) {
-            boundaryReached = boundaries.first(where: { $0.id == boundaryId })?.isBlocked ?? false
+            let boundaryReached = boundaries.first(where: { $0.id == boundaryId })?.isBlocked ?? false
+            
+            if boundaryReached {
+                boundaryState = .reached
+            }
         }
-        
-//        let boundary = boundaryService.getBoundaryById(boundaryId: boundaryId)
-//        boundaryReached = boundary?.isBlocked ?? false
     }
 }
 
@@ -269,6 +295,8 @@ struct PillBarReport: DeviceActivityReportScene {
     }
     
     func makeConfiguration(representing data: DeviceActivityResults<DeviceActivityData>) async -> Configuration {
+        sharedDefaults?.synchronize()
+        
         let boundaries = getBoundaries()
         
         // Early return if no boundaries

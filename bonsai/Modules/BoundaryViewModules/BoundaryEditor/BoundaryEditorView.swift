@@ -96,7 +96,6 @@ struct BoundaryEditorView: View {
         .alert("Are you sure you want to delete a boundary?", isPresented: $showingDeleteConfirmation) {
             Button("delete", role: .cancel) {
                 boundaryIdsToDelete.forEach { id in
-                    print(id)
                     screenTime.deleteBoundary(boundaryId: id)
                 }
                 
@@ -191,8 +190,11 @@ struct BoundaryEditorView: View {
     }
     
     private var boundariesContent: some View {
-        Group {
-            if !screenTime.boundariesSet.isEmpty {
+        let visibleModified = modifiedBoundaries.filter { !boundaryIdsToDelete.contains($0.id) }
+        let hasAnythingToShow = !screenTime.boundariesSet.isEmpty || !visibleModified.isEmpty
+
+        return Group {
+            if hasAnythingToShow {
                 boundariesListView
             } else {
                 Spacer()

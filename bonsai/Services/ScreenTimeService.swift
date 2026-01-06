@@ -60,13 +60,15 @@ public class ScreenTimeService: ObservableObject {
     }
     
     public func startMonitoring(boundary: Boundary) {
-//        let testDurationMinutes = 15
+        // *** Test code for boundary resetting after 15 minutes
         
+//        let testDurationMinutes = 15
 //        let startDate = Calendar.current.date(byAdding: .second, value: 5, to: Date())!
 //        let endDate   = Calendar.current.date(byAdding: .minute, value: testDurationMinutes, to: startDate)!
-        
 //        let startComps = Calendar.current.dateComponents([.hour, .minute, .second], from: startDate)
 //        let endComps   = Calendar.current.dateComponents([.hour, .minute, .second], from: endDate)
+        
+        // ***
 
         let schedule = DeviceActivitySchedule(
 //            intervalStart: startComps,
@@ -97,14 +99,103 @@ public class ScreenTimeService: ObservableObject {
             print("Failed to start monitoring boundaries. Error: \(error)")
         }
     }
+
+    public func extendBlockedBoundary(boundaryId: UUID) {
+        if var boundary = boundaryService.getBoundaryById(boundaryId: boundaryId) {
+            
+            // Unblock apps
+            var shieldedApps = settingsStore.shield.applications ?? []
+            boundary.appTokens.forEach { token in shieldedApps.remove(token) }
+            settingsStore.shield.applications = shieldedApps
+            
+            // Unblock categories
+            unblockCategories(boundary.categoryTokens)
+            
+            // Unblock web domains
+            var shieldedWebDomainTokens = settingsStore.shield.webDomains ?? []
+            boundary.webDomainTokens.forEach { token in shieldedWebDomainTokens.remove(token) }
+            settingsStore.shield.webDomains = shieldedWebDomainTokens
+            
+            // Unblock boundary
+            boundary.isBlocked = false
+            boundaryService.upsertBoundary(boundary: boundary)
+            
+            dailyBoundaryExtensionService.addBoundaryIdToExtensions(boundaryId: boundaryId, extendedDateTimeUtc: Date())
+            
+            if var existingExtensionCode = sentExtensionCodeService.getRecentSentExtensionCodeForBoundary(boundaryId: boundaryId) {
+                existingExtensionCode.isCodeValid = false
+                sentExtensionCodeService.upsertSentExtensionCode(SentExtensionCode: existingExtensionCode)
+            }
+            
+            startMonitoringPostExtension(boundary: boundary)
+        }
+    }
     
+    private func startMonitoringPostExtension(boundary: Boundary) {
+        let schedule = DeviceActivitySchedule(
+            intervalStart: DateComponents(hour: 0, minute: 0, second: 0),
+            intervalEnd: DateComponents(hour: 23, minute: 59, second: 59),
+            repeats: true)
+        
+        if boundary.weekdays.contains(Weekday.today) {
+            try! center.startMonitoring(
+                DeviceActivityName(boundary.id.uuidString + EXTENSION_SUFFIX_STRING),
+                during: schedule,
+                events: [DeviceActivityEvent.Name(BOUNDARY_STRING): DeviceActivityEvent (
+                    applications: boundary.appTokens,
+                    categories: boundary.categoryTokens,
+                    webDomains: boundary.webDomainTokens,
+                    threshold: DateComponents(hour: 0, minute: 15)
+                )]
+            )
+        }
+        
+        dailyBoundaryExtensionService.addBoundaryIdToExtensions(boundaryId: boundary.id, extendedDateTimeUtc: Date())
+    }
+    
+    func unblockCategories(_ toUnblock: Set<ActivityCategoryToken>) {
+        guard let policy = settingsStore.shield.applicationCategories else { return }
+
+        switch policy {
+        case .specific(var blocked, let except):
+            blocked.subtract(toUnblock)
+            settingsStore.shield.applicationCategories = blocked.isEmpty
+                ? nil
+                : .specific(blocked, except: except)
+
+        case .all:
+            break
+        case .none:
+            break
+        @unknown default:
+            break
+        }
+    }
+
+    private func getShieldedCategoryTokens() -> Set<ActivityCategoryToken> {
+        if let categories = settingsStore.shield.applicationCategories {
+            switch categories {
+            case .none:
+                return []
+            case .specific(let specificCategories, _):
+                return specificCategories
+            case .all(except: _):
+                return []
+            @unknown default:
+                return []
+            }
+        }
+        
+        return []
+    }
+
     public func addActiveExtensionCode(boundaryId: UUID, code: String) {
         let code = SentExtensionCode(id: UUID(), boundaryId: boundaryId, code: code, sentDateTimeUtc: Date())
         sentExtensionCodeService.addSentExtensionCode(sentExtensionCode: code)
     }
     
     public func getCodeForBoundaryId(boundaryId: UUID) -> String {
-        return sentExtensionCodeService.getSentExtensionCodeForBoundary(boundaryId: boundaryId)?.code ?? ""
+        return sentExtensionCodeService.getRecentSentExtensionCodeForBoundary(boundaryId: boundaryId)?.code ?? ""
     }
     
     private func updateLeftoverWeeklySaves() {
@@ -140,7 +231,7 @@ public class ScreenTimeService: ObservableObject {
 
     public func setGroupDisplays() {
         let boundaries = boundaryService.getBoundaries()
-        
+
         boundariesSet = boundaries
         boundariesSetToday = boundaryService.getBoundariesForToday()
         boundariesReached = boundaries.filter { $0.isBlocked }
@@ -154,89 +245,6 @@ public class ScreenTimeService: ObservableObject {
         } else {
             pinError = "Invalid PIN"
         }
-    }
-
-    public func extendBlockedBoundary(boundaryId: UUID) {
-        if let boundary = boundaryService.getBoundaryById(boundaryId: boundaryId) {
-            // These 3 variables get reassigned with the tokens to extend for removal. Muatating these set doesn't properly update them in real-time with the change detection. Need to reassign.
-            var shieldedApps = settingsStore.shield.applications ?? []
-            var shieldedWebDomainTokens = settingsStore.shield.webDomains ?? []
-            var shieldedCategoryTokens = getShieldedCategoryTokens()
-            
-            boundary.appTokens.forEach { token in
-                shieldedApps.remove(token)
-            }
-            
-            settingsStore.shield.applications = shieldedApps
-            
-            boundary.categoryTokens.forEach { token in
-                shieldedCategoryTokens.remove(token)
-            }
-            
-            settingsStore.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.specific(shieldedCategoryTokens)
-            
-            boundary.webDomainTokens.forEach { token in
-                shieldedWebDomainTokens.remove(token)
-            }
-            
-            settingsStore.shield.webDomains = shieldedWebDomainTokens
-            
-            boundaryService.getBoundaries().forEach { currentBoundary in
-                var updatedBoundary = currentBoundary
-                if currentBoundary.id == boundary.id {
-                    updatedBoundary.isBlocked = false
-                }
-                
-                boundaryService.upsertBoundary(boundary: updatedBoundary)
-            }
-            
-            startMonitoringPostExtension(boundary: boundary)
-        }
-    }
-    
-    private func startMonitoringPostExtension(boundary: Boundary) {
-        let schedule = DeviceActivitySchedule(
-            intervalStart: DateComponents(hour: 0, minute: 0, second: 0),
-            intervalEnd: DateComponents(hour: 23, minute: 59, second: 59),
-            repeats: true)
-        
-        var boundaryToExtend = boundary
-        
-        boundaryToExtend.isBlocked = false
-        boundaryService.upsertBoundary(boundary: boundaryToExtend)
-        
-        if boundary.weekdays.contains(Weekday.today) {
-            try! center.startMonitoring(
-                DeviceActivityName(boundary.id.uuidString),
-                during: schedule,
-                events: [DeviceActivityEvent.Name("Boundary"): DeviceActivityEvent (
-                    applications: boundary.appTokens,
-                    categories: boundary.categoryTokens,
-                    webDomains: boundary.webDomainTokens,
-                    threshold: DateComponents(hour: 0, minute: 15)
-                )]
-            )
-        }
-        
-        setGroupDisplays()
-        dailyBoundaryExtensionService.addBoundaryIdToExtensions(boundaryId: boundary.id, extendedDateTimeUtc: Date())
-    }
-    
-    private func getShieldedCategoryTokens() -> Set<ActivityCategoryToken> {
-        if let categories = settingsStore.shield.applicationCategories {
-            switch categories {
-            case .none:
-                return []
-            case .specific(let specificCategories, _):
-                return specificCategories
-            case .all(except: _):
-                return []
-            @unknown default:
-                return []
-            }
-        }
-        
-        return []
     }
     
     public func deleteBoundary(boundaryId: UUID) {

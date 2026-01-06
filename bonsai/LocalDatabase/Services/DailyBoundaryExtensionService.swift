@@ -44,6 +44,8 @@ class DailyBoundaryExtensionService: DailyBoundaryExtensionServiceProtocol {
     func addBoundaryIdToExtensions(boundaryId: UUID, extendedDateTimeUtc: Date) {
         
         try! storage.addBoundaryIdToExtensions(dailyBoundaryExtension: DailyBoundaryExtension(boundaryId: boundaryId, extendedDateTimeUtc: extendedDateTimeUtc))
+        
+        writeDailyBoundaryExtensionsToUserDefaults()
     }
     
     func writeDailyBoundaryExtensionsToUserDefaults() {

@@ -8,7 +8,7 @@ import SwiftUI
 import ManagedSettings
 
 struct ContentView: View {
-    
+
     var AccountabilityPartner = ""
     let accountApi = AccountApi()
     let smsApi = SMSApi()
@@ -18,7 +18,6 @@ struct ContentView: View {
     @StateObject var screenTime = ScreenTimeService()
     @AppStorage("invitedAccountabilityPartner") private var invitedAccountabilityPartnerStorage: Bool = false
     @AppStorage("hasAccountabilityPartner") private var hasPartnerStorage: Bool = false
-    
 
     var body: some View {
         VStack(spacing: 0) {
@@ -50,11 +49,11 @@ struct ContentView: View {
 
             CustomTabBar(selectedTab: $tabSelection)
         }
-        .onAppear { // Removing accountability partner locally if it has been removed from the database, check is made every time the app is opened
+        .onAppear {
+            
+            // Removing accountability partner locally if it has been removed from the database, check is made every time the app is opened
             Task {
                 do {
-                    
-                    
                     let hasPartner = UserDefaults.standard.bool(forKey: "hasAccountabilityPartner")
                     
                     if hasPartner {
@@ -155,4 +154,3 @@ struct TabBarButton: View {
         }
     }
 }
-

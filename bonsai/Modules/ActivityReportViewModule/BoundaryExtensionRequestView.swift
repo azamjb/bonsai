@@ -1,139 +1,217 @@
 import SwiftUI
 
 struct BoundaryExtensionRequestView: View {
-    @Environment(\.presentationMode) var presentationMode
     @StateObject private var viewModel = AccountabilityPartnerViewModel()
     @StateObject var UserViewModel: ProfileViewModel = ProfileViewModel()
-    @State private var isRememberMeChecked = false
     @EnvironmentObject var screenTime: ScreenTimeService
-    @State public var checkedItems: [Boundary : Bool] = [:] // dictionary to track which of the boundaries have been 'checked' to be extended
-    @State var isRequestSent: Bool = false
 
+    @State public var checkedItems: [Boundary: Bool] = [:]
+    @State var isRequestSent: Bool = false
+    @State public var sentExtensionBoundaryNames: [String] = []
     @State private var requestNote: String = ""
     @State private var pin: String = ""
+
     @FocusState private var isFieldFocused: Bool
-    @AppStorage("isProfileCreated") private var isProfileCreated = false
+
     @AppStorage("hasAccountabilityPartner") var hasAccountabilityPartner: Bool = false
-    
     @State public var showNoBoundariesSelectedError: Bool = false
+    @State public var showRequestAlreadySentError: Bool = false
 
     var body: some View {
-        
         if !hasAccountabilityPartner {
             noAccountabilityPartnerView(hasAccountabilityPartner: $hasAccountabilityPartner)
-                
+        } else {
+            BoundaryExtensionRequestMainView(
+                viewModel: viewModel,
+                userViewModel: UserViewModel,
+                checkedItems: $checkedItems,
+                isRequestSent: $isRequestSent,
+                sentExtensionBoundaryNames: $sentExtensionBoundaryNames,
+                requestNote: $requestNote,
+                pin: $pin,
+                isFieldFocused: $isFieldFocused,
+                showNoBoundariesSelectedError: $showNoBoundariesSelectedError,
+                showRequestAlreadySentError: $showRequestAlreadySentError
+            )
         }
-        
-        else {
-            
-            NavigationStack {
-                ZStack {
-                    ScrollView {
-                        VStack(alignment: .leading) {
-                            Spacer()
-                            HStack {
-                                Spacer()
-                                HeaderView()
-                                Spacer()
-                            }
-                            HStack {
-                                Spacer()
-                                Image("lanterns")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(height: 150)
-                                Spacer()
-                            }
-                            SelectAppsSection(screenTime: screenTime, checkedItems: $checkedItems, showErrorMessage: $showNoBoundariesSelectedError)
-                            NoteSection(requestNote: $requestNote, isFieldFocused: _isFieldFocused)
-                            
-                            HStack() {
-                                SendCodeButton(viewModel: viewModel, userViewModel: UserViewModel, requestNote: $requestNote, checkedItems: $checkedItems, showErrorMessage: $showNoBoundariesSelectedError, isRequestSent: $isRequestSent)
-                                NavigationLink(destination: OverrideBoundaryView(screenTime)) {
-                                    Text("override")
-                                        .font(.system(size: 15, weight: .bold))
-                                        .foregroundColor(.primary)
-                                        .padding(.vertical, 15)
-                                        .padding(.horizontal, 24)
-                                        .frame(alignment: .center)
-                                        .background(
-                                            RoundedRectangle(cornerRadius: 15)
-                                                .fill(Color(red: 1.0, green: 0.7, blue: 0.7).opacity(0.8))
-                                        )
-                                        .padding(.bottom, 30)
+    }
+}
 
+struct BoundaryExtensionRequestMainView: View {
+    @ObservedObject var viewModel: AccountabilityPartnerViewModel
+    @ObservedObject var userViewModel: ProfileViewModel
+    @EnvironmentObject var screenTime: ScreenTimeService
 
-                                }
-                                .buttonStyle(.plain)
+    @Binding var checkedItems: [Boundary: Bool]
+    @Binding var isRequestSent: Bool
+    @Binding var sentExtensionBoundaryNames: [String]
+    @Binding var requestNote: String
+    @Binding var pin: String
+    @FocusState.Binding var isFieldFocused: Bool
 
-                            }
-                            
-                            if showNoBoundariesSelectedError {
-                                HStack {
-                                    Spacer()
-                                    Text("Please select at least one boundary.")
-                                        .foregroundColor(.red)
-                                    Spacer()
-                                }
-                                
-                            }
-                            
-                            if isRequestSent {
-                                HStack {
-                                    Spacer()
-                                    Text("Extension code has been sent")
-                                        .foregroundColor(.green)
-                                    Spacer()
-                                }
-                                
-                            }
-                            
-                            
-                            if (isRequestSent) {
-                                EnterCodeSection(pin: $pin, checkedItems: $checkedItems, viewModel: viewModel, screenTime: screenTime, isRequestSent: $isRequestSent)
-                            }
-                            
-                            SentRequestCodesSection(sentExtensionRequests: screenTime.getSentExtensionCodesAsBoundaryNameAndDateDict())
-                        }
-                        .padding(.horizontal, 40)
-                    }
-                    .onTapGesture {
-                        hideKeyboard()
-                    }
-                }
-                .onAppear {
-                    setupOnAppear()
-                }
-                .onChange(of: screenTime.boundariesReached) { _, newboundaries in
-                    updateCheckedItems(newboundaries)
-                }
+    @Binding var showNoBoundariesSelectedError: Bool
+    @Binding var showRequestAlreadySentError: Bool
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                scrollContent
             }
-            .navigationBarBackButtonHidden(true)
-            
+            .onAppear(perform: setupOnAppear)
+            .onChange(of: screenTime.boundariesReached) { _, newBoundaries in
+                updateCheckedItems(newBoundaries)
+            }
         }
-        
-        
+        .navigationBarBackButtonHidden(true)
     }
 
+    // MARK: - Broken up views
+
+    private var scrollContent: some View {
+        ScrollView {
+            VStack(alignment: .leading) {
+                headerSection
+                selectSection
+                noteSection
+                actionSection
+                statusSection
+                enterCodeSection
+                sentCodesSection
+            }
+            .padding(.horizontal, 40)
+        }
+        .onTapGesture { hideKeyboard() }
+    }
+
+    private var headerSection: some View {
+        VStack {
+            Spacer()
+
+            HStack { Spacer(); HeaderView(); Spacer() }
+
+            HStack {
+                Spacer()
+                Image("lanterns")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: 150)
+                Spacer()
+            }
+        }
+    }
+
+    private var selectSection: some View {
+        SelectAppsSection(
+            screenTime: screenTime,
+            checkedItems: $checkedItems,
+            showErrorMessage: $showNoBoundariesSelectedError
+        )
+    }
+
+    private var noteSection: some View {
+        NoteSection(requestNote: $requestNote, isFieldFocused: $isFieldFocused)
+    }
+
+    private var actionSection: some View {
+        HStack {
+            SendCodeButton(
+                viewModel: viewModel,
+                userViewModel: userViewModel,
+                requestNote: $requestNote,
+                checkedItems: $checkedItems,
+                showErrorMessage: $showNoBoundariesSelectedError,
+                isRequestSent: $isRequestSent,
+                showRequestAlreadySentError: $showRequestAlreadySentError,
+                sentExtensionBoundaryNames: $sentExtensionBoundaryNames
+            )
+
+            NavigationLink(destination: OverrideBoundaryView(screenTime)) {
+                Text("override")
+                    .font(.system(size: 15, weight: .bold))
+                    .foregroundColor(.primary)
+                    .padding(.vertical, 15)
+                    .padding(.horizontal, 24)
+                    .background(
+                        RoundedRectangle(cornerRadius: 15)
+                            .fill(Color(red: 1.0, green: 0.7, blue: 0.7).opacity(0.8))
+                    )
+                    .padding(.bottom, 30)
+            }
+            .buttonStyle(.plain)
+        }
+    }
+
+    @ViewBuilder
+    private var statusSection: some View {
+        if showNoBoundariesSelectedError {
+            HStack {
+                Spacer()
+                Text("Please select at least one boundary.")
+                    .foregroundColor(.red)
+                Spacer()
+            }
+        }
+
+        if isRequestSent{
+            HStack {
+                Spacer()
+                Text("Extension code has been sent")
+                    .foregroundColor(.green)
+                Spacer()
+            }
+        }
+
+        if showRequestAlreadySentError {
+            HStack {
+                Text("One or more selected boundaries already have an active extension code for today.")
+                    .foregroundColor(.red)
+                Spacer()
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var enterCodeSection: some View {
+        if isRequestSent || viewModel.isAnyCodeActive() {
+            EnterCodeSection(
+                pin: $pin,
+                checkedItems: $checkedItems,
+                viewModel: viewModel,
+                screenTime: screenTime,
+                isRequestSent: $isRequestSent,
+                sentExtensionBoundaryNames: $sentExtensionBoundaryNames
+            )
+        }
+    }
+
+    private var sentCodesSection: some View {
+        SentRequestCodesSection(
+            sentExtensionRequests: screenTime.getSentExtensionCodesAsBoundaryNameAndDateDict()
+        )
+    }
+
+    // MARK: - Existing functions
     private func setupOnAppear() {
-        UserViewModel.fetchUserProfile()
+        userViewModel.fetchUserProfile()
 
         screenTime.setGroupDisplays()
-        for Boundary in screenTime.boundariesReached {
-            if checkedItems[Boundary] == nil {
-                checkedItems[Boundary] = false
+        for boundary in screenTime.boundariesReached {
+            if checkedItems[boundary] == nil {
+                checkedItems[boundary] = false
             }
         }
     }
 
-    private func updateCheckedItems(_ newboundaries: [Boundary]) {
-        for Boundary in newboundaries {
-            if checkedItems[Boundary] == nil {
-                checkedItems[Boundary] = false
+    private func updateCheckedItems(_ newBoundaries: [Boundary]) {
+        for boundary in newBoundaries {
+            if checkedItems[boundary] == nil {
+                checkedItems[boundary] = false
             }
         }
+
         let allKeys = Set(checkedItems.keys)
-        let newSet = Set(newboundaries)
+        let newSet = Set(newBoundaries)
+
         for oldKey in allKeys.subtracting(newSet) {
             checkedItems.removeValue(forKey: oldKey)
         }
@@ -249,8 +327,6 @@ private struct noAccountabilityPartnerView: View {
         let accountabilityPartnerName = UserDefaults.standard.string(forKey: "tempAccountabilityPartnerName") ?? ""
 
         if pin == inviteCode {
-            print("CORRECTTTTTT")
-
             Task {
                 await viewModel.saveAccountabilityPartner(
                     name: accountabilityPartnerName,
@@ -276,7 +352,6 @@ private struct noAccountabilityPartnerView: View {
                 try await smsApi.introduction(request: SMSInvite)
             }
         } else {
-            print("wrongggggg")
             wrongCodeEntered = true
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 wrongCodeEntered = false
@@ -292,7 +367,7 @@ struct SelectAppsSection: View {
 
     var body: some View {
         VStack {
-            Text("SELECT APPS")
+            Text("SELECT BOUNDARIES")
                 .font(.system(size: 15))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.bottom, 6)
@@ -330,7 +405,7 @@ struct SelectAppsSection: View {
 
 struct NoteSection: View {
     @Binding var requestNote: String
-    @FocusState var isFieldFocused: Bool
+    @FocusState.Binding var isFieldFocused: Bool
 
     var body: some View {
         VStack(spacing: 16) {
@@ -351,6 +426,8 @@ struct SendCodeButton: View {
     @Binding var checkedItems: [Boundary: Bool]
     @Binding var showErrorMessage: Bool
     @Binding var isRequestSent: Bool
+    @Binding var showRequestAlreadySentError: Bool
+    @Binding var sentExtensionBoundaryNames: [String]
     
     var body: some View {
         VStack {
@@ -363,12 +440,18 @@ struct SendCodeButton: View {
                     showErrorMessage = false
                     
                     Task {
+                        let boundaries = checkedItems.filter { $0.value }.map { $0.key }
+                        
+                        guard shouldSendExtensionRequest(boundaries: boundaries) else {
+                            return
+                        }
+                        
                         await viewModel.sendTimeRequest(
                             phoneNumber: userViewModel.accountabilityPartner.phoneNumber ?? "",
                             userName: userViewModel.userProfile.name ?? "",
                             accountabilityPartnerName: userViewModel.accountabilityPartner.name ?? "",
                             note: requestNote,
-                            boundaries: checkedItems.filter({ $0.value == true }).map({ $0.key })
+                            boundaries: boundaries
                         )
                         
                         isRequestSent = true
@@ -388,8 +471,36 @@ struct SendCodeButton: View {
                     )
                     .padding(.bottom, 30)
             }
-            
         }
+    }
+    
+    private func shouldSendExtensionRequest(boundaries: [Boundary]) -> Bool {
+        let alreadyHasCode = boundaries.filter { !doesActiveCodeExistForBoundary(boundaryId: $0.id) }.count > 0
+
+        if alreadyHasCode {
+            showRequestAlreadySentError = true
+            return false
+        }
+
+        showRequestAlreadySentError = false
+
+        let foundBoundaryNames = boundaries.map(\.givenName)
+        sentExtensionBoundaryNames.append(contentsOf: foundBoundaryNames)
+
+        return true
+    }
+
+    private func doesActiveCodeExistForBoundary(boundaryId: UUID) -> Bool {
+        let sentExtensionCodeService = SentExtensionCodeService(storage: SentExtensionCodeStorageService(database: LocalDatabase.shared.databaseWriter))
+        
+        let code = sentExtensionCodeService.getRecentSentExtensionCodeForBoundary(boundaryId: boundaryId)
+        
+        // if the code is still valid we shouldn't allow them to send another one
+        if (code != nil && code!.isCodeValid) {
+            return false
+        }
+        
+        return true
     }
 }
 
@@ -450,6 +561,7 @@ struct EnterCodeSection: View {
     @ObservedObject var viewModel: AccountabilityPartnerViewModel
     @ObservedObject var screenTime: ScreenTimeService
     @Binding var isRequestSent: Bool
+    @Binding var sentExtensionBoundaryNames: [String]
 
     var body: some View {
         VStack {
@@ -505,21 +617,16 @@ struct EnterCodeSection: View {
             let validated = viewModel.validateVerificationCode(pin: pin)
             
             if validated {
-                pin = ""
-                showSuccessAlert = true
-                isRequestSent = false
-                
-                let keysToRemove = checkedItems.compactMap { $0.value ? $0.key : nil }
-                
-                keysToRemove.forEach { key in
-                    checkedItems.removeValue(forKey: key)
-                }
-                
-                screenTime.boundariesReached.removeAll { boundary in
-                    keysToRemove.contains(boundary)
+                if validated {
+                    pin = ""
+                    showSuccessAlert = true
+                    isRequestSent = false
+
+                    for key in checkedItems.keys { checkedItems[key] = false }
+
+                    screenTime.setGroupDisplays()
                 }
             } else {
-                print("invalid code")
                 showFailureAlert = true
             }
         }
