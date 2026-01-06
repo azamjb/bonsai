@@ -328,8 +328,6 @@ private struct noAccountabilityPartnerView: View {
         let accountabilityPartnerName = UserDefaults.standard.string(forKey: "tempAccountabilityPartnerName") ?? ""
 
         if pin == inviteCode {
-            print("CORRECTTTTTT")
-
             Task {
                 await viewModel.saveAccountabilityPartner(
                     name: accountabilityPartnerName,
@@ -355,7 +353,6 @@ private struct noAccountabilityPartnerView: View {
                 try await smsApi.introduction(request: SMSInvite)
             }
         } else {
-            print("wrongggggg")
             wrongCodeEntered = true
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 wrongCodeEntered = false

@@ -6,4 +6,4 @@
 //
 
 let BOUNDARY_STRING = "Boundary"
-let MIDNIGHT_RESET_STRING = "MidnightReset"
+let EXTENSION_SUFFIX_STRING = "-extension"

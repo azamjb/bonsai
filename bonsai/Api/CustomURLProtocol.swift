@@ -39,7 +39,7 @@ class CustomURLProtocol: URLProtocol {
             
             if let data = data {
                 if let responseString = String(data: data, encoding: .utf8) {
-                    print("\nIncoming Response: \(responseString)")
+                    //print("\nIncoming Response: \(responseString)")
                 }
                 
                 self.client?.urlProtocol(self, didLoad: data)

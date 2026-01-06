@@ -16,11 +16,12 @@ private var sharedDefaults: UserDefaults? {
 }
 
 protocol SentExtensionCodeServiceProtocol {
+    func getSentExtensionCodeByCode(code: String) -> SentExtensionCode?
     func getSentExtensionCodes() -> [SentExtensionCode]
     func getSentExtensionCodesCount() -> Int
     func upsertSentExtensionCode(SentExtensionCode: SentExtensionCode)
     func addSentExtensionCode(sentExtensionCode: SentExtensionCode)
-    func getSentExtensionCodeForBoundary(boundaryId: UUID) -> SentExtensionCode?
+    func getRecentSentExtensionCodeForBoundary(boundaryId: UUID) -> SentExtensionCode?
     func getBoundaryIdsForActiveCode(code: String) -> [UUID]
     func removeAllSentExtensionCodes()
     
@@ -34,6 +35,12 @@ class SentExtensionCodeService: SentExtensionCodeServiceProtocol {
         self.storage = storage
     }
     
+    func getSentExtensionCodeByCode(code: String) -> SentExtensionCode? {
+        let extensionCode = try! storage.getSentExtensionCodeByCode(code: code)
+        
+        return extensionCode
+    }
+    
     func getSentExtensionCodes() -> [SentExtensionCode] {
         let sentExtensionCodes = try! storage.getSentExtensionCodes()
         
@@ -44,8 +51,8 @@ class SentExtensionCodeService: SentExtensionCodeServiceProtocol {
         return try! storage.getSentExtensionCodesCount()
     }
 
-    func getSentExtensionCodeForBoundary(boundaryId: UUID) -> SentExtensionCode? {
-        try! storage.getSentExtensionCodeForBoundary(boundaryId: boundaryId)
+    func getRecentSentExtensionCodeForBoundary(boundaryId: UUID) -> SentExtensionCode? {
+        try! storage.getRecentSentExtensionCodeForBoundary(boundaryId: boundaryId)
     }
     
     func addSentExtensionCode(sentExtensionCode: SentExtensionCode) {
@@ -83,21 +90,30 @@ class SentExtensionCodeService: SentExtensionCodeServiceProtocol {
 }
 
 protocol SentExtensionCodeStorageProtocol {
+    func getSentExtensionCodeByCode(code: String) throws -> SentExtensionCode?
     func getSentExtensionCodes() throws -> [SentExtensionCode]
     func getSentExtensionCodesCount() throws -> Int
     func addSentExtensionCode(sentExtensionCode: SentExtensionCode) throws
-    func getSentExtensionCodeForBoundary(boundaryId: UUID) throws -> SentExtensionCode?
+    func getRecentSentExtensionCodeForBoundary(boundaryId: UUID) throws -> SentExtensionCode?
     func getBoundaryIdsForActiveCode(code: String) throws -> [UUID]
     func upsertSentExtensionCode(sentExtensionCode: SentExtensionCode) throws
     func removeAllSentExtensionCodes() throws
 }
 
 class SentExtensionCodeStorageService: SentExtensionCodeStorageProtocol {
-    
     private let db: DatabaseWriter
     
     init(database: DatabaseWriter) {
         self.db = database
+    }
+    
+    func getSentExtensionCodeByCode(code: String) throws -> SentExtensionCode? {
+        try db.read { db in
+            try SentExtensionCode
+                .filter(Column("code") == code)
+                .order(Column("sentDateTimeUtc").desc)
+                .fetchOne(db)
+        }
     }
 
     func getSentExtensionCodes() throws -> [SentExtensionCode] {
@@ -114,10 +130,11 @@ class SentExtensionCodeStorageService: SentExtensionCodeStorageProtocol {
         }
     }
 
-    func getSentExtensionCodeForBoundary(boundaryId: UUID) throws -> SentExtensionCode? {
+    func getRecentSentExtensionCodeForBoundary(boundaryId: UUID) throws -> SentExtensionCode? {
         try db.read { db in
             try SentExtensionCode
                 .filter(Column("boundaryId") == boundaryId)
+                .order(Column("sentDateTimeUtc").desc)
                 .fetchOne(db)
         }
     }

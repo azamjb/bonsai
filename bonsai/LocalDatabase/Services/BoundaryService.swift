@@ -83,7 +83,6 @@ class BoundaryService: BoundaryServiceProtocol {
             switch categories {
             case .none: break
             case .specific(let specificCategories, let exceptions):
-                // You might also need to filter exceptions depending on your requirements
                 let filteredCategories = specificCategories.filter({ !boundary!.categoryTokens.contains($0) })
                 settingsStore.shield.applicationCategories = .specific(filteredCategories, except: exceptions)
             case .all: break
@@ -107,6 +106,8 @@ class BoundaryService: BoundaryServiceProtocol {
     
     func unblockAllBoundaries() {
         try! storage.unblockAllBoundaries()
+        
+        writeBoundariesToUserDefaults()
     }
     
     func writeBoundariesToUserDefaults() {

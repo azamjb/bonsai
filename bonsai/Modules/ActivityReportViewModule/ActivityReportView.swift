@@ -26,6 +26,7 @@ enum AnalyticsDisplaysType: Int {
 
 struct ActivityReportView: View {
     @Binding var tabSelection: Int
+    @Environment(\.scenePhase) private var scenePhase
 
     let center = AuthorizationCenter.shared
 
@@ -290,13 +291,21 @@ struct ActivityReportView: View {
                     await MainActor.run {
                         isAuthorized = true
                     }
+                    
+                    boundaryService.writeBoundariesToUserDefaults()
+                    await forceRefreshReports()
                 } catch {
                     print("Failed to request authorization: \(error)")
                     return
                 }
-                
+            }
+        }
+        .onChange(of: scenePhase) { _, phase in
+            guard phase == .active else { return }
+            guard isAuthorized else { return }
+            Task {
                 boundaryService.writeBoundariesToUserDefaults()
-                await loadReportsInPriority()
+                await forceRefreshReports()
             }
         }
         .onChange(of: analyticsRange) { _, _ in
@@ -327,7 +336,7 @@ struct ActivityReportView: View {
         }
         cancelLoadingTimer(for: "totalActivity")
         
-        try? await Task.sleep(nanoseconds: 70_000_000)
+        try? await Task.sleep(nanoseconds: 300_000_000)
         
         if hasAccountabilityPartner {
             startLoadingTimer(for: "pillBar")
@@ -335,7 +344,7 @@ struct ActivityReportView: View {
                 isPillBarLoaded = true
             }
             cancelLoadingTimer(for: "pillBar")
-            try? await Task.sleep(nanoseconds: 70_000_000) 
+            try? await Task.sleep(nanoseconds: 250_000_000)
         }
         
         startLoadingTimer(for: "analytics")

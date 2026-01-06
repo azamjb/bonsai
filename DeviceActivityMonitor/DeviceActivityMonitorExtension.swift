@@ -37,15 +37,18 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
         extensionCodes.forEach(sentExtensionCodeService.upsertSentExtensionCode)
     }
     
-   
     override func intervalDidStart(for activity: DeviceActivityName) {
         super.intervalDidStart(for: activity)
     }
 
     override func intervalDidEnd(for activity: DeviceActivityName) {
         super.intervalDidEnd(for: activity)
+        
+        if activity.rawValue.hasSuffix(EXTENSION_SUFFIX_STRING) { return }
+
         unshieldApps()
         deactivateExtensionCodesForYesterday()
+        boundaryService.unblockAllBoundaries()
     }
     
     override func eventDidReachThreshold(_ event: DeviceActivityEvent.Name, activity: DeviceActivityName) {
@@ -53,9 +56,15 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
         
         if event.rawValue != BOUNDARY_STRING { return }
         
+        let raw = activity.rawValue
+        let isExtensionActivity = raw.hasSuffix(EXTENSION_SUFFIX_STRING)
+        let idString = isExtensionActivity ? String(raw.dropLast(EXTENSION_SUFFIX_STRING.count)) : raw
+
+        guard let boundaryId = UUID(uuidString: idString) else { return }
+        
         let boundaries = boundaryService.getBoundaries()
         
-        if var boundary = boundaries.first(where: { $0.id == UUID(uuidString: activity.rawValue) }) {
+        if var boundary = boundaries.first(where: { $0.id == boundaryId }) {
             guard boundary.weekdays.contains(Weekday.today) else {
                 print("Boundary '\(boundary.givenName)' not active on \(Weekday.today)")
                 return
@@ -80,7 +89,6 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     }
     
     private func handleThresholdReached(categoryToken: ActivityCategoryToken) {
-        print("\n\n\(categoryToken)")
         if let categories = store.shield.applicationCategories {
             switch categories {
             case .none:
@@ -90,7 +98,6 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
             case .specific(var specificCategories, let exceptions):
                 // If categories are specific, add the new category.
                 specificCategories.insert(categoryToken)
-                print(specificCategories, exceptions)
                 store.shield.applicationCategories = .specific(specificCategories, except: exceptions)
                 
             case .all(_): break
