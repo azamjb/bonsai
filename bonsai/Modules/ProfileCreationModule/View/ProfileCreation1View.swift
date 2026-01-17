@@ -53,6 +53,14 @@ struct ProfileCreation1View: View {
                                         }
                                         
                                         isNavigating = true
+                                        Task {
+                                            await viewModel.saveProfileFields(
+                                                name: name,
+                                                phoneNumber: "0",
+                                                hobbies: nil,
+                                                termsAccepted: nil
+                                            )
+                                        }
                                     }
                                 }) {
                                     forwardButton
@@ -67,7 +75,7 @@ struct ProfileCreation1View: View {
                     Spacer()
                     
                     NavigationLink(
-                        destination: ProfileCreation2View(name: name),
+                        destination: DailyScreenTimeView(name: name, phoneNumber:"0"),
                         isActive: $isNavigating
                     ) {
                         EmptyView()
