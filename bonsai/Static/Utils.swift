@@ -16,14 +16,7 @@ func isValidEmail(_ email: String) -> Bool {
 }
 
 func areDatesSameDay(date1: Date, date2: Date) -> Bool {
-    let calendar = Calendar.current
-    
-    let components1 = calendar.dateComponents([.year, .month, .day], from: date1)
-    let components2 = calendar.dateComponents([.year, .month, .day], from: date2)
-    
-    return components1.year == components2.year &&
-           components1.month == components2.month &&
-           components1.day == components2.day
+    Calendar.current.isDate(date1, inSameDayAs: date2)
 }
 
 func getDateInWeekStartingFromThisMonday(weekday: Weekday) -> Date? {

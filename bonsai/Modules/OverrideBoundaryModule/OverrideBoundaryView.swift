@@ -60,7 +60,7 @@ struct OverrideBoundaryView: View {
                         Task {
                             let spendResult = await viewModel.spendToken(tokenSpendAmount: 1)
                             
-                            switch spendResult{
+                            switch spendResult {
                             case .success:
                                 screenTime.clearShieldedApps()
                                 

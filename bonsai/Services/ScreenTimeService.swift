@@ -40,7 +40,6 @@ public class ScreenTimeService: ObservableObject {
     @AppStorage(ACCOUNTABILITY_PARTNER_NUMBER_STRING) private var accountabilityPartnerNumber: String?
     
     init() {
-        //boundaryService.removeAllBoundaries(center: center)
         setGroupDisplays()
     }
     
@@ -69,12 +68,13 @@ public class ScreenTimeService: ObservableObject {
 //        let endComps   = Calendar.current.dateComponents([.hour, .minute, .second], from: endDate)
         
         // ***
+        
+        let startComps = DateComponents(hour: 0, minute: 0, second: 0)
+        let endComps = DateComponents(hour: 23, minute: 59, second: 59)
 
         let schedule = DeviceActivitySchedule(
-//            intervalStart: startComps,
-//            intervalEnd: endComps,
-            intervalStart: DateComponents(hour: 0, minute: 0, second: 0),
-            intervalEnd: DateComponents(hour: 23, minute: 59, second: 59),
+            intervalStart: startComps,
+            intervalEnd: endComps,
             repeats: true
         )
         
@@ -120,7 +120,8 @@ public class ScreenTimeService: ObservableObject {
             boundary.isBlocked = false
             boundaryService.upsertBoundary(boundary: boundary)
             
-            dailyBoundaryExtensionService.addBoundaryIdToExtensions(boundaryId: boundaryId, extendedDateTimeUtc: Date())
+            let now = Date()
+            dailyBoundaryExtensionService.addBoundaryIdToExtensions(boundaryId: boundaryId, extendedDateTimeUtc: now)
             
             if var existingExtensionCode = sentExtensionCodeService.getRecentSentExtensionCodeForBoundary(boundaryId: boundaryId) {
                 existingExtensionCode.isCodeValid = false
@@ -132,27 +133,35 @@ public class ScreenTimeService: ObservableObject {
     }
     
     private func startMonitoringPostExtension(boundary: Boundary) {
+        // if there's already an active interval for this boundary, get rid of it so stuff doesn't get messed up
+        center.stopMonitoring([DeviceActivityName(boundary.id.uuidString + EXTENSION_SUFFIX_STRING)])
+
         let schedule = DeviceActivitySchedule(
             intervalStart: DateComponents(hour: 0, minute: 0, second: 0),
             intervalEnd: DateComponents(hour: 23, minute: 59, second: 59),
-            repeats: true)
-        
-        if boundary.weekdays.contains(Weekday.today) {
-            try! center.startMonitoring(
+            repeats: true
+        )
+
+        do {
+            try center.startMonitoring(
                 DeviceActivityName(boundary.id.uuidString + EXTENSION_SUFFIX_STRING),
                 during: schedule,
-                events: [DeviceActivityEvent.Name(BOUNDARY_STRING): DeviceActivityEvent (
-                    applications: boundary.appTokens,
-                    categories: boundary.categoryTokens,
-                    webDomains: boundary.webDomainTokens,
-                    threshold: DateComponents(hour: 0, minute: 15)
-                )]
+                events: [
+                    DeviceActivityEvent.Name(BOUNDARY_STRING): DeviceActivityEvent(
+                        applications: boundary.appTokens,
+                        categories: boundary.categoryTokens,
+                        webDomains: boundary.webDomainTokens,
+                        threshold: DateComponents(hour: 0, minute: 15)
+                        //threshold: DateComponents(minute: 1)
+
+                    )
+                ]
             )
+        } catch {
+            print("Failed to start extension monitoring: \(error)")
         }
-        
-        dailyBoundaryExtensionService.addBoundaryIdToExtensions(boundaryId: boundary.id, extendedDateTimeUtc: Date())
     }
-    
+
     func unblockCategories(_ toUnblock: Set<ActivityCategoryToken>) {
         guard let policy = settingsStore.shield.applicationCategories else { return }
 
@@ -227,6 +236,8 @@ public class ScreenTimeService: ObservableObject {
         settingsStore.shield.applications = nil
         settingsStore.shield.webDomains = nil
         settingsStore.shield.webDomainCategories = nil
+        
+        boundaryService.unblockAllBoundaries()
     }
 
     public func setGroupDisplays() {

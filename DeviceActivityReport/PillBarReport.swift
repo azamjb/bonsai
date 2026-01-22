@@ -168,53 +168,45 @@ struct TimeLimitSliderView: View {
     }
     
     private func updateBoundaryStates() {
+        boundaryState = nil
         guard let defaults = sharedDefaults else { return }
-        var boundaries: [Boundary]? = []
         
-        if let boundariesData = defaults.data(forKey: BOUNDARIES_STRING) {
-           boundaries = try? JSONDecoder().decode([Boundary].self, from: boundariesData)
+        let boundaries: [Boundary] = (defaults.data(forKey: BOUNDARIES_STRING))
+            .flatMap { try? JSONDecoder().decode([Boundary].self, from: $0) } ?? []
+        
+        guard let displayedBoundary = boundaries.first(where: { $0.id == boundaryId }) else { return }
+        
+        // Extension check
+        let dailyExtensions: [DailyBoundaryExtension] = (defaults.data(forKey: DAILY_BOUNDARY_EXTENSIONS_STRING))
+            .flatMap { try? JSONDecoder().decode([DailyBoundaryExtension].self, from: $0) } ?? []
+        
+        let latestTodayExtension = dailyExtensions
+            .filter { $0.boundaryId == boundaryId && areDatesSameDay(date1: $0.extendedDateTimeUtc, date2: Date()) }
+            .max(by: { $0.extendedDateTimeUtc < $1.extendedDateTimeUtc })
+
+        if latestTodayExtension != nil && displayedBoundary.isBlocked == false {
+            boundaryState = .extended
+            return
         }
 
-        // Check if boundary is currently extended
-        if let dailyExtensionsData = defaults.data(forKey: DAILY_BOUNDARY_EXTENSIONS_STRING),
-           let dailyExtensionsModels = try? JSONDecoder().decode([DailyBoundaryExtension].self, from: dailyExtensionsData) {
-            if boundaries != nil {
-                let extensionActive = dailyExtensionsModels.contains(where: {
-                    areDatesSameDay(date1: $0.extendedDateTimeUtc, date2: Date())
-                    && $0.boundaryId == boundaryId
-                    && !(boundaries?.first(where: { $0.id == boundaryId })?.isBlocked ?? false)
-                })
-                
-                if extensionActive {
-                    boundaryState = .extended
-                    return
-                }
-            }
+        // Code sent check
+        let sentCodes: [SentExtensionCode] = (defaults.data(forKey: SENT_EXTENSION_CODES_STRING))
+            .flatMap { try? JSONDecoder().decode([SentExtensionCode].self, from: $0) } ?? []
+        
+        let hasValidCodeToday = sentCodes.contains {
+            $0.boundaryId == boundaryId &&
+            areDatesSameDay(date1: $0.sentDateTimeUtc, date2: Date()) &&
+            $0.isCodeValid
         }
         
-        // Check if boundary has an active code but has not yet been extended
-        if let activeCodesData = defaults.data(forKey: SENT_EXTENSION_CODES_STRING),
-           let activeCodeModels = try? JSONDecoder().decode([SentExtensionCode].self, from: activeCodesData) {
-            let extensionCodeSent = activeCodeModels.contains(where: {
-                areDatesSameDay(date1: $0.sentDateTimeUtc, date2: Date())
-                && $0.boundaryId == boundaryId
-                && activeCodeModels.first(where: { $0.boundaryId == boundaryId })?.isCodeValid ?? false
-            })
-            
-            if extensionCodeSent {
-                boundaryState = .codeSent
-                return
-            }
+        if hasValidCodeToday {
+            boundaryState = .codeSent
+            return
         }
         
-        // Check if boundary is reached
-        if let boundariesData = defaults.data(forKey: BOUNDARIES_STRING),
-           let boundaries = try? JSONDecoder().decode([Boundary].self, from: boundariesData) {
-            let boundaryReached = boundaries.first(where: { $0.id == boundaryId })?.isBlocked ?? false
-            
-            if boundaryReached {
-                boundaryState = .reached
-            }
+        // Boundary Reached check
+        if displayedBoundary.isBlocked {
+            boundaryState = .reached
         }
     }
 }

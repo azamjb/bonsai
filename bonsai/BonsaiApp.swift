@@ -18,6 +18,8 @@ struct BonsaiApp: App {
     @StateObject private var notificationHandler = NotificationHandler.shared
     @StateObject private var quoteViewModel = QuoteViewModel()
     
+    @Environment(\.scenePhase) private var scenePhase
+
     init() {
         NotificationHandler.shared.requestAuthorization()
     }
@@ -29,6 +31,11 @@ struct BonsaiApp: App {
                     .environmentObject(screenTime)
                     .environmentObject(quoteViewModel)
                     .environmentObject(notificationHandler)
+            }
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            if newPhase == .active {
+                screenTime.setGroupDisplays()
             }
         }
     }

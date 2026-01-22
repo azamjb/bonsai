@@ -90,8 +90,11 @@ class BoundaryService: BoundaryServiceProtocol {
             }
         }
         
-        center.stopMonitoring([DeviceActivityName(boundaryId.uuidString)])
-
+        center.stopMonitoring([
+            DeviceActivityName(boundaryId.uuidString),
+            DeviceActivityName(boundaryId.uuidString + EXTENSION_SUFFIX_STRING)
+        ])
+        
         try! storage.removeBoundary(boundaryId: boundaryId)
         
         writeBoundariesToUserDefaults()

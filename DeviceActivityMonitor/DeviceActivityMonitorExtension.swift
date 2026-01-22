@@ -43,19 +43,29 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
 
     override func intervalDidEnd(for activity: DeviceActivityName) {
         super.intervalDidEnd(for: activity)
-        
+
         if activity.rawValue.hasSuffix(EXTENSION_SUFFIX_STRING) { return }
 
         unshieldApps()
         deactivateExtensionCodesForYesterday()
         boundaryService.unblockAllBoundaries()
+
+        stopAllExtensionMonitoring()
     }
-    
+    private func stopAllExtensionMonitoring() {
+        let center = DeviceActivityCenter()
+        let toStop = center.activities.filter { $0.rawValue.hasSuffix(EXTENSION_SUFFIX_STRING) }
+        if !toStop.isEmpty {
+            center.stopMonitoring(toStop)
+        }
+    }
+
     override func eventDidReachThreshold(_ event: DeviceActivityEvent.Name, activity: DeviceActivityName) {
         super.eventDidReachThreshold(event, activity: activity)
         
         if event.rawValue != BOUNDARY_STRING { return }
         
+        // remove the extension suffix to get the pure boundary id
         let raw = activity.rawValue
         let isExtensionActivity = raw.hasSuffix(EXTENSION_SUFFIX_STRING)
         let idString = isExtensionActivity ? String(raw.dropLast(EXTENSION_SUFFIX_STRING.count)) : raw
@@ -76,6 +86,12 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
             
             boundary.isBlocked = true
             boundaryService.upsertBoundary(boundary: boundary)
+        }
+        
+        // since extensions are a one time thing, end the activity
+        if activity.rawValue.hasSuffix(EXTENSION_SUFFIX_STRING) {
+            let center = DeviceActivityCenter()
+            center.stopMonitoring([activity])
         }
     }
     
