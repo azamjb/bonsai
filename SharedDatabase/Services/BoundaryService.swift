@@ -28,20 +28,39 @@ class BoundaryService: BoundaryServiceProtocol {
     }
     
     func getBoundaries() -> [Boundary] {
-        return try! storage.getBoundaries()
+        do {
+            return try storage.getBoundaries()
+        } catch {
+            print("Failed to fetch boundaries: \(error)")
+            return []
+        }
     }
-    
+
     func getBoundariesForToday() -> [Boundary] {
         // TODO - optimize this by just doing it in db. just wanna test this now
-        return (try! storage.getBoundaries()).filter { $0.weekdays.contains(Weekday.today) }
+        do {
+            return (try storage.getBoundaries()).filter { $0.weekdays.contains(Weekday.today) }
+        } catch {
+            print("Failed to fetch boundaries for today: \(error)")
+            return []
+        }
     }
 
     func getBoundaryById(boundaryId: UUID) -> Boundary? {
-        return try! storage.getBoundaryById(boundaryId: boundaryId)
+        do {
+            return try storage.getBoundaryById(boundaryId: boundaryId)
+        } catch {
+            print("Failed to fetch boundary \(boundaryId): \(error)")
+            return nil
+        }
     }
-    
+
     func upsertBoundary(boundary: Boundary) {
-        try! storage.upsertBoundary(boundary: boundary)
+        do {
+            try storage.upsertBoundary(boundary: boundary)
+        } catch {
+            print("Failed to upsert boundary: \(error)")
+        }
     }
     
     func removeBoundary(boundaryId: UUID, settingsStore: ManagedSettingsStore, center: DeviceActivityCenter) {
@@ -66,14 +85,25 @@ class BoundaryService: BoundaryServiceProtocol {
             }
         }
         
-        center.stopMonitoring([DeviceActivityName(boundaryId.uuidString)])
+        center.stopMonitoring([
+            DeviceActivityName(boundaryId.uuidString),
+            DeviceActivityName(boundaryId.uuidString + "-extension")
+        ])
 
-        try! storage.removeBoundary(boundaryId: boundaryId)
+        do {
+            try storage.removeBoundary(boundaryId: boundaryId)
+        } catch {
+            print("Failed to remove boundary \(boundaryId): \(error)")
+        }
     }
-    
+
     func removeAllBoundaries(center: DeviceActivityCenter) {
         center.stopMonitoring(center.activities)
-        try! storage.removeAllBoundaries()
+        do {
+            try storage.removeAllBoundaries()
+        } catch {
+            print("Failed to remove all boundaries: \(error)")
+        }
     }
 }
 

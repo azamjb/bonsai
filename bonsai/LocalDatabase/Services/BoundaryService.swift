@@ -38,23 +38,33 @@ class BoundaryService: BoundaryServiceProtocol {
     }
     
     func getBoundaries() -> [Boundary] {
-        let boundaries = try! storage.getBoundaries()
-        
-        writeBoundariesToUserDefaults()
-        return boundaries
+        do {
+            let boundaries = try storage.getBoundaries()
+            writeBoundariesToUserDefaults()
+            return boundaries
+        } catch {
+            print("Failed to fetch boundaries: \(error)")
+            return []
+        }
     }
-    
+
     func getBoundariesForToday() -> [Boundary] {
         // TODO - optimize this by just doing it in db. just wanna test this now
-        let boundaries = (try! storage.getBoundaries()).filter { $0.weekdays.contains(Weekday.today) }
-        
-        return boundaries
+        do {
+            return (try storage.getBoundaries()).filter { $0.weekdays.contains(Weekday.today) }
+        } catch {
+            print("Failed to fetch boundaries for today: \(error)")
+            return []
+        }
     }
 
     func getBoundaryById(boundaryId: UUID) -> Boundary? {
-        let boundary = try! storage.getBoundaryById(boundaryId: boundaryId)
-        
-        return boundary
+        do {
+            return try storage.getBoundaryById(boundaryId: boundaryId)
+        } catch {
+            print("Failed to fetch boundary \(boundaryId): \(error)")
+            return nil
+        }
     }
     
     func clearBoundariesFromUserDefaults() {
@@ -64,9 +74,12 @@ class BoundaryService: BoundaryServiceProtocol {
     
     
     func upsertBoundary(boundary: Boundary) {
-        try! storage.upsertBoundary(boundary: boundary)
-        
-        writeBoundariesToUserDefaults()
+        do {
+            try storage.upsertBoundary(boundary: boundary)
+            writeBoundariesToUserDefaults()
+        } catch {
+            print("Failed to upsert boundary: \(error)")
+        }
     }
     
     func removeBoundary(boundaryId: UUID, settingsStore: ManagedSettingsStore, center: DeviceActivityCenter) {
@@ -94,23 +107,33 @@ class BoundaryService: BoundaryServiceProtocol {
             DeviceActivityName(boundaryId.uuidString),
             DeviceActivityName(boundaryId.uuidString + EXTENSION_SUFFIX_STRING)
         ])
-        
-        try! storage.removeBoundary(boundaryId: boundaryId)
-        
+
+        do {
+            try storage.removeBoundary(boundaryId: boundaryId)
+        } catch {
+            print("Failed to remove boundary \(boundaryId): \(error)")
+        }
+
         writeBoundariesToUserDefaults()
     }
     
     func removeAllBoundaries(center: DeviceActivityCenter) {
         center.stopMonitoring(center.activities)
-        try! storage.removeAllBoundaries()
-        
+        do {
+            try storage.removeAllBoundaries()
+        } catch {
+            print("Failed to remove all boundaries: \(error)")
+        }
         clearBoundariesFromUserDefaults()
     }
-    
+
     func unblockAllBoundaries() {
-        try! storage.unblockAllBoundaries()
-        
-        writeBoundariesToUserDefaults()
+        do {
+            try storage.unblockAllBoundaries()
+            writeBoundariesToUserDefaults()
+        } catch {
+            print("Failed to unblock all boundaries: \(error)")
+        }
     }
     
     func writeBoundariesToUserDefaults() {

@@ -46,22 +46,6 @@ struct SixDigitCodeField: View {
                 isTextFieldFocused = true
             }
 
-            // Paste button
-            Button(action: pasteFromClipboard) {
-                HStack(spacing: 6) {
-                    Image(systemName: "doc.on.clipboard")
-                        .font(.system(size: 14))
-                    Text("Paste Code")
-                        .font(.system(size: 14))
-                }
-                .foregroundColor(.blue)
-                .padding(.vertical, 8)
-                .padding(.horizontal, 16)
-                .background(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color.blue, lineWidth: 1)
-                )
-            }
         }
         .onAppear {
             internalCode = code
@@ -98,14 +82,7 @@ struct SixDigitCodeField: View {
         }
     }
 
-    private func pasteFromClipboard() {
-        if let clipboardString = UIPasteboard.general.string {
-            let digits = clipboardString.filter { $0.isNumber }
-            let sixDigits = String(digits.prefix(6))
-            internalCode = sixDigits
-            code = sixDigits
-        }
-    }
+
 }
 
 // Visual box for each digit

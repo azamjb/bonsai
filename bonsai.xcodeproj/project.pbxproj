@@ -108,6 +108,9 @@
 		B76F61FF2D03FFE20092DA9E /* ManagedSettingsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ManagedSettingsUI.framework; path = System/Library/Frameworks/ManagedSettingsUI.framework; sourceTree = SDKROOT; };
 		B76F620D2D040EB40092DA9E /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		B77B2DCD2DB9FAAB0018F685 /* ShieldActionExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ShieldActionExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		B7D2FCE22F6D0B770098E1DC /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		B7D2FCE42F6D0B770098E1DC /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		B7D2FCFE2F6D0D5C0098E1DC /* BonsaiWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BonsaiWidgetExtension.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -313,6 +316,7 @@
 		B71550AE2CF9519F000AFACB = {
 			isa = PBXGroup;
 			children = (
+				B7D2FCFE2F6D0D5C0098E1DC /* BonsaiWidgetExtension.entitlements */,
 				24EF2FD22E96A98F00AD9B9A /* iPhoneNumberField */,
 				B7186B4C2D333920000723BE /* StoreKitConfig.storekit */,
 				B71550B92CF9519F000AFACB /* bonsai */,
@@ -345,6 +349,8 @@
 				B71551012CF957FF000AFACB /* DeviceActivity.framework */,
 				B76F61FD2D03FFE20092DA9E /* ManagedSettings.framework */,
 				B76F61FF2D03FFE20092DA9E /* ManagedSettingsUI.framework */,
+				B7D2FCE22F6D0B770098E1DC /* WidgetKit.framework */,
+				B7D2FCE42F6D0B770098E1DC /* SwiftUI.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -485,7 +491,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1620;
+				LastSwiftUpdateCheck = 2630;
 				LastUpgradeCheck = 1610;
 				ORGANIZATIONNAME = "Bonsai Software Incorporated";
 				TargetAttributes = {
@@ -791,7 +797,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.11.2;
+				MARKETING_VERSION = 1.11.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.bonsai.inc;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -833,7 +839,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.11.2;
+				MARKETING_VERSION = 1.11.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.bonsai.inc;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

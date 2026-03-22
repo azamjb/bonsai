@@ -18,7 +18,10 @@ class CustomURLProtocol: URLProtocol {
     
     override func startLoading() {
         var newRequest = self.request
-        URLProtocol.setProperty(true, forKey: "HandledByCustomProtocol", in: newRequest as! NSMutableURLRequest)
+        if let mutableRequest = (self.request as NSURLRequest).mutableCopy() as? NSMutableURLRequest {
+            URLProtocol.setProperty(true, forKey: "HandledByCustomProtocol", in: mutableRequest)
+            newRequest = mutableRequest as URLRequest
+        }
         
         newRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         newRequest.setValue("*/*", forHTTPHeaderField: "Accept")

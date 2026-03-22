@@ -132,23 +132,25 @@ class ProfileViewModel: ObservableObject {
     }
     
     public func getTotalDaysWithoutExtension() -> Int {
-        if let signUpDateData = sharedDefaults!.data(forKey: SIGN_UP_DATE_STRING) {
-            let signUpDate = try! JSONDecoder().decode(Date.self, from: signUpDateData)
-            
+        guard let defaults = sharedDefaults else { return 0 }
+
+        if let signUpDateData = defaults.data(forKey: SIGN_UP_DATE_STRING),
+           let signUpDate = try? JSONDecoder().decode(Date.self, from: signUpDateData) {
+
             // get all extensions after the start date
             let allExtensions = dailyBoundaryExtensionService.getDailyBoundaryExtensions()
             let extensionsAfterStartDate = allExtensions.filter {
                 $0.extendedDateTimeUtc >= signUpDate
             }
-            
+
             // calculate total days from start date to now
             let totalSeconds = Date().timeIntervalSinceReferenceDate - signUpDate.timeIntervalSinceReferenceDate
             let totalDays = Int(totalSeconds / (60 * 60 * 24))
-            
+
             // count days with extensions (we need to count each day only once)
             var daysWithExtensionsSet = Set<String>()
             let calendar = Calendar.current
-            
+
             for extensionModel in extensionsAfterStartDate {
                 // get the date components to identify the day (ignoring time)
                 let components = calendar.dateComponents([.year, .month, .day], from: extensionModel.extendedDateTimeUtc)
@@ -158,12 +160,14 @@ class ProfileViewModel: ObservableObject {
                     daysWithExtensionsSet.insert(dayKey)
                 }
             }
-            
+
             let daysWithExtensions = daysWithExtensionsSet.count
-            
+
             return max(0, totalDays - daysWithExtensions)
         } else {
-            sharedDefaults!.set(try! JSONEncoder().encode(Date()), forKey: SIGN_UP_DATE_STRING)
+            if let encodedDate = try? JSONEncoder().encode(Date()) {
+                defaults.set(encodedDate, forKey: SIGN_UP_DATE_STRING)
+            }
             return 0
         }
     }

@@ -208,16 +208,16 @@ public class ScreenTimeService: ObservableObject {
     }
     
     private func updateLeftoverWeeklySaves() {
-        if sharedDefaults!.object(forKey: REMAINING_BOUNDARY_EXTENSIONS_STRING) != nil {
-            let leftoverSaves = sharedDefaults!.integer(forKey: REMAINING_BOUNDARY_EXTENSIONS_STRING)
+        if sharedDefaults?.object(forKey: REMAINING_BOUNDARY_EXTENSIONS_STRING) != nil {
+            let leftoverSaves = sharedDefaults?.integer(forKey: REMAINING_BOUNDARY_EXTENSIONS_STRING) ?? 0
             sharedDefaults?.set(max(0, leftoverSaves - 1), forKey: REMAINING_BOUNDARY_EXTENSIONS_STRING) // This should never be able to go below 0 except for testing (why we're setting a minimum)
         } else {
             sharedDefaults?.set(1, forKey: REMAINING_BOUNDARY_EXTENSIONS_STRING) // Set to 1 because they've just used their first edit.
         }
     }
-    
+
     public func getLeftoverWeeklySaves() -> Int {
-        return sharedDefaults!.integer(forKey: REMAINING_BOUNDARY_EXTENSIONS_STRING)
+        return sharedDefaults?.integer(forKey: REMAINING_BOUNDARY_EXTENSIONS_STRING) ?? 0
     }
     
     // This removes everything. Blocked apps, active monitoring sessions, and set boundaries. Basically a fresh start for testing + unbricks phone.

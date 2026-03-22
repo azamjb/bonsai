@@ -57,26 +57,34 @@ public struct Boundary: Codable, Identifiable, Hashable, FetchableRecord, Persis
         isBlocked = row["isBlocked"]
         invisibleBoundary = row["invisibleBoundary"]
         
-        if let jsonString: String = row["appTokens"] {
-            appTokens = Set(try! JSONDecoder().decode([ApplicationToken].self, from: jsonString.data(using: .utf8)!))
+        if let jsonString: String = row["appTokens"],
+           let data = jsonString.data(using: .utf8),
+           let decoded = try? JSONDecoder().decode([ApplicationToken].self, from: data) {
+            appTokens = Set(decoded)
         } else {
             appTokens = []
         }
-        
-        if let jsonString: String = row["categoryTokens"] {
-            categoryTokens = Set(try! JSONDecoder().decode([ActivityCategoryToken].self, from: jsonString.data(using: .utf8)!))
+
+        if let jsonString: String = row["categoryTokens"],
+           let data = jsonString.data(using: .utf8),
+           let decoded = try? JSONDecoder().decode([ActivityCategoryToken].self, from: data) {
+            categoryTokens = Set(decoded)
         } else {
             categoryTokens = []
         }
-        
-        if let jsonString: String = row["webDomainTokens"] {
-            webDomainTokens = Set(try! JSONDecoder().decode([WebDomainToken].self, from: jsonString.data(using: .utf8)!))
+
+        if let jsonString: String = row["webDomainTokens"],
+           let data = jsonString.data(using: .utf8),
+           let decoded = try? JSONDecoder().decode([WebDomainToken].self, from: data) {
+            webDomainTokens = Set(decoded)
         } else {
             webDomainTokens = []
         }
-        
-        if let jsonString: String = row["weekdays"] {
-            weekdays = Set(try! JSONDecoder().decode([Weekday].self, from: jsonString.data(using: .utf8)!))
+
+        if let jsonString: String = row["weekdays"],
+           let data = jsonString.data(using: .utf8),
+           let decoded = try? JSONDecoder().decode([Weekday].self, from: data) {
+            weekdays = Set(decoded)
         } else {
             weekdays = []
         }

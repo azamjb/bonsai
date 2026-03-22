@@ -28,38 +28,34 @@ class BaseApi {
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.addValue(apiKey, forHTTPHeaderField: apiKeyHeaderName)
-        
-        do {
-            let (data, httpResponse) = try await URLSession.shared.data(for: request)
-            return (data, httpResponse as! HTTPURLResponse)
-        } catch {
-            throw error // Catch error codes in child api, send them to view model, show as snackbar
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw StringError(message: "Unexpected response type")
         }
+        return (data, httpResponse)
     }
-    
+
     func makePOSTRequest<T : Encodable>(url: URL, bodyObject: T) async throws -> (Data?, HTTPURLResponse) {
         URLProtocol.registerClass(CustomURLProtocol.self) // Our interceptor
-        
+
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.httpBody = try! JSONEncoder().encode(bodyObject)
+        request.httpBody = try JSONEncoder().encode(bodyObject)
         request.addValue(apiKey, forHTTPHeaderField: apiKeyHeaderName)
 
-        do {
-            let (data, httpResponse) = try await URLSession.shared.data(for: request)
-            return (data, httpResponse as! HTTPURLResponse)
-        } catch {
-            throw error // Catch error codes in child api, send them to view model, show as snackbar
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw StringError(message: "Unexpected response type")
         }
+        return (data, httpResponse)
     }
-    
-    func checkForErrorFromResponse(responseData: Data, httpResponse: HTTPURLResponse) -> StringError? {
-        guard(200...299).contains(httpResponse.statusCode) else {
-            return StringError(
-                message: String(data: responseData, encoding: .utf8)!
-            )
+
+    func checkForErrorFromResponse(responseData: Data?, httpResponse: HTTPURLResponse) -> StringError? {
+        guard (200...299).contains(httpResponse.statusCode) else {
+            let message = responseData.flatMap { String(data: $0, encoding: .utf8) } ?? "Unknown error"
+            return StringError(message: message)
         }
-        
         return nil
     }
 }

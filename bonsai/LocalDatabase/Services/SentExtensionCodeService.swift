@@ -36,47 +36,75 @@ class SentExtensionCodeService: SentExtensionCodeServiceProtocol {
     }
     
     func getSentExtensionCodeByCode(code: String) -> SentExtensionCode? {
-        let extensionCode = try! storage.getSentExtensionCodeByCode(code: code)
-        
-        return extensionCode
+        do {
+            return try storage.getSentExtensionCodeByCode(code: code)
+        } catch {
+            print("Failed to fetch extension code: \(error)")
+            return nil
+        }
     }
-    
+
     func getSentExtensionCodes() -> [SentExtensionCode] {
-        let sentExtensionCodes = try! storage.getSentExtensionCodes()
-        
-        return sentExtensionCodes
+        do {
+            return try storage.getSentExtensionCodes()
+        } catch {
+            print("Failed to fetch sent extension codes: \(error)")
+            return []
+        }
     }
-    
+
     func getSentExtensionCodesCount() -> Int {
-        return try! storage.getSentExtensionCodesCount()
+        do {
+            return try storage.getSentExtensionCodesCount()
+        } catch {
+            print("Failed to fetch sent extension codes count: \(error)")
+            return 0
+        }
     }
 
     func getRecentSentExtensionCodeForBoundary(boundaryId: UUID) -> SentExtensionCode? {
-        try! storage.getRecentSentExtensionCodeForBoundary(boundaryId: boundaryId)
+        do {
+            return try storage.getRecentSentExtensionCodeForBoundary(boundaryId: boundaryId)
+        } catch {
+            print("Failed to fetch recent extension code for boundary \(boundaryId): \(error)")
+            return nil
+        }
     }
-    
+
     func addSentExtensionCode(sentExtensionCode: SentExtensionCode) {
-        try! storage.addSentExtensionCode(sentExtensionCode: sentExtensionCode)
-        
-        writeSentExtensionCodesToUserDefaults()
+        do {
+            try storage.addSentExtensionCode(sentExtensionCode: sentExtensionCode)
+            writeSentExtensionCodesToUserDefaults()
+        } catch {
+            print("Failed to add sent extension code: \(error)")
+        }
     }
 
     func upsertSentExtensionCode(SentExtensionCode: SentExtensionCode) {
-        try! storage.upsertSentExtensionCode(sentExtensionCode: SentExtensionCode)
-        
-        writeSentExtensionCodesToUserDefaults()
+        do {
+            try storage.upsertSentExtensionCode(sentExtensionCode: SentExtensionCode)
+            writeSentExtensionCodesToUserDefaults()
+        } catch {
+            print("Failed to upsert sent extension code: \(error)")
+        }
     }
-    
-    func getBoundaryIdsForActiveCode(code: String) -> [UUID]
-    {
-        try! storage.getBoundaryIdsForActiveCode(code: code)
+
+    func getBoundaryIdsForActiveCode(code: String) -> [UUID] {
+        do {
+            return try storage.getBoundaryIdsForActiveCode(code: code)
+        } catch {
+            print("Failed to fetch boundary IDs for active code: \(error)")
+            return []
+        }
     }
-    
+
     func removeAllSentExtensionCodes() {
-        
-        try! storage.removeAllSentExtensionCodes()
-        
-        writeSentExtensionCodesToUserDefaults()
+        do {
+            try storage.removeAllSentExtensionCodes()
+            writeSentExtensionCodesToUserDefaults()
+        } catch {
+            print("Failed to remove all sent extension codes: \(error)")
+        }
     }
     
     func writeSentExtensionCodesToUserDefaults() {
@@ -84,8 +112,15 @@ class SentExtensionCodeService: SentExtensionCodeServiceProtocol {
     }
     
     private func writeSentExtensionCodesToUserDefaultsInternal() {
-        sharedDefaults!.set(try? JSONEncoder().encode(storage.getSentExtensionCodes()), forKey: "sentExtensionCodes")
-        sharedDefaults!.synchronize()
+        do {
+            let codes = try storage.getSentExtensionCodes()
+            let data = try JSONEncoder().encode(codes)
+            sharedDefaults?.set(data, forKey: "sentExtensionCodes")
+        } catch {
+            sharedDefaults?.removeObject(forKey: "sentExtensionCodes")
+            print("Failed to write sent extension codes to user defaults: \(error)")
+        }
+        sharedDefaults?.synchronize()
     }
 }
 

@@ -29,23 +29,30 @@ class DailyBoundaryExtensionService: DailyBoundaryExtensionServiceProtocol {
     }
     
     func getDailyBoundaryExtensions() -> [DailyBoundaryExtension] {
-        let sentExtensionCodes = try! storage.getDailyBoundaryExtensions()
-        
-        return sentExtensionCodes
+        do {
+            return try storage.getDailyBoundaryExtensions()
+        } catch {
+            print("Failed to fetch daily boundary extensions: \(error)")
+            return []
+        }
     }
-    
-    func removeAllDailyBoundaryExtensions() {
-        
-        try! storage.resetDailyBoundaryExtensions()
 
-        writeDailyBoundaryExtensionsToUserDefaults()
+    func removeAllDailyBoundaryExtensions() {
+        do {
+            try storage.resetDailyBoundaryExtensions()
+            writeDailyBoundaryExtensionsToUserDefaults()
+        } catch {
+            print("Failed to remove all daily boundary extensions: \(error)")
+        }
     }
-    
+
     func addBoundaryIdToExtensions(boundaryId: UUID, extendedDateTimeUtc: Date) {
-        
-        try! storage.addBoundaryIdToExtensions(dailyBoundaryExtension: DailyBoundaryExtension(boundaryId: boundaryId, extendedDateTimeUtc: extendedDateTimeUtc))
-        
-        writeDailyBoundaryExtensionsToUserDefaults()
+        do {
+            try storage.addBoundaryIdToExtensions(dailyBoundaryExtension: DailyBoundaryExtension(boundaryId: boundaryId, extendedDateTimeUtc: extendedDateTimeUtc))
+            writeDailyBoundaryExtensionsToUserDefaults()
+        } catch {
+            print("Failed to add boundary to daily extensions: \(error)")
+        }
     }
     
     func writeDailyBoundaryExtensionsToUserDefaults() {
@@ -53,8 +60,15 @@ class DailyBoundaryExtensionService: DailyBoundaryExtensionServiceProtocol {
     }
     
     private func writeDailyBoundaryExtensionsToUserDefaultsInternal() {
-        sharedDefaults!.set(try? JSONEncoder().encode(storage.getDailyBoundaryExtensions()), forKey: "dailyBoundaryExtensions")
-        sharedDefaults!.synchronize()
+        do {
+            let extensions = try storage.getDailyBoundaryExtensions()
+            let data = try JSONEncoder().encode(extensions)
+            sharedDefaults?.set(data, forKey: "dailyBoundaryExtensions")
+        } catch {
+            sharedDefaults?.removeObject(forKey: "dailyBoundaryExtensions")
+            print("Failed to write daily boundary extensions to user defaults: \(error)")
+        }
+        sharedDefaults?.synchronize()
     }
 }
 

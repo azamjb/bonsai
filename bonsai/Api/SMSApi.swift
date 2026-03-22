@@ -17,7 +17,7 @@ class SMSApi : BaseApi {
     func invite(request: SMSInvite) async throws {
         let (responseData, httpResponse) = try await self.makePOSTRequest(url: getBaseUrl(endpoint: "invite"), bodyObject: request)
         
-        if let error = checkForErrorFromResponse(responseData: responseData!, httpResponse: httpResponse) {
+        if let error = checkForErrorFromResponse(responseData: responseData, httpResponse: httpResponse) {
             throw error
         }
     }
@@ -26,7 +26,7 @@ class SMSApi : BaseApi {
     func introduction(request: SMSInvite) async throws {
         let (responseData, httpResponse) = try await self.makePOSTRequest(url: getBaseUrl(endpoint: "introduction"), bodyObject: request)
         
-        if let error = checkForErrorFromResponse(responseData: responseData!, httpResponse: httpResponse) {
+        if let error = checkForErrorFromResponse(responseData: responseData, httpResponse: httpResponse) {
             throw error
         }
     }
@@ -35,7 +35,7 @@ class SMSApi : BaseApi {
     func timeRequest(request: SMSRequest) async throws {
         let (responseData, httpResponse) = try await self.makePOSTRequest(url: getBaseUrl(endpoint: "request"), bodyObject: request)
         
-        if let error = checkForErrorFromResponse(responseData: responseData!, httpResponse: httpResponse) {
+        if let error = checkForErrorFromResponse(responseData: responseData, httpResponse: httpResponse) {
             throw error
         }
     }
@@ -44,7 +44,7 @@ class SMSApi : BaseApi {
     func removalNotif(request: SMSInvite) async throws {
         let (responseData, httpResponse) = try await self.makePOSTRequest(url: getBaseUrl(endpoint: "remove"), bodyObject: request)
         
-        if let error = checkForErrorFromResponse(responseData: responseData!, httpResponse: httpResponse) {
+        if let error = checkForErrorFromResponse(responseData: responseData, httpResponse: httpResponse) {
             throw error
         }
     }
@@ -53,7 +53,7 @@ class SMSApi : BaseApi {
     func SelfRemovalNotif(request: SMSInvite) async throws {
         let (responseData, httpResponse) = try await self.makePOSTRequest(url: getBaseUrl(endpoint: "AccountabilityPartnerRemove"), bodyObject: request)
         
-        if let error = checkForErrorFromResponse(responseData: responseData!, httpResponse: httpResponse) {
+        if let error = checkForErrorFromResponse(responseData: responseData, httpResponse: httpResponse) {
             throw error
         }
     }

@@ -17,7 +17,7 @@ class AccountApi : BaseApi {
     func connectionPrompt() async throws { // only serves purpose of prompting network access
             let (responseData, httpResponse) = try await self.makePOSTRequest(url: getBaseUrl(endpoint: "abcd"), bodyObject: "null")
             
-            if let error = checkForErrorFromResponse(responseData: responseData!, httpResponse: httpResponse) {
+            if let error = checkForErrorFromResponse(responseData: responseData, httpResponse: httpResponse) {
                 throw error
             } else {
                 print(responseData)
@@ -27,7 +27,7 @@ class AccountApi : BaseApi {
     func sendFeedback(request: FeedbackRequest) async throws {
         let (responseData, httpResponse) = try await self.makePOSTRequest(url: getBaseUrl(endpoint: "feedback/addFeedback"), bodyObject: request)
         
-        if let error = checkForErrorFromResponse(responseData: responseData!, httpResponse: httpResponse) {
+        if let error = checkForErrorFromResponse(responseData: responseData, httpResponse: httpResponse) {
             throw error
         } 
     }
@@ -35,18 +35,21 @@ class AccountApi : BaseApi {
     func addUser(request: RegisterUser) async throws -> AddUserResponse {
         let (responseData, httpResponse) = try await self.makePOSTRequest(url: getBaseUrl(endpoint: ""), bodyObject: request)
         
-        if let error = checkForErrorFromResponse(responseData: responseData!, httpResponse: httpResponse) {
+        if let error = checkForErrorFromResponse(responseData: responseData, httpResponse: httpResponse) {
             throw error
         }
         
-        let response = try! JSONDecoder().decode(AddUserResponse.self, from: responseData!)
+        guard let data = responseData else {
+            throw StringError(message: "No response data")
+        }
+        let response = try JSONDecoder().decode(AddUserResponse.self, from: data)
         return response
     }
     
     func deleteUser(request: DeleteUser) async throws {
         let (responseData, httpResponse) = try await self.makePOSTRequest(url: getBaseUrl(endpoint: "deleteUser"), bodyObject: request)
         
-        if let error = checkForErrorFromResponse(responseData: responseData!, httpResponse: httpResponse) {
+        if let error = checkForErrorFromResponse(responseData: responseData, httpResponse: httpResponse) {
             throw error
         }
     }
@@ -55,7 +58,7 @@ class AccountApi : BaseApi {
     func addAccountabilityPartner(request: AddAccountabilityPartner) async throws {
         let (responseData, httpResponse) = try await self.makePOSTRequest(url: getBaseUrl(endpoint: "addAccountabilityPartner"), bodyObject: request)
 
-        if let error = checkForErrorFromResponse(responseData: responseData!, httpResponse: httpResponse) {
+        if let error = checkForErrorFromResponse(responseData: responseData, httpResponse: httpResponse) {
             throw error
         } else {
             print("Accountability partner added")
@@ -65,7 +68,7 @@ class AccountApi : BaseApi {
     func retrieveAccountabilityPartner(request: checkAccountabilityPartner) async throws -> String? {
         let (responseData, httpResponse) = try await self.makePOSTRequest(url: getBaseUrl(endpoint: "retrieveAccountabilityPartner"),bodyObject: request)
 
-        if let error = checkForErrorFromResponse(responseData: responseData!, httpResponse: httpResponse) {
+        if let error = checkForErrorFromResponse(responseData: responseData, httpResponse: httpResponse) {
             throw error
         }
 
