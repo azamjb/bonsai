@@ -29,4 +29,4 @@ Financial friction. The paid override exists so there's always an exit — but o
 
 <img width="451" height="578" alt="IMG_3933" src="https://github.com/user-attachments/assets/390dda93-0478-40ba-9073-c7b6a78a2fef" />
 
-<img width="1206" height="728" alt="IMG_3510 2" src="https://github.com/user-attachments/assets/26ab0f92-19f1-44d4-baf6-892999b07818" />
+<img width="451" alt="IMG_3510 2" src="https://github.com/user-attachments/assets/26ab0f92-19f1-44d4-baf6-892999b07818" />
