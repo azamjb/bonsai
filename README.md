@@ -1,7 +1,7 @@
 
 Bonsai
 
-An iOS app that reduces screen time through social accountability. Instead of self imposed limits that can easily be dismissed, Bonsai invokes social accountability to help you stick to your goals
+An iOS app that aims to combat screen addiction through social accountability. Instead of self imposed limits that can easily be dismissed, Bonsai invokes an external accountability system to help you stick to your goals
 
 The problem:
 
