@@ -24,3 +24,8 @@ Social friction. Asking someone for permission to keep scrolling is an admission
 
 Financial friction. The paid override exists so there's always an exit — but one that costs something. A small charge is enough to make impulsive use feel like a decision rather than a reflex.
 
+<img width="1206" height="1197" alt="IMG_3844" src="https://github.com/user-attachments/assets/8d1fad8f-edd7-4683-a2a9-438529f6f523" />
+
+<img width="451" height="300" alt="bonsai" src="https://github.com/user-attachments/assets/3d4a8c8f-b6a9-465c-8e23-6a7a50a3b46a" />
+
+<img width="1206" height="728" alt="IMG_3510 2" src="https://github.com/user-attachments/assets/26ab0f92-19f1-44d4-baf6-892999b07818" />
